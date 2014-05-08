@@ -19,6 +19,8 @@ class AccountAnimes(object):
         self.__dropped = []
         self.__plan_to_watch = []
 
+        self._is_loaded = False
+
     @property
     @load
     def watching(self) -> list:
@@ -65,8 +67,8 @@ class AccountAnimes(object):
         else:
             raise KeyError(e)
 
-    def refresh(self):
-        resp_data = self.__connection.connect(self.__url)
+    def reload(self):
+        resp_data = self.__connection.auth_connect(self.__url)
         xml_tree = ElementTree.fromstring(resp_data)
         assert 'myanimelist' == xml_tree.tag
         xml_animes = xml_tree.getchildren()
@@ -75,9 +77,10 @@ class AccountAnimes(object):
         l = xml_general_data.getchildren()
         xml_user_id = l[0]
         assert 'user_id' == xml_user_id.tag
+        assert self.__connection.is_user_by_id(int(xml_user_id.text))
         xml_user_name = l[1]
         assert 'user_name' == xml_user_name.tag
-        assert self.__connection.is_user(xml_user_name.text, int(xml_user_id.text))
+        assert self.__connection.is_user_by_name(xml_user_name.text)
         xml_user_watching = l[2]
         assert 'user_watching' == xml_user_watching.tag
         xml_user_completed = l[3]
@@ -101,9 +104,9 @@ class AccountAnimes(object):
         for xml_anime in xml_animes:
             pass
             if DEBUG:
-                self.get_anime(xml_anime)
+                self.__get_anime(xml_anime)
             else:
-                thread = Thread(target=self.get_anime, args=(xml_anime, ))
+                thread = Thread(target=self.__get_anime, args=(xml_anime, ))
                 thread.start()
                 threads.append(thread)
 
@@ -117,10 +120,11 @@ class AccountAnimes(object):
             assert self.__dropped == int(xml_user_dropped.text)
             assert self.__plan_to_watch == int(xml_user_plantowatch.text)
 
-    def get_anime(self, anime_id: int):
-        import pdb
-        pdb.set_trace()
-        anime = MyAnime(anime_id, self.__connection)
+        self._is_loaded = True
+
+    def __get_anime(self, anime_xml: ElementTree.Element):
+        anime_id_xml = anime_xml.find('series_animedb_id')
+        anime = MyAnime(int(anime_id_xml.text), self.__connection)
         try:
             self[anime.my_status].append(anime)
         except Exception as e:
