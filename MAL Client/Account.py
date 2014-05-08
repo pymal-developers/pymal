@@ -18,21 +18,21 @@ class Account(object):
         self.__auth_string = ''
         self.__cookies = dict()
 
-        self.__is_loaded = False
+        self._is_loaded = False
         self.__animes = None
         self.__mangas = None
 
         if password is not None:
             self.change_password(password)
 
-    @load
     @property
+    @load
     def animes(self):
         return self.__animes
 
     def reload(self):
         self.__animes = AccountAnimes(self._username, self)
-        self.__is_loaded = True
+        self._is_loaded = True
 
     def change_password(self, password: str) -> bool:
         """Checking if the new password is valid"""
