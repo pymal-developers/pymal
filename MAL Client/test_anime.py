@@ -1,7 +1,7 @@
 import unittest
 from Anime import Anime
 import global_functions
-import constants_for_testing
+from constants_for_testing import ANIME_ID
 from global_functions_for_testing import connection_for_testing
 
 
@@ -10,7 +10,7 @@ class AnimeTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.anime_real_connect = global_functions.connect
         Anime.connect = connection_for_testing
-        cls.anime = Anime(constants_for_testing.ANIME_ID)
+        cls.anime = Anime(ANIME_ID)
 
     @classmethod
     def tearDownClass(cls):
