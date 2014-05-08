@@ -91,11 +91,11 @@ class AccountAnimes(object):
 
         xml_animes = xml_animes[1:]
 
-        self.__watching = []
-        self.__completed = []
-        self.__on_hold = []
-        self.__dropped = []
-        self.__plan_to_watch = []
+        self.__watching.clear()
+        self.__completed.clear()
+        self.__on_hold.clear()
+        self.__dropped.clear()
+        self.__plan_to_watch.clear()
 
         threads = []
         for xml_anime in xml_animes:
