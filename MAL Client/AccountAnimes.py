@@ -13,36 +13,36 @@ class AccountAnimes(object):
         self.__connection = connection
         self.__url = self.URL.format(username)
 
-        self.__watching = None
-        self.__completed = None
-        self.__on_hold = None
-        self.__dropped = None
-        self.__plan_to_watch = None
+        self.__watching = []
+        self.__completed = []
+        self.__on_hold = []
+        self.__dropped = []
+        self.__plan_to_watch = []
 
-    @load
     @property
+    @load
     def watching(self) -> list:
         return self.__watching
 
-    @load
     @property
+    @load
     def completed(self) -> list:
         return self.__completed
 
-    @load
     @property
+    @load
     def on_hold(self) -> list:
         return self.__on_hold
 
-    @load
     @property
+    @load
     def dropped(self) -> list:
         if self.__dropped is None:
             self.refresh()
         return self.__dropped
 
-    @load
     @property
+    @load
     def plan_to_watch(self) -> list:
         return self.__plan_to_watch
 
@@ -126,8 +126,9 @@ class AccountAnimes(object):
         except Exception as e:
             print(e)
 
+    @load
     def __len__(self):
-        return len(self.watching) + len(self.completed) + len(self.on_hold) + len(self.dropped) + len(self.plan_to_watch)
+        return len(self.__watching) + len(self.__completed) + len(self.__on_hold) + len(self.__dropped) + len(self.plan_to_watch)
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))
