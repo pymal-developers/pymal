@@ -1,5 +1,5 @@
 import unittest
-import Manga
+from Manga import Manga
 import global_functions
 from global_functions_for_testing import connection_for_testing
 import constants_for_testing
@@ -10,7 +10,7 @@ class AnimeTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.manga_real_connect = global_functions.connect
         Manga.connect = connection_for_testing
-        cls.anime = Manga.Manga(constants_for_testing.MANGA_ID)
+        cls.anime = Manga(constants_for_testing.MANGA_ID)
 
     @classmethod
     def tearDownClass(cls):
