@@ -1,12 +1,12 @@
 from urllib import request
-import consts
+from consts import HOST_NAME, DEBUG
 from decorators import load
 from MALObject import MALObject, check_side_content_div
 from global_functions import connect, make_list, get_next_index
 
 
 class Anime(MALObject):
-    ANIME_URL = request.urljoin(consts.HOST_NAME, "anime/{0:d}")
+    ANIME_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
 
     def __init__(self, anime_id: int):
         self._anime_id = anime_id
@@ -174,7 +174,7 @@ class Anime(MALObject):
 
         #Getting content <div>
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-        if consts.DEBUG:
+        if DEBUG:
             assert content_div is not None
 
         content_table = content_div.table
@@ -293,7 +293,7 @@ class Anime(MALObject):
         # Data from main content
         main_content = contents[1]
         main_content_inner_divs = main_content.findAll(name='div', recursive=False)
-        if consts.DEBUG:
+        if DEBUG:
             assert 2 == len(main_content_inner_divs), \
                 "Got len(main_content_inner_divs) == {0:d}".format(len(main_content_inner_divs))
         main_content_datas = main_content_inner_divs[1].table.tbody.findAll(name="tr", recursive=False)
@@ -305,11 +305,11 @@ class Anime(MALObject):
         # Getting synopsis
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
-        if consts.DEBUG:
+        if DEBUG:
             assert 6 == len(synopsis_cell_contents), \
                 "Got len(synopsis_cell_contents) == {0:d}".format(len(synopsis_cell_contents))
         len(synopsis_cell.contents)
-        if consts.DEBUG:
+        if DEBUG:
             assert 'Synopsis' == synopsis_cell.h2.text
         self.__synopsis = synopsis_cell_contents[1]
 
@@ -338,7 +338,7 @@ class Anime(MALObject):
             index = make_list(related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
         next_index = get_next_index(index, other_data_kids)
 
-        if consts.DEBUG:
+        if DEBUG:
             assert next_index - index == 2
             index = next_index + 1
 

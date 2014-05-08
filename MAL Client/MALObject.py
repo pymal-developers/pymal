@@ -1,5 +1,5 @@
 import bs4
-import consts
+from consts import RETRY_NUMBER
 import time
 
 def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
@@ -12,7 +12,7 @@ def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
 class MALObject(object):
     def _get_myanimelist_div(self, url: str, connection_function) -> bs4.element.Tag:
         got_robot = False
-        for try_number in range(consts.RETRY_NUMBER):
+        for try_number in range(RETRY_NUMBER):
             time.sleep(0.5)
             data = connection_function(url)
             html = bs4.BeautifulSoup(data, "html5lib").html

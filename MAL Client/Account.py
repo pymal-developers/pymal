@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 import time
 from global_functions import _connect
 from decorators import load
-import consts
+from consts import RETRY_NUMBER
 from AccountAnimes import AccountAnimes
 
 
@@ -56,7 +56,7 @@ class Account(object):
             except ElementTree.ParseError as e:
                 if e.code != 4:
                     raise
-                elif tries > consts.RETRY_NUMBER:
+                elif tries > RETRY_NUMBER:
                     raise
                 time.sleep(0.5)
                 continue

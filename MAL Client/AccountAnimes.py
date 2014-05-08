@@ -1,13 +1,13 @@
 from xml.etree import ElementTree
 from threading import Thread
-import consts
+from consts import HOST_NAME, DEBUG
 from decorators import load
 from MyAnime import MyAnime
 from Anime import Anime
-
+from urllib import request
 
 class AccountAnimes(object):
-    URL = r"http://myanimelist.net/malappinfo.php?u={0:s}&type=anime"
+    URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=anime")
 
     def __init__(self, username: str, connection):
         self.__connection = connection
@@ -100,7 +100,7 @@ class AccountAnimes(object):
         threads = []
         for xml_anime in xml_animes:
             pass
-            if consts.DEBUG:
+            if DEBUG:
                 self.get_anime(xml_anime)
             else:
                 thread = Thread(target=self.get_anime, args=(xml_anime, ))
@@ -110,7 +110,7 @@ class AccountAnimes(object):
         while threads:
             threads.pop().join()
 
-        if consts.DEBUG:
+        if DEBUG:
             assert self.__watching == int(xml_user_watching.text)
             assert self.__completed == int(xml_user_completed.text)
             assert self.__on_hold == int(xml_user_onhold.text)

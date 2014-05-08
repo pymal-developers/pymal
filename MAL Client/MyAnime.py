@@ -1,13 +1,13 @@
 from urllib import request
-import consts
+from consts import HOST_NAME
 from decorators import my_load
 from Anime import Anime
 
 
 class MyAnime(Anime):
-    MY_ANIME_URL = request.urljoin(consts.HOST_NAME, 'editlist.php?type=anime&id={0:d}')
-    MY_ANIME_EPISODES_URL = request.urljoin(consts.HOST_NAME, 'ajaxtb.php?detailedaid={0:d}')
-    MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
+    MY_ANIME_URL = request.urljoin(HOST_NAME, 'editlist.php?type=anime&id={0:d}')
+    MY_ANIME_EPISODES_URL = request.urljoin(HOST_NAME, 'ajaxtb.php?detailedaid={0:d}')
+    MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
 
     def __init__(self, anime_id: int or Anime, account):
         if type(anime_id) == Anime:
