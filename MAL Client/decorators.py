@@ -1,7 +1,5 @@
 def load(function):
-    """
-    a decorator
-    """
+    """a decorator"""
     def _load_wrapper(self, *args):
         if not self._is_loaded:
             self.reload()
@@ -10,9 +8,7 @@ def load(function):
 
 
 def my_load(function):
-    """
-    a decorator
-    """
+    """a decorator"""
     def _my_load_wrapper(self, *args):
         if not self._is_my_loaded:
             self.my_reload()
