@@ -20,11 +20,18 @@ class AccountAnimes(object):
         self.__plan_to_watch = []
 
         self.map_of_lists = {
+            1: self.__watching,
+            2: self.__completed,
+            3: self.__on_hold,
+            4: self.__dropped,
+            6: self.__plan_to_watch,
+
             '1': self.__watching,
             '2': self.__completed,
             '3': self.__on_hold,
             '4': self.__dropped,
             '6': self.__plan_to_watch,
+
             'watching': self.__watching,
             'completed': self.__completed,
             'onhold': self.__on_hold,
@@ -81,10 +88,27 @@ class AccountAnimes(object):
         return AccountAnimesIterator(self.watching + self.completed + self.on_hold + self.dropped + self.plan_to_watch)
 
     def __getitem__(self, key: str or int) -> list:
+        if type(key) == int:
+            if key < len(self.watching):
+                return self.watching[key]
+            key -= len(self.watching)
+            if key < len(self.completed):
+                return self.completed[key]
+            key -= len(self.completed)
+            if key < len(self.on_hold):
+                return self.on_hold[key]
+            key -= len(self.on_hold)
+            if key < len(self.dropped):
+                return self.dropped[key]
+            key -= len(self.dropped)
+            if key < len(self.plan_to_watch):
+                return self.plan_to_watch[key]
+            raise IndexError('list index out of range (the size if {0:d}'.format(len(self)))
         key = str(key)
-        if key in self.map_of_lists:
-            return self.map_of_lists[key]
-        raise KeyError('AccountanimeData gets only the keys: ' + ', '.join(self.map_of_lists.keys()))
+        for anime in self:
+            if anime.title == key:
+                return anime
+        KeyError("{0:s} doesn't have the anime '{1:s}'".format(self.__class__.__name__, key))
 
     def reload(self):
         resp_data = self.__connection.auth_connect(self.__url)
@@ -132,29 +156,28 @@ class AccountAnimes(object):
         while threads:
             threads.pop().join()
 
-        if DEBUG:
-            if len(self.__watching) != int(xml_user_watching.text.strip()):
-                print('watching: {0:d} != {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip())))
-            if len(self.__completed) != int(xml_user_completed.text.strip()):
-                print('completed: {0:d} != {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip())))
-            if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
-                print('on hold:{0:d} != {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
-            if len(self.__dropped) != int(xml_user_dropped.text.strip()):
-                print('dropped: {0:d} != {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip())))
-            if len(self.__plan_to_watch) != int(xml_user_plantowatch.text.strip()):
-                print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
-            """
-            assert len(self.__watching) == int(xml_user_watching.text.strip()),\
-                '{0:d} == {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip()))
-            assert len(self.__completed) == int(xml_user_completed.text.strip()),\
-                '{0:d} == {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip()))
-            assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
-                '{0:d} == {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
-            assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
-                '{0:d} == {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip()))
-            assert len(self.__plan_to_watch) == int(xml_user_plantowatch.text.strip()),\
-                '{0:d} == {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip()))
-            """
+        if len(self.__watching) != int(xml_user_watching.text.strip()):
+            print('watching: {0:d} != {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip())))
+        if len(self.__completed) != int(xml_user_completed.text.strip()):
+            print('completed: {0:d} != {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip())))
+        if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
+            print('on hold:{0:d} != {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
+        if len(self.__dropped) != int(xml_user_dropped.text.strip()):
+            print('dropped: {0:d} != {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip())))
+        if len(self.__plan_to_watch) != int(xml_user_plantowatch.text.strip()):
+            print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
+        """
+        assert len(self.__watching) == int(xml_user_watching.text.strip()),\
+            '{0:d} == {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip()))
+        assert len(self.__completed) == int(xml_user_completed.text.strip()),\
+            '{0:d} == {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip()))
+        assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
+            '{0:d} == {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
+        assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
+            '{0:d} == {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip()))
+        assert len(self.__plan_to_watch) == int(xml_user_plantowatch.text.strip()),\
+            '{0:d} == {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip()))
+        """
         self._is_loaded = True
 
     def __get_anime(self, anime_xml: ElementTree.Element):

@@ -20,11 +20,18 @@ class AccountMangas(object):
             self.__plan_to_read = []
 
             self.map_of_lists = {
+                1: self.__reading,
+                2: self.__completed,
+                3: self.__on_hold,
+                4: self.__dropped,
+                6: self.__plan_to_read,
+
                 '1': self.__reading,
                 '2': self.__completed,
                 '3': self.__on_hold,
                 '4': self.__dropped,
                 '6': self.__plan_to_read,
+
                 'reading': self.__reading,
                 'completed': self.__completed,
                 'onhold': self.__on_hold,
@@ -84,10 +91,27 @@ class AccountMangas(object):
             return AccountMangasIterator(self.reading + self.completed + self.on_hold + self.dropped + self.plan_to_read)
 
         def __getitem__(self, key: str or int) -> list:
+            if type(key) == int:
+                if key < len(self.reading):
+                    return self.reading[key]
+                key -= len(self.reading)
+                if key < len(self.completed):
+                    return self.completed[key]
+                key -= len(self.completed)
+                if key < len(self.on_hold):
+                    return self.on_hold[key]
+                key -= len(self.on_hold)
+                if key < len(self.dropped):
+                    return self.dropped[key]
+                key -= len(self.dropped)
+                if key < len(self.plan_to_read):
+                    return self.plan_to_read[key]
+                raise IndexError('list index out of range (the size if {0:d}'.format(len(self)))
             key = str(key)
-            if key in self.map_of_lists:
-                return self.map_of_lists[key]
-            raise KeyError('AccountanimeData gets only the keys: ' + ', '.join(self.map_of_lists.keys()))
+            for manga in self:
+                if manga.title == key:
+                    return manga
+            KeyError("{0:s} doesn't have the anime '{1:s}'".format(self.__class__.__name__, key))
 
         def reload(self):
             resp_data = self.__connection.auth_connect(self.__url)
@@ -138,29 +162,28 @@ class AccountMangas(object):
             while threads:
                 threads.pop().join()
 
-            if DEBUG:
-                if len(self.__reading) != int(xml_user_reading.text.strip()):
-                    print("reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip())))
-                if len(self.__completed) != int(xml_user_completed.text.strip()):
-                    print("completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip())))
-                if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
-                    print("on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
-                if len(self.__dropped) != int(xml_user_dropped.text.strip()):
-                    print("dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip())))
-                if len(self.__plan_to_read) != int(xml_user_plantoread.text.strip()):
-                    print("plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip())))
-                """
-                assert len(self.__reading) == int(xml_user_reading.text.strip()),\
-                    "reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip()))
-                assert len(self.__completed) == int(xml_user_completed.text.strip()),\
-                    "completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip()))
-                assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
-                    "on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
-                assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
-                    "dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip()))
-                assert len(self.__plan_to_read) == int(xml_user_plantoread.text.strip()),\
-                    "plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip()))
-                """
+            if len(self.__reading) != int(xml_user_reading.text.strip()):
+                print("reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip())))
+            if len(self.__completed) != int(xml_user_completed.text.strip()):
+                print("completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip())))
+            if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
+                print("on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
+            if len(self.__dropped) != int(xml_user_dropped.text.strip()):
+                print("dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip())))
+            if len(self.__plan_to_read) != int(xml_user_plantoread.text.strip()):
+                print("plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip())))
+            """
+            assert len(self.__reading) == int(xml_user_reading.text.strip()),\
+                "reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip()))
+            assert len(self.__completed) == int(xml_user_completed.text.strip()),\
+                "completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip()))
+            assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
+                "on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
+            assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
+                "dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip()))
+            assert len(self.__plan_to_read) == int(xml_user_plantoread.text.strip()),\
+                "plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip()))
+            """
             self._is_loaded = True
 
         def _get_manga(self, xml_manga: ElementTree.Element):
