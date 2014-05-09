@@ -1,9 +1,8 @@
 from xml.etree import ElementTree
-import time
 from global_functions import _connect
 from decorators import load
-from consts import RETRY_NUMBER, RETRY_SLEEP
 from AccountAnimes import AccountAnimes
+from AccountMangas import AccountMangas
 from requests.auth import HTTPBasicAuth
 
 
@@ -28,8 +27,14 @@ class Account(object):
     def animes(self):
         return self.__animes
 
+    @property
+    @load
+    def mangas(self):
+        return self.__mangas
+
     def reload(self):
         self.__animes = AccountAnimes(self._username, self)
+        self.__mangas = AccountMangas(self._username, self)
         self._is_loaded = True
 
     def change_password(self, password: str) -> bool:

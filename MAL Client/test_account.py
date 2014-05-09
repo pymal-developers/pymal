@@ -1,6 +1,7 @@
 import unittest
 from Account import Account
 from AccountAnimes import AccountAnimes
+from AccountMangas import AccountMangas
 from constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
@@ -38,6 +39,7 @@ class AccountFunctionsTestCase(unittest.TestCase):
 
     def test_reload(self):
         assert type(self.account.animes) == AccountAnimes
+        assert type(self.account.animes) == AccountMangas
 
 
 def main():
