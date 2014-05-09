@@ -3,7 +3,6 @@ from threading import Thread
 from consts import HOST_NAME, DEBUG
 from decorators import load
 from MyAnime import MyAnime
-from Anime import Anime
 from urllib import request
 
 
@@ -60,7 +59,7 @@ class AccountAnimes(object):
     def plan_to_watch(self) -> list:
         return self.__plan_to_watch
 
-    def __contains__(self, item: Anime) -> bool:
+    def __contains__(self, item: MyAnime) -> bool:
         return item in self.watching or item in self.completed or item in self.on_hold or item in self.dropped or item in self.plan_to_watch
 
     def __iter__(self):
@@ -168,9 +167,9 @@ class AccountAnimes(object):
         except KeyError as err:
             print("Got an key error:", err)
 
-    @load
     def __len__(self):
-        return len(self.__watching) + len(self.__completed) + len(self.__on_hold) + len(self.__dropped) + len(self.plan_to_watch)
+        return len(self.watching) + len(self.completed) + len(self.on_hold) + len(self.dropped) +\
+               len(self.plan_to_watch)
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))
