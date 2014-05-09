@@ -8,57 +8,85 @@ class MyAnime(Anime):
     MY_ANIME_URL = request.urljoin(HOST_NAME, 'editlist.php?type=anime&id={0:d}')
     MY_ANIME_EPISODES_URL = request.urljoin(HOST_NAME, 'ajaxtb.php?detailedaid={0:d}')
     MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
+    TAG_SEPARETOR = ';'
 
-    def __init__(self, anime_id: int or Anime, account):
+    def __init__(self, anime_id: int or Anime, account, my_xml: None=None):
         if type(anime_id) == Anime:
             anime_id = anime_id.anime_id
-        super().__init__(anime_id)
+        super().__init__(anime_id, anime_xml=my_xml)
 
         self.__my_anime_url = self.MY_ANIME_URL.format(self._anime_id)
 
         self._is_my_loaded = False
         self.__account = account
-        self.__my_status = 0
-        self.__my_is_rewatching = False
-        self.__my_completed_episodes = 0
-        self.__my_score = 0
-        self.__my_start_date = '00000000'
-        self.__my_end_date = '00000000'
+
+        self.__my_id = None
+        self.__my_status = None
+        self.__my_is_rewatching = None
+        self.__my_completed_episodes = None
+        self.__my_score = None
+        self.__my_start_date = None
+        self.__my_end_date = None
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_storage_value = 0.0
         self.__my_download_episodes = 0
         self.__my_times_rewatched = 0
-        self.__my_rewatch_value = 0
+        self.__my_rewatch_value = None
+        self.__my_tags = None
+
+        if my_xml is not None:
+            self.__my_id = int(my_xml.find('my_id').text)
+            self.__my_status = int(my_xml.find('my_status').text)
+            self.__my_is_rewatching = bool(my_xml.find('my_rewatching').text)
+            self.__my_completed_episodes = int(my_xml.find('my_watched_episodes').text)
+            self.__my_score = int(my_xml.find('my_score').text)
+            self.__my_start_date = my_xml.find('my_start_date').text
+            self.__my_end_date = my_xml.find('my_finish_date').text
+            self.__my_rewatch_value = int(my_xml.find('my_rewatching_ep').text)
+            my_tags_xml = my_xml.find('my_tags')
+            if my_tags_xml.text is not None:
+                self.__my_tags = my_tags_xml.text.split(self.TAG_SEPARETOR)
+
 
     @property
-    @my_load
+    def my_id(self):
+        return self.__my_id
+
+    @property
     def my_status(self):
+        if self.__my_status is None:
+            self.my_reload()
         return self.__my_status
 
     @property
-    @my_load
     def my_is_rewatching(self):
+        if self.__my_is_rewatching is None:
+            self.my_reload()
         return self.__my_is_rewatching
 
     @property
-    @my_load
     def my_completed_episodes(self):
+        if self.__my_completed_episodes is None:
+            self.my_reload()
         return self.__my_completed_episodes
 
     @property
-    @my_load
     def my_score(self):
+        if self.__my_score is None:
+            self.my_reload()
         return self.__my_score
 
     @property
-    @my_load
     def my_start_date(self):
+        if self.__my_start_date is None:
+            self.my_reload()
         return self.__my_start_date
 
     @property
-    @my_load
     def my_end_date(self):
+        if self.__my_end_date is None:
+            self.my_reload()
         return self.__my_end_date
 
     @property
@@ -82,13 +110,15 @@ class MyAnime(Anime):
         return self.__my_download_episodes
 
     @property
-    @my_load
     def my_times_rewatched(self):
+        if self.__my_times_rewatched is None:
+            self.my_reload()
         return self.__my_times_rewatched
 
     @property
-    @my_load
     def my_rewatch_value(self):
+        if self.__my_rewatch_value is None:
+            self.my_reload()
         return self.__my_rewatch_value
 
     def my_reload(self):
@@ -226,3 +256,9 @@ class MyAnime(Anime):
         discuss_node = content_rows[16].find(name='select', attrs={"name": "discuss"})
         assert discuss_node is not None
         self._is_my_loaded = True
+
+
+
+
+def get_my_anime(id: int, *args, **kwargs):
+    return get_anime(id, MyAnime, *args, **kwargs)
