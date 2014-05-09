@@ -1,8 +1,9 @@
 from urllib import request
-from consts import HOST_NAME, DEBUG
+from consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
 from decorators import load
 from MALObject import MALObject, check_side_content_div
 from global_functions import connect, make_list, get_next_index
+import time
 
 
 class Manga(MALObject):
@@ -60,9 +61,18 @@ class Manga(MALObject):
             except ValueError:
                 self.__status = manga_xml.find('series_status').text.strip()
                 print('self.__status=', self.__status)
-            #TODO: this is part of 'aired' that we need to split
-            #print(manga_xml.find('series_start').text.strip())
-            #print(manga_xml.find('series_end').text.strip())
+            start_time = manga_xml.find('series_start').text.strip()
+            if start_time == '0000-00-00':
+                self.__start_time = float('inf')
+            else:
+                start_time = start_time[:4] + start_time[4:].replace('00', '01')
+                self.__start_time = time.mktime(time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
+            end_time = manga_xml.find('series_end').text.strip()
+            if end_time == '0000-00-00':
+                self.__end_time = float('inf')
+            else:
+                end_time = end_time[:4] + end_time[4:].replace('00', '01')
+                self.__end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
             self.__image_url = manga_xml.find('series_image').text.strip()
 
     @property
@@ -122,9 +132,16 @@ class Manga(MALObject):
         return self.__status
 
     @property
-    @load
-    def published(self):
-        return self.__published
+    def start_time(self):
+        if self.__start_time is None:
+            self.reload()
+        return self.__start_time
+
+    @property
+    def end_time(self):
+        if self.__end_time is None:
+            self.reload()
+        return self.__end_time
 
     @property
     @load
@@ -279,9 +296,17 @@ class Manga(MALObject):
         # published <div>
         published_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Published', published_div)
-        published_span, self.__published = published_div.contents
-        self.__published = self.__published.strip()
-        # TODO: split __published to more data
+        published_span, published = published_div.contents
+        start_time, end_time = published.split('to')
+        start_time, end_time = start_time.strip(), end_time.strip()
+        if '?' == start_time:
+            self.__start_time = float('inf')
+        else:
+            self.__start_time = time.mktime(time.strptime(start_time, SITE_PUBLISHED_FORMAT_TIME))
+        if '?' == end_time:
+            self.__end_time = float('inf')
+        else:
+            self.__end_time = time.mktime(time.strptime(end_time, SITE_PUBLISHED_FORMAT_TIME))
         side_contents_divs_index += 1
 
         # genres <div>
