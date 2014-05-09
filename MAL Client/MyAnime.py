@@ -256,9 +256,3 @@ class MyAnime(Anime):
         discuss_node = content_rows[16].find(name='select', attrs={"name": "discuss"})
         assert discuss_node is not None
         self._is_my_loaded = True
-
-
-
-
-def get_my_anime(id: int, *args, **kwargs):
-    return get_anime(id, MyAnime, *args, **kwargs)
