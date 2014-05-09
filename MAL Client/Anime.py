@@ -8,7 +8,7 @@ from global_functions import connect, make_list, get_next_index
 class Anime(MALObject):
     ANIME_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
 
-    def __init__(self, anime_id: int):
+    def __init__(self, anime_id: int, anime_xml=None):
         self._anime_id = anime_id
         self._is_loaded = False
 
@@ -16,14 +16,14 @@ class Anime(MALObject):
 
         ### Getting staff from html
         ## staff from side content
-        self.__title = ''
-        self.__image_url = ''
+        self.__title = None
+        self.__image_url = None
         self.__english = ''
-        self.__synonyms = ''
+        self.__synonyms = None
         self.__japanese = ''
         self.__type = ''
-        self.__episodes = 0
-        self.__status = ''
+        self.__episodes = None
+        self.__status = None
         self.__aired = ''
         self.__producers = dict()
         self.__genres = dict()
@@ -45,18 +45,34 @@ class Anime(MALObject):
         self.__alternative_versions = list()
         self.__side_story = list()
 
+        if anime_xml is not None:
+            self.__title = anime_xml.find('series_title').text
+            self.__synonyms = anime_xml.find('series_synonyms').text
+            print(int(anime_xml.find('series_type').text))
+            self.__episodes = int(anime_xml.find('series_episodes').text)
+            try:
+                self.__status = int(anime_xml.find('series_status'))
+            except ValueError:
+                print('self.__status=', self.__status)
+            #TODO: this is part of 'aired' that we need to split
+            #print(anime_xml.find('series_start').text)
+            #print(anime_xml.find('series_end').text)
+            self.__image_url = anime_xml.find('series_image').text
+
     @property
     def id(self):
         return self._anime_id
 
     @property
-    @load
     def title(self):
+        if self.__title == None:
+            self.reload()
         return self.__title
 
     @property
-    @load
     def image_url(self):
+        if self.__image_url is None:
+            self.reload()
         return self.__image_url
 
     @property
@@ -65,8 +81,9 @@ class Anime(MALObject):
         return self.__english
 
     @property
-    @load
     def synonyms(self):
+        if self.__synonyms is None:
+            self.reload()
         return self.__synonyms
 
     @property
@@ -80,13 +97,15 @@ class Anime(MALObject):
         return self.__type
 
     @property
-    @load
     def episodes(self):
+        if self.__episodes is None:
+            self.reload()
         return self.__episodes
 
     @property
-    @load
     def status(self):
+        if self.__status is None:
+            self.reload()
         return self.__status
 
     @property
@@ -354,4 +373,4 @@ class Anime(MALObject):
         return self._anime_id == other._anime_id
 
     def __repr__(self):
-        return "<{0:s}  id={1:d}>".format(self.__class__.__name__, self._anime_id)
+        return "<{0:s} id={1:d}>".format(self.__class__.__name__, self._anime_id)
