@@ -189,9 +189,13 @@ class AccountMangas(object):
         def _get_manga(self, xml_manga: ElementTree.Element):
             manga_id_xml = xml_manga.find('series_mangadb_id')
             assert manga_id_xml is not None
-            manga = MyManga(int(manga_id_xml.text.strip()), self.__connection, my_xml=xml_manga)
             try:
-                self[manga.my_status].append(manga)
+                manga = MyManga(int(manga_id_xml.text.strip()), self.__connection, my_xml=xml_manga)
+            except AssertionError as err:
+                print('AssertionError', err)
+                return
+            try:
+                self.map_of_lists[manga.my_status].append(manga)
                 #print("Added", manga, "to ", manga.my_status)
             except KeyError as err:
                 print("Got an key error:", err)

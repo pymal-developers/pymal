@@ -183,9 +183,13 @@ class AccountAnimes(object):
     def __get_anime(self, anime_xml: ElementTree.Element):
         anime_id_xml = anime_xml.find('series_animedb_id')
         assert anime_id_xml is not None
-        anime = MyAnime(int(anime_id_xml.text.strip()), self.__connection, my_xml=anime_xml)
         try:
-            self[anime.my_status].append(anime)
+            anime = MyAnime(int(anime_id_xml.text.strip()), self.__connection, my_xml=anime_xml)
+        except AssertionError as err:
+            print('AssertionError', err)
+            return
+        try:
+            self.map_of_lists[anime.my_status].append(anime)
             #print("Added", anime, "to ", anime.my_status)
         except KeyError as err:
             print("Got an key error:", err)
