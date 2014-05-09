@@ -17,12 +17,12 @@ class AnimeTestCase(unittest.TestCase):
         global_functions.connect = cls.anime_real_connect
 
     def test_anime_title(self):
-        self.assertEqual(self.anime.english, 'Luckyâ\u02dc\u2020Star')
+        self.assertEqual(self.anime.english, 'Lucky\u2606Star')
 
     def test_anime_spinoff(self):
         self.assertGreater(len(self.anime.spin_offs), 0 )
         for spin_off in self.anime.spin_offs:
-            self.assertEqual(spin_off.__class__, Anime.Anime)
+            self.assertEqual(spin_off.__class__, Anime)
 
 
 def main():

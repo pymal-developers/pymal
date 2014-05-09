@@ -27,7 +27,7 @@ class AccountInitTestCase(unittest.TestCase):
 
 class AccountFunctionsTestCase(unittest.TestCase):
     def setUp(self):
-        self.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        self.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
     def test_reload(self):
         assert type(self.account.animes) == AccountAnimes
