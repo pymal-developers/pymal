@@ -152,7 +152,6 @@ class MyAnime(Anime):
 
             #Getting content <div>
             content_td_divs = content_td.findAll(name="div", recursive=False)
-            #import pdb, IPython as ipy;pdb.set_trace()
             assert 2 == len(content_td_divs), "Got len(content_td_divs) == {0:d}".format(len(content_td_divs))
 
         content_div = content_td_divs[1]
