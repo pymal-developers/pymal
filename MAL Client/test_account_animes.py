@@ -10,6 +10,12 @@ class AnimeTestCase(unittest.TestCase):
         cls.animes = cls.account.animes
 
     def test_animes_len(self):
+        """
+        errors:
+            completed: 72 != 145
+            dropped: 0 != 13
+            plan to watch: 111 != 110
+        """
         self.assertGreater(len(self.animes), 0)
 
 
