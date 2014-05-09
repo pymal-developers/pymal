@@ -6,6 +6,7 @@ from MyAnime import MyAnime
 from Anime import Anime
 from urllib import request
 
+
 class AccountAnimes(object):
     URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=anime")
 
@@ -18,6 +19,19 @@ class AccountAnimes(object):
         self.__on_hold = []
         self.__dropped = []
         self.__plan_to_watch = []
+
+        self.map_of_lists = {
+            '1': self.__watching,
+            '2': self.__completed,
+            '3': self.__on_hold,
+            '4': self.__dropped,
+            '6': self.__plan_to_watch,
+            'watching': self.__watching,
+            'completed': self.__completed,
+            'onhold': self.__on_hold,
+            'dropped': self.__dropped,
+            'plantowatch': self.__plan_to_watch,
+        }
 
         self._is_loaded = False
 
@@ -39,8 +53,6 @@ class AccountAnimes(object):
     @property
     @load
     def dropped(self) -> list:
-        if self.__dropped is None:
-            self.refresh()
         return self.__dropped
 
     @property
@@ -51,21 +63,29 @@ class AccountAnimes(object):
     def __contains__(self, item: Anime) -> bool:
         return item in self.watching or item in self.completed or item in self.on_hold or item in self.dropped or item in self.plan_to_watch
 
+    def __iter__(self):
+        class AccountAnimesIterator(object):
+            def __init__(self, values):
+                self. values = values
+                self.location = 0
+
+            def __iter__(self):
+                self.location = 0
+                return self
+
+            def __next__(self):
+                if self.location >= len(self.values):
+                    raise StopIteration
+                value = self.values[self.location]
+                self.location += 1
+                return value
+        return AccountAnimesIterator(self.watching + self.completed + self.on_hold + self.dropped + self.plan_to_watch)
+
     def __getitem__(self, key: str or int) -> list:
         key = str(key)
-        e = 'AccountanimeData gets only the keys: 1, 2, 3, 4, 6, watching, completed, onhold, dropped, plantowatch'
-        if '1' == key or 'watching' == key:
-            return self.watching
-        elif '2' == key or 'completed' == key:
-            return self.completed
-        elif '3' == key or 'onhold' == key:
-            return self.on_hold
-        elif '4' == key or 'dropped' == key:
-            return self.dropped
-        elif '6' == key or 'plantowatch' == key:
-            return self.plan_to_watch
-        else:
-            raise KeyError(e)
+        if key in self.map_of_lists:
+            return self.map_of_lists[key]
+        raise KeyError('AccountanimeData gets only the keys: ' + ', '.join(self.map_of_lists.keys()))
 
     def reload(self):
         resp_data = self.__connection.auth_connect(self.__url)
@@ -77,10 +97,10 @@ class AccountAnimes(object):
         l = xml_general_data.getchildren()
         xml_user_id = l[0]
         assert 'user_id' == xml_user_id.tag
-        assert self.__connection.is_user_by_id(int(xml_user_id.text))
+        assert self.__connection.is_user_by_id(int(xml_user_id.text.strip()))
         xml_user_name = l[1]
         assert 'user_name' == xml_user_name.tag
-        assert self.__connection.is_user_by_name(xml_user_name.text)
+        assert self.__connection.is_user_by_name(xml_user_name.text.strip())
         xml_user_watching = l[2]
         assert 'user_watching' == xml_user_watching.tag
         xml_user_completed = l[3]
@@ -114,21 +134,39 @@ class AccountAnimes(object):
             threads.pop().join()
 
         if DEBUG:
-            assert self.__watching == int(xml_user_watching.text)
-            assert self.__completed == int(xml_user_completed.text)
-            assert self.__on_hold == int(xml_user_onhold.text)
-            assert self.__dropped == int(xml_user_dropped.text)
-            assert self.__plan_to_watch == int(xml_user_plantowatch.text)
-
+            if len(self.__watching) != int(xml_user_watching.text.strip()):
+                print('watching: {0:d} != {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip())))
+            if len(self.__completed) != int(xml_user_completed.text.strip()):
+                print('completed: {0:d} != {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip())))
+            if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
+                print('on hold:{0:d} != {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
+            if len(self.__dropped) != int(xml_user_dropped.text.strip()):
+                print('dropped: {0:d} != {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip())))
+            if len(self.__plan_to_watch) != int(xml_user_plantowatch.text.strip()):
+                print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
+            """
+            assert len(self.__watching) == int(xml_user_watching.text.strip()),\
+                '{0:d} == {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip()))
+            assert len(self.__completed) == int(xml_user_completed.text.strip()),\
+                '{0:d} == {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip()))
+            assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
+                '{0:d} == {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
+            assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
+                '{0:d} == {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip()))
+            assert len(self.__plan_to_watch) == int(xml_user_plantowatch.text.strip()),\
+                '{0:d} == {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip()))
+            """
         self._is_loaded = True
 
     def __get_anime(self, anime_xml: ElementTree.Element):
         anime_id_xml = anime_xml.find('series_animedb_id')
-        anime = MyAnime(int(anime_id_xml.text), self.__connection)
+        assert anime_id_xml is not None
+        anime = MyAnime(int(anime_id_xml.text.strip()), self.__connection, my_xml=anime_xml)
         try:
             self[anime.my_status].append(anime)
-        except Exception as e:
-            print(e)
+            #print("Added", anime, "to ", anime.my_status)
+        except KeyError as err:
+            print("Got an key error:", err)
 
     @load
     def __len__(self):

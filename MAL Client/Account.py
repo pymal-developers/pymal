@@ -12,7 +12,6 @@ class Account(object):
 
     def __init__(self, username: str, password: str or None=None):
         self._username = username
-        self._password = password
         self.__user_id = 0
         self.__auth_object = None
         self.__cookies = dict()
@@ -38,19 +37,19 @@ class Account(object):
         self.__auth_object = HTTPBasicAuth(self._username, password)
         data = self.auth_connect(self.AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
-            raise ValueError("Password is wrong")
+            self.__auth_object = None
+            return False
         xml_user = ElementTree.fromstring(data)
-        self._password = password
 
         assert 'user' == xml_user.tag
         l = xml_user.getchildren()
         xml_username = l[1]
         assert 'username' == xml_username.tag
-        assert self.is_user_by_name(xml_username.text)
+        assert self.is_user_by_name(xml_username.text.strip())
 
         xml_id = l[0]
         assert 'id' == xml_id.tag
-        self.__user_id = int(xml_id.text)
+        self.__user_id = int(xml_id.text.strip())
 
         return True
 
@@ -58,7 +57,7 @@ class Account(object):
         assert self.__auth_object is not None, "Not auth yet!"
         if headers is None:
             headers = dict()
-        return _connect(url, data=data, headers=headers, auth=self.__auth_object).text
+        return _connect(url, data=data, headers=headers, auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
         return username == self._username
@@ -72,7 +71,7 @@ class Account(object):
 
     @property
     def is_auth(self) -> bool:
-        return bool(self.__auth_object)
+        return self.__auth_object is not None
 
     def __repr__(self):
         return "<Account username: {0:s}>".format(self._username)

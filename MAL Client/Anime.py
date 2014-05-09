@@ -21,7 +21,7 @@ class Anime(MALObject):
         self.__english = ''
         self.__synonyms = None
         self.__japanese = ''
-        self.__type = ''
+        self.__type = None
         self.__episodes = None
         self.__status = None
         self.__aired = ''
@@ -46,19 +46,22 @@ class Anime(MALObject):
         self.__side_story = list()
 
         if anime_xml is not None:
-            self.__title = anime_xml.find('series_title').text
+            self.__title = anime_xml.find('series_title').text.strip()
             self.__synonyms = anime_xml.find('series_synonyms').text
-            print(int(anime_xml.find('series_type').text))
-            self.__episodes = int(anime_xml.find('series_episodes').text)
+            if self.__synonyms is not None:
+                self.__synonyms = self.__synonyms.strip()
+            # TODO: make this number to a string (or the string to a number?)
+            self.__type = anime_xml.find('series_type').text.strip()
+            self.__episodes = int(anime_xml.find('series_episodes').text.strip())
             try:
-                self.__status = int(anime_xml.find('series_status').text)
+                self.__status = int(anime_xml.find('series_status').text.strip())
             except ValueError:
-                self.__status = anime_xml.find('series_status').text
+                self.__status = anime_xml.find('series_status').text.strip()
                 print('self.__status=', self.__status)
             #TODO: this is part of 'aired' that we need to split
-            #print(anime_xml.find('series_start').text)
-            #print(anime_xml.find('series_end').text)
-            self.__image_url = anime_xml.find('series_image').text
+            #print(anime_xml.find('series_start').text.strip())
+            #print(anime_xml.find('series_end').text.strip())
+            self.__image_url = anime_xml.find('series_image').text.strip()
 
     @property
     def id(self):
@@ -267,14 +270,14 @@ class Anime(MALObject):
         producers_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Producers', producers_div)
         for producer_link in producers_div.findAll(name='a'):
-            self.__producers[producer_link.text] = producer_link['href']
+            self.__producers[producer_link.text.strip()] = producer_link['href']
         side_contents_divs_index += 1
 
         # genres <div>
         genres_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Genres', genres_div)
         for genre_link in genres_div.findAll(name='a'):
-            self.__genres[genre_link.text] = genre_link['href']
+            self.__genres[genre_link.text.strip()] = genre_link['href']
         side_contents_divs_index += 1
 
         side_contents_divs_index += 1
@@ -330,7 +333,7 @@ class Anime(MALObject):
                 "Got len(synopsis_cell_contents) == {0:d}".format(len(synopsis_cell_contents))
         len(synopsis_cell.contents)
         if DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text
+            assert 'Synopsis' == synopsis_cell.h2.text.strip()
         self.__synopsis = synopsis_cell_contents[1]
 
         # Getting other data
@@ -351,7 +354,7 @@ class Anime(MALObject):
         index = 0
         index = get_next_index(index, other_data_kids)
         assert 'h2' == other_data_kids[index].name
-        assert 'Related Anime' == other_data_kids[index].text
+        assert 'Related Anime' == other_data_kids[index].text.strip()
 
         index += 1
         while other_data_kids[index + 1].name != 'br':

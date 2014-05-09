@@ -38,7 +38,7 @@ def connect(url: str, data: str=None, headers: dict or None=None, auth=None) -> 
     :param headers: headers to send
     :rtype : responded data
     """
-    return _connect(url, data, headers, auth).text
+    return _connect(url, data, headers, auth).text.strip()
 
 
 def get_next_index(i: int, list_of_tags: list) -> int:

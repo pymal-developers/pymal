@@ -6,7 +6,7 @@ from global_functions import connect, make_list, get_next_index
 
 
 class Manga(MALObject):
-    MANGA_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
+    MANGA_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
 
     def __init__(self, anime_id: int):
         self._manga_id = anime_id
@@ -176,7 +176,7 @@ class Manga(MALObject):
         content_wrapper_div = self._get_content_wrapper_div(self.__manga_url, connect)
 
         # Getting title <div>
-        self.__title = content_wrapper_div.h1.contents[1]
+        self.__title = content_wrapper_div.h1.contents[1].strip()
 
         #Getting content <div>
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
@@ -197,7 +197,7 @@ class Manga(MALObject):
         assert img_link is not None
         self.__image_url = img_link.img['src']
 
-        side_contents_divs_index = 3
+        side_contents_divs_index = 4
         # english <div>
         english_div = side_contents_divs[side_contents_divs_index]
         if check_side_content_div('English', english_div):
@@ -262,14 +262,14 @@ class Manga(MALObject):
         genres_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Genres', genres_div)
         for genre_link in genres_div.findAll(name='a'):
-            self.__genres[genre_link.text] = genre_link['href']
+            self.__genres[genre_link.text.strip()] = genre_link['href']
         side_contents_divs_index += 1
 
         # authors <div>
         authors_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Authors', authors_div)
         for authors_link in authors_div.findAll(name='a'):
-            self.__authors[authors_link.text] = authors_link['href']
+            self.__authors[authors_link.text.strip()] = authors_link['href']
         side_contents_divs_index += 1
 
         side_contents_divs_index += 1
@@ -313,7 +313,7 @@ class Manga(MALObject):
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
         if DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text
+            assert 'Synopsis' == synopsis_cell.h2.text.strip()
         self.__synopsis = synopsis_cell_contents[1]
 
         # Getting other data
@@ -334,7 +334,7 @@ class Manga(MALObject):
         index = 0
         index = get_next_index(index, other_data_kids)
         assert 'h2' == other_data_kids[index].name
-        assert 'Related Manga' == other_data_kids[index].text
+        assert 'Related Manga' == other_data_kids[index].text.strip()
 
         index += 1
         while other_data_kids[index + 1].name != 'br':
@@ -352,4 +352,4 @@ class Manga(MALObject):
         self._is_loaded = True
 
     def __repr__(self):
-        return "<{0:s}  id={1:d}>".format(self.__class__.__name__, self._manga_id)
+        return "<{0:s} id={1:d}>".format(self.__class__.__name__, self._manga_id)

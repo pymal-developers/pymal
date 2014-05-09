@@ -7,7 +7,7 @@ def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
     span_node = div_node.span
     assert span_node is not None, div_node
     expected_text += ":"
-    return ['dark_text'] == span_node['class'] and expected_text == span_node.text
+    return ['dark_text'] == span_node['class'] and expected_text == span_node.text.strip()
 
 
 class MALObject(object):

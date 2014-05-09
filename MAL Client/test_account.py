@@ -24,6 +24,13 @@ class AccountInitTestCase(unittest.TestCase):
         account.change_password(ACCOUNT_TEST_PASSWORD)
         self.assertTrue(account.is_auth)
 
+    def test_account_init_later_auth_bad_password(self):
+        account = Account(ACCOUNT_TEST_USERNAME)
+        self.assertFalse(account.is_auth)
+
+        self.assertFalse(account.change_password(ACCOUNT_TEST_PASSWORD * 2))
+        self.assertFalse(account.is_auth)
+
 
 class AccountFunctionsTestCase(unittest.TestCase):
     def setUp(self):

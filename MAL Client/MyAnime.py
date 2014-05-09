@@ -36,17 +36,18 @@ class MyAnime(Anime):
         self.__my_tags = None
 
         if my_xml is not None:
-            self.__my_id = int(my_xml.find('my_id').text)
-            self.__my_status = int(my_xml.find('my_status').text)
-            self.__my_is_rewatching = bool(my_xml.find('my_rewatching').text)
-            self.__my_completed_episodes = int(my_xml.find('my_watched_episodes').text)
-            self.__my_score = int(my_xml.find('my_score').text)
-            self.__my_start_date = my_xml.find('my_start_date').text
-            self.__my_end_date = my_xml.find('my_finish_date').text
-            self.__my_rewatch_value = int(my_xml.find('my_rewatching_ep').text)
+            self.__my_id = int(my_xml.find('my_id').text.strip())
+            self.__my_status = int(my_xml.find('my_status').text.strip())
+            if my_xml.find('my_rewatching').text is not None:
+                self.__my_is_rewatching = bool(int(my_xml.find('my_rewatching').text.strip()))
+            self.__my_completed_episodes = int(my_xml.find('my_watched_episodes').text.strip())
+            self.__my_score = int(my_xml.find('my_score').text.strip())
+            self.__my_start_date = my_xml.find('my_start_date').text.strip()
+            self.__my_end_date = my_xml.find('my_finish_date').text.strip()
+            self.__my_rewatch_value = int(my_xml.find('my_rewatching_ep').text.strip())
             my_tags_xml = my_xml.find('my_tags')
             if my_tags_xml.text is not None:
-                self.__my_tags = my_tags_xml.text.split(self.TAG_SEPARETOR)
+                self.__my_tags = my_tags_xml.text.strip().split(self.TAG_SEPARETOR)
 
 
     @property

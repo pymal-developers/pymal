@@ -1,28 +1,20 @@
 import unittest
 from Manga import Manga
-import global_functions
-from global_functions_for_testing import connection_for_testing
 from constants_for_testing import MANGA_ID
 
 
-class AnimeTestCase(unittest.TestCase):
+class MangaTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.manga_real_connect = global_functions.connect
-        Manga.connect = connection_for_testing
-        cls.anime = Manga(MANGA_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        global_functions.connect = cls.manga_real_connect
+        cls.manga = Manga(MANGA_ID)
 
     def test_manga_title(self):
-        self.assertEqual(self.anime.english, 'Lucky â\u02dc\u2020 Star')
+        self.assertEqual(self.manga.title, 'Lucky☆Star')
 
     def test_manga_spinoff(self):
-        self.assertGreater(len(self.anime.spin_offs), 0 )
-        for spin_off in self.anime.spin_offs:
-            self.assertEqual(spin_off.__class__, Manga.Manga)
+        self.assertGreater(len(self.manga.spin_offs), 0 )
+        for spin_off in self.manga.spin_offs:
+            self.assertEqual(spin_off.__class__, Manga)
 
 
 def main():
