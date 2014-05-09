@@ -3,7 +3,7 @@ from Account import Account
 from constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
-class AnimeTestCase(unittest.TestCase):
+class AccountAnimeListTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
