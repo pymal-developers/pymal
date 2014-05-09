@@ -1,6 +1,6 @@
 import unittest
-from Account import Account
-from constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from pymal.Account import Account
+from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
 class AccountMangaListTestCase(unittest.TestCase):

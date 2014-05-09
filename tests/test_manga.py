@@ -1,6 +1,6 @@
 import unittest
-from Manga import Manga
-from constants_for_testing import MANGA_ID
+from pymal.Manga import Manga
+from tests.constants_for_testing import MANGA_ID
 
 
 class MangaTestCase(unittest.TestCase):

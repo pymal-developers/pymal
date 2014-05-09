@@ -1,7 +1,7 @@
 from urllib import request
-from consts import HOST_NAME
-from decorators import my_load
-from Manga import Manga
+from pymal.consts import HOST_NAME
+from pymal.decorators import my_load
+from pymal.Manga import Manga
 
 
 class MyManga(Manga):

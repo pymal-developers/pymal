@@ -1,5 +1,5 @@
 import bs4
-from consts import RETRY_NUMBER, RETRY_SLEEP
+from pymal.consts import RETRY_NUMBER, RETRY_SLEEP
 import time
 
 

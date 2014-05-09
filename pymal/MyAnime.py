@@ -1,7 +1,7 @@
 from urllib import request
-from consts import HOST_NAME
-from decorators import my_load
-from Anime import Anime
+from pymal.consts import HOST_NAME
+from pymal.decorators import my_load
+from pymal.Anime import Anime
 
 
 class MyAnime(Anime):

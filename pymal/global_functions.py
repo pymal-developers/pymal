@@ -1,5 +1,5 @@
 from http import cookiejar
-import consts
+from pymal.consts import USER_AGENT, HOST_NAME
 import requests
 from urllib import request
 
@@ -26,7 +26,7 @@ def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) ->
 
     url = url_fixer(url)
 
-    headers['User-Agent'] = consts.USER_AGENT
+    headers['User-Agent'] = USER_AGENT
     sock = requests.get(url, data=data, headers=headers, cookies=cj, auth=auth)
     return sock
 
@@ -69,8 +69,8 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
     :rtype: int
     """
     # TODO: find a way to put it out
-    from Anime import Anime
-    from Manga import Manga
+    from pymal.Anime import Anime
+    from pymal.Manga import Manga
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
@@ -80,5 +80,5 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
         elif '/manga/' in list_of_tags[i]['href']:
             self_list.append(Manga(int(list_of_tags[i]['href'].split('/manga/')[1].split('/')[0])))
         else:
-            self_list.append(request.urljoin(consts.HOST_NAME, list_of_tags[i]['href']))
+            self_list.append(request.urljoin(HOST_NAME, list_of_tags[i]['href']))
     return n_i

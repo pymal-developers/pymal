@@ -1,8 +1,8 @@
 from xml.etree import ElementTree
 from threading import Thread
-from consts import HOST_NAME, DEBUG
-from decorators import load
-from MyManga import MyManga
+from pymal.consts import HOST_NAME, DEBUG
+from pymal.decorators import load
+from pymal.MyManga import MyManga
 from urllib import request
 
 

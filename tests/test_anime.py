@@ -1,6 +1,6 @@
 import unittest
-from Anime import Anime
-from constants_for_testing import ANIME_ID
+from pymal.Anime import Anime
+from tests.constants_for_testing import ANIME_ID
 
 
 class AnimeTestCase(unittest.TestCase):
@@ -12,7 +12,7 @@ class AnimeTestCase(unittest.TestCase):
         self.assertEqual(self.anime.english, 'Lucky☆Star')
 
     def test_anime_spinoff(self):
-        self.assertGreater(len(self.anime.spin_offs), 0 )
+        self.assertGreater(len(self.anime.spin_offs), 0)
         for spin_off in self.anime.spin_offs:
             self.assertEqual(spin_off.__class__, Anime)
 

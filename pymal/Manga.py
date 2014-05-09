@@ -1,8 +1,8 @@
 from urllib import request
-from consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
-from decorators import load
-from MALObject import MALObject, check_side_content_div
-from global_functions import connect, make_list, get_next_index
+from pymal.consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
+from pymal.decorators import load
+from pymal.MALObject import MALObject, check_side_content_div
+from pymal.global_functions import connect, make_list, get_next_index
 import time
 
 

@@ -1,8 +1,8 @@
 from xml.etree import ElementTree
-from global_functions import _connect
-from decorators import load
-from AccountAnimes import AccountAnimes
-from AccountMangas import AccountMangas
+from pymal.global_functions import _connect
+from pymal.decorators import load
+from pymal.AccountAnimes import AccountAnimes
+from pymal.AccountMangas import AccountMangas
 from requests.auth import HTTPBasicAuth
 
 
