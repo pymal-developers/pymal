@@ -51,8 +51,9 @@ class Anime(MALObject):
             print(int(anime_xml.find('series_type').text))
             self.__episodes = int(anime_xml.find('series_episodes').text)
             try:
-                self.__status = int(anime_xml.find('series_status'))
+                self.__status = int(anime_xml.find('series_status').text)
             except ValueError:
+                self.__status = anime_xml.find('series_status').text
                 print('self.__status=', self.__status)
             #TODO: this is part of 'aired' that we need to split
             #print(anime_xml.find('series_start').text)
