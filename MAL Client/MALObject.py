@@ -1,6 +1,7 @@
 import bs4
-from consts import RETRY_NUMBER
+from consts import RETRY_NUMBER, RETRY_SLEEP
 import time
+
 
 def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
     span_node = div_node.span
@@ -13,7 +14,7 @@ class MALObject(object):
     def _get_myanimelist_div(self, url: str, connection_function) -> bs4.element.Tag:
         got_robot = False
         for try_number in range(RETRY_NUMBER):
-            time.sleep(0.5)
+            time.sleep(RETRY_SLEEP)
             data = connection_function(url)
             html = bs4.BeautifulSoup(data, "html5lib").html
             if html.head.find(name="meta", attrs={"name": "robots"}) is not None:
