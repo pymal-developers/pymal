@@ -69,7 +69,7 @@ class Anime(MALObject):
 
     @property
     def title(self):
-        if self.__title == None:
+        if self.__title is None:
             self.reload()
         return self.__title
 
@@ -96,8 +96,9 @@ class Anime(MALObject):
         return self.__japanese
 
     @property
-    @load
     def type(self):
+        if self.__type is None:
+            self.reload()
         return self.__type
 
     @property
