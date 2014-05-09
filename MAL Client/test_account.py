@@ -38,8 +38,8 @@ class AccountFunctionsTestCase(unittest.TestCase):
         self.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
     def test_reload(self):
-        assert type(self.account.animes) == AccountAnimes
-        assert type(self.account.animes) == AccountMangas
+        assert type(self.account.animes) == AccountAnimes, type(self.account.animes)
+        assert type(self.account.mangas) == AccountMangas, type(self.account.mangas)
 
 
 def main():

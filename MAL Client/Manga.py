@@ -339,7 +339,7 @@ class Manga(MALObject):
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
         if DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text.strip()
+            assert 'Synopsis' == synopsis_cell.h2.text.strip(), synopsis_cell.h2.text.strip()
         self.__synopsis = synopsis_cell_contents[1]
 
         # Getting other data
@@ -368,12 +368,12 @@ class Manga(MALObject):
         next_index = get_next_index(index, other_data_kids)
 
         if DEBUG:
-            assert next_index - index == 2
+            assert next_index - index == 2, "{0:d} - {1:d}".format(next_index, index)
             index = next_index + 1
 
             # Getting all the data under 'Characters & Voice Actors'
-            assert 'h2' == other_data_kids[index].name
-            assert 'Characters' == other_data_kids[index].contents[-1]
+            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(other_data_kids[index].name)
+            assert 'Characters' == other_data_kids[index].contents[-1], 'Characters == {0:s}'.format(other_data_kids[index].contents[-1])
 
         self._is_loaded = True
 

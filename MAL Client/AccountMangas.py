@@ -92,29 +92,29 @@ class AccountMangas(object):
         def reload(self):
             resp_data = self.__connection.auth_connect(self.__url)
             xml_tree = ElementTree.fromstring(resp_data)
-            assert 'myanimelist' == xml_tree.tag
+            assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(xml_tree.tag)
             xml_mangas = xml_tree.getchildren()
             xml_general_data = xml_mangas[0]
-            assert 'myinfo' == xml_general_data.tag
+            assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(xml_general_data.tag)
             l = xml_general_data.getchildren()
             xml_user_id = l[0]
-            assert 'user_id' == xml_user_id.tag
-            assert self.__connection.is_user_by_id(int(xml_user_id.text.strip()))
+            assert 'user_id' == xml_user_id.tag, 'user_id == {0:s}'.format(xml_user_id.tag)
+            assert self.__connection.is_user_by_id(int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
             xml_user_name = l[1]
-            assert 'user_name' == xml_user_name.tag
-            assert self.__connection.is_user_by_name(xml_user_name.text.strip())
+            assert 'user_name' == xml_user_name.tag, 'user_name == {0:s}'.format(xml_user_name.tag)
+            assert self.__connection.is_user_by_name(xml_user_name.text.strip()), xml_user_name.text.strip()
             xml_user_reading = l[2]
-            assert 'user_reading' == xml_user_reading.tag
+            assert 'user_reading' == xml_user_reading.tag, 'user_reading == {0:s}'.format(xml_user_reading.tag)
             xml_user_completed = l[3]
-            assert 'user_completed' == xml_user_completed.tag
+            assert 'user_completed' == xml_user_completed.tag, 'user_completed == {0:s}'.format(xml_user_completed.tag)
             xml_user_onhold = l[4]
-            assert 'user_onhold' == xml_user_onhold.tag
+            assert 'user_onhold' == xml_user_onhold.tag, 'user_onhold == {0:s}'.format(xml_user_onhold.tag)
             xml_user_dropped = l[5]
-            assert 'user_dropped' == xml_user_dropped.tag
+            assert 'user_dropped' == xml_user_dropped.tag, 'user_dropped == {0:s}'.format(xml_user_dropped.tag)
             xml_user_plantoread = l[6]
-            assert 'user_plantoread' == xml_user_plantoread.tag
+            assert 'user_plantoread' == xml_user_plantoread.tag, 'user_plantoread == {0:s}'.format(xml_user_plantoread.tag)
             xml_user_days_spent_watching = l[7]
-            assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag
+            assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag, 'user_days_spent_watching == {0:s}'.format(xml_user_days_spent_watching.tag)
             self.user_days_spent_watching = float(xml_user_days_spent_watching.text.strip())
 
             xml_mangas = xml_mangas[1:]

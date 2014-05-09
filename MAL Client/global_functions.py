@@ -74,7 +74,7 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
-        assert 'a' == list_of_tags[i].name
+        assert 'a' == list_of_tags[i].name, list_of_tags[i].name
         if '/anime/' in list_of_tags[i]['href']:
             self_list.append(Anime(int(list_of_tags[i]['href'].split('/anime/')[1].split('/')[0])))
         elif '/manga/' in list_of_tags[i]['href']:

@@ -46,14 +46,14 @@ class Account(object):
             return False
         xml_user = ElementTree.fromstring(data)
 
-        assert 'user' == xml_user.tag
+        assert 'user' == xml_user.tag, 'user == {0:s}'.format(xml_user.tag)
         l = xml_user.getchildren()
         xml_username = l[1]
-        assert 'username' == xml_username.tag
-        assert self.is_user_by_name(xml_username.text.strip())
+        assert 'username' == xml_username.tag, 'username == {0:s}'.format(xml_username.tag)
+        assert self.is_user_by_name(xml_username.text.strip()), 'username = {0:s}'.format(xml_username.text.strip())
 
         xml_id = l[0]
-        assert 'id' == xml_id.tag
+        assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
         self.__user_id = int(xml_id.text.strip())
 
         return True

@@ -3,6 +3,6 @@ XMLS_DIRECTORY = 'XML_TEMPLATES'
 
 HOST_NAME = "http://myanimelist.net"
 
-DEBUG = True
+DEBUG = False
 RETRY_NUMBER = 4
 RETRY_SLEEP = 1
