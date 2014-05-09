@@ -3,6 +3,10 @@ XMLS_DIRECTORY = 'XML_TEMPLATES'
 
 HOST_NAME = "http://myanimelist.net"
 
-DEBUG = False
+DEBUG = True
 RETRY_NUMBER = 4
 RETRY_SLEEP = 1
+
+SITE_FORMAT_TIME = '%b  %d, %Y'
+SITE_PUBLISHED_FORMAT_TIME = '%b %Y'
+MALAPPINFO_FORMAT_TIME = "%Y-%m-%d"

@@ -1,8 +1,9 @@
 from urllib import request
-from consts import HOST_NAME, DEBUG
+from consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
 from decorators import load
 from MALObject import MALObject, check_side_content_div
 from global_functions import connect, make_list, get_next_index
+import time
 
 
 class Anime(MALObject):
@@ -24,7 +25,8 @@ class Anime(MALObject):
         self.__type = None
         self.__episodes = None
         self.__status = None
-        self.__aired = ''
+        self.__start_time = None
+        self.__end_time = None
         self.__producers = dict()
         self.__genres = dict()
         self.__rating = 0
@@ -62,9 +64,18 @@ class Anime(MALObject):
             except ValueError:
                 self.__status = anime_xml.find('series_status').text.strip()
                 print('self.__status=', self.__status)
-            #TODO: this is part of 'aired' that we need to split
-            #print(anime_xml.find('series_start').text.strip())
-            #print(anime_xml.find('series_end').text.strip())
+            start_time = anime_xml.find('series_start').text.strip()
+            if start_time == '0000-00-00':
+                self.__start_time = float('inf')
+            else:
+                start_time = start_time[:4] + start_time[4:].replace('00', '01')
+                self.__start_time = time.mktime(time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
+            end_time = anime_xml.find('series_end').text.strip()
+            if end_time == '0000-00-00':
+                self.__end_time = float('inf')
+            else:
+                end_time = end_time[:4] + end_time[4:].replace('00', '01')
+                self.__end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
             self.__image_url = anime_xml.find('series_image').text.strip()
 
     @property
@@ -118,9 +129,16 @@ class Anime(MALObject):
         return self.__status
 
     @property
-    @load
-    def aired(self):
-        return self.__aired
+    def start_time(self):
+        if self.__start_time is None:
+            self.reload()
+        return self.__start_time
+
+    @property
+    def end_time(self):
+        if self.__end_time is None:
+            self.reload()
+        return self.__end_time
 
     @property
     @load
@@ -286,9 +304,11 @@ class Anime(MALObject):
         # aired <div>
         aired_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Aired', aired_div)
-        aired_span, self.__aired = aired_div.contents
-        self.__aired = self.__aired.strip()
-        # TODO: split __aired to more data
+        aired_span, aired = aired_div.contents
+        start_time, end_time = aired.split('to')
+        start_time, end_time = start_time.strip(), end_time.strip()
+        self.__start_time = time.mktime(time.strptime(start_time, SITE_FORMAT_TIME))
+        self.__end_time = time.mktime(time.strptime(end_time, SITE_FORMAT_TIME))
         side_contents_divs_index += 1
 
         # producers <div>
