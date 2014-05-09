@@ -8,23 +8,23 @@ from global_functions import connect, make_list, get_next_index
 class Manga(MALObject):
     MANGA_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
 
-    def __init__(self, anime_id: int):
-        self._manga_id = anime_id
+    def __init__(self, manga_id: int, manga_xml=None):
+        self._manga_id = manga_id
         self._is_loaded = False
 
         self.__manga_url = self.MANGA_URL.format(self._manga_id)
 
         ### Getting staff from html
         ## staff from side content
-        self.__title = ''
-        self.__image_url = ''
+        self.__title = None
+        self.__image_url = None
         self.__english = ''
-        self.__synonyms = ''
+        self.__synonyms = None
         self.__japanese = ''
-        self.__type = ''
-        self.__volumes = -1
-        self.__chapters = -1
-        self.__status = ''
+        self.__type = None
+        self.__volumes = None
+        self.__chapters = None
+        self.__status = None
         self.__published = ''
         self.__authors = dict()
         self.__genres = dict()
@@ -46,18 +46,39 @@ class Manga(MALObject):
         self.__alternative_versions = list()
         self.__side_story = list()
 
+        if manga_xml is not None:
+            self.__title = manga_xml.find('series_title').text.strip()
+            self.__synonyms = manga_xml.find('series_synonyms').text
+            if self.__synonyms is not None:
+                self.__synonyms = self.__synonyms.strip()
+            # TODO: make this number to a string (or the string to a number?)
+            self.__type = manga_xml.find('series_type').text.strip()
+            self.__episodes = int(manga_xml.find('series_chapters').text.strip())
+            self.__volumes = int(manga_xml.find('series_volumes').text.strip())
+            try:
+                self.__status = int(manga_xml.find('series_status').text.strip())
+            except ValueError:
+                self.__status = manga_xml.find('series_status').text.strip()
+                print('self.__status=', self.__status)
+            #TODO: this is part of 'aired' that we need to split
+            #print(manga_xml.find('series_start').text.strip())
+            #print(manga_xml.find('series_end').text.strip())
+            self.__image_url = manga_xml.find('series_image').text.strip()
+
     @property
     def id(self):
         return self._manga_id
 
     @property
-    @load
     def title(self):
+        if self.__title is None:
+            self.reload()
         return self.__title
 
     @property
-    @load
     def image_url(self):
+        if self.__image_url is None:
+            self.reload()
         return self.__image_url
 
     @property
@@ -66,8 +87,9 @@ class Manga(MALObject):
         return self.__english
 
     @property
-    @load
     def synonyms(self):
+        if self.__synonyms is None:
+            self.reload()
         return self.__synonyms
 
     @property
@@ -76,23 +98,27 @@ class Manga(MALObject):
         return self.__japanese
 
     @property
-    @load
     def type(self):
+        if self.__type is None:
+            self.reload()
         return self.__type
 
     @property
-    @load
     def volumes(self):
+        if self.__volumes is None:
+            self.reload()
         return self.__volumes
 
     @property
-    @load
-    def chapters (self):
+    def chapters(self):
+        if self.__chapters is None:
+            self.reload()
         return self.__chapters
 
     @property
-    @load
     def status(self):
+        if self.__status is None:
+            self.reload()
         return self.__status
 
     @property
@@ -191,7 +217,7 @@ class Manga(MALObject):
         side_content = contents[0]
         side_contents_divs = side_content.findAll(name="div", recursive=False)
 
-        # Getting anime image url <img>
+        # Getting manga image url <img>
         img_div = side_contents_divs[0]
         img_link = img_div.find(name="a")
         assert img_link is not None
