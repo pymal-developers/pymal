@@ -1,12 +1,11 @@
-from urllib import request
 from http import cookiejar
-
 import consts
+import requests
+from urllib import request
 
 
-cookies = {}
 cj = cookiejar.CookieJar()
-opener = request.build_opener(request.HTTPCookieProcessor(cj))
+
 
 def url_fixer(url: str) -> str:
     url = url.encode('utf-8')
@@ -15,7 +14,7 @@ def url_fixer(url: str) -> str:
     return url.decode('utf-8')
 
 
-def _connect(url: str, data: str=None, headers: dict or None=None) -> request.http.client.HTTPResponse:
+def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) -> requests.Response:
     """
     :param url: url
     :param data: data to post
@@ -27,32 +26,19 @@ def _connect(url: str, data: str=None, headers: dict or None=None) -> request.ht
 
     url = url_fixer(url)
 
-    curl = request.Request(url, headers=headers)
-    if curl.host not in cookies:
-        cookies[curl.host] = dict()
-
-    curl.headers['Cookie'] = ";".join(["=".join(item)for item in cookies[curl.host].items()])
-    curl.headers['User-Agent'] = consts.USER_AGENT
-
-    sock = opener.open(curl, data)
-
-    for header_name, header_data in sock.getheaders():
-        if 'Set-Cookie' != header_name:
-            continue
-        cookie_name, cookie_value = header_data.split(';')[0].split('=', 1)
-        cookies[curl.host][cookie_name] = cookie_value
-
+    headers['User-Agent'] = consts.USER_AGENT
+    sock = requests.get(url, data=data, headers=headers, cookies=cj, auth=auth)
     return sock
 
 
-def connect(url: str, data: str=None, headers: dict or None=None) -> str:
+def connect(url: str, data: str=None, headers: dict or None=None, auth=None) -> str:
     """
     :param url: url
     :param data: data to post
     :param headers: headers to send
     :rtype : responded data
     """
-    return _connect(url, data, headers).read()
+    return _connect(url, data, headers, auth).text
 
 
 def get_next_index(i: int, list_of_tags: list) -> int:

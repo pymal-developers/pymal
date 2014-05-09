@@ -1,11 +1,10 @@
-import base64
 from xml.etree import ElementTree
-from urllib.error import HTTPError
 import time
 from global_functions import _connect
 from decorators import load
-from consts import RETRY_NUMBER
+from consts import RETRY_NUMBER, RETRY_SLEEP
 from AccountAnimes import AccountAnimes
+from requests.auth import HTTPBasicAuth
 
 
 class Account(object):
@@ -15,7 +14,7 @@ class Account(object):
         self._username = username
         self._password = password
         self.__user_id = 0
-        self.__auth_string = ''
+        self.__auth_object = None
         self.__cookies = dict()
 
         self._is_loaded = False
@@ -36,32 +35,11 @@ class Account(object):
 
     def change_password(self, password: str) -> bool:
         """Checking if the new password is valid"""
-        auth_string = '{0:s}:{1:s}'.format(self._username, password)
-        auth_string = base64.b64encode(auth_string.encode('utf-8')).decode('utf-8').replace('\n', '')
-        self.__auth_string = 'Basic %s' % auth_string
-
-        tries = 0
-        try_again = True
-        while try_again:
-            tries += 1
-            try:
-                data = self.auth_connect(self.AUTH_CHECKER_URL)
-            except HTTPError as e:
-                self.__auth_string = ''
-                if e.code == 401:
-                    return False
-                raise
-            try:
-                xml_user = ElementTree.fromstring(data)
-            except ElementTree.ParseError as e:
-                if e.code != 4:
-                    raise
-                elif tries > RETRY_NUMBER:
-                    raise
-                time.sleep(0.5)
-                continue
-            else:
-                try_again = False
+        self.__auth_object = HTTPBasicAuth(self._username, password)
+        data = self.auth_connect(self.AUTH_CHECKER_URL)
+        if data == 'Invalid credentials':
+            raise ValueError("Password is wrong")
+        xml_user = ElementTree.fromstring(data)
         self._password = password
 
         assert 'user' == xml_user.tag
@@ -77,13 +55,10 @@ class Account(object):
         return True
 
     def auth_connect(self, url: str, data: str=None, headers: dict or None=None) -> str:
-        assert self.__auth_string, "Not auth yet!"
+        assert self.__auth_object is not None, "Not auth yet!"
         if headers is None:
             headers = dict()
-        headers['Authorization'] = self.__auth_string
-        headers['Cookie'] = self.__cookies_string
-        sock = _connect(url, data=data, headers=headers)
-        return sock.read()
+        return _connect(url, data=data, headers=headers, auth=self.__auth_object).text
 
     def is_user_by_name(self, username: str) -> bool:
         return username == self._username
@@ -97,7 +72,7 @@ class Account(object):
 
     @property
     def is_auth(self) -> bool:
-        return bool(self.__auth_string)
+        return bool(self.__auth_object)
 
     def __repr__(self):
         return "<Account username: {0:s}>".format(self._username)
