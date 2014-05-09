@@ -12,7 +12,7 @@ class MangaTestCase(unittest.TestCase):
         self.assertEqual(self.manga.title, 'Lucky☆Star')
 
     def test_manga_spinoff(self):
-        self.assertGreater(len(self.manga.spin_offs), 0 )
+        self.assertGreater(len(self.manga.spin_offs), 0)
         for spin_off in self.manga.spin_offs:
             self.assertEqual(spin_off.__class__, Manga)
 

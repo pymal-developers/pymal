@@ -1,6 +1,5 @@
 import unittest
 from Anime import Anime
-import global_functions
 from constants_for_testing import ANIME_ID
 
 
