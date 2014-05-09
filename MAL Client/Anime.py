@@ -3,6 +3,8 @@ from consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
 from decorators import load
 from MALObject import MALObject, check_side_content_div
 from global_functions import connect, make_list, get_next_index
+import os
+from bs4.element import NavigableString
 import time
 
 
@@ -254,7 +256,6 @@ class Anime(MALObject):
         # Getting anime image url <img>
         img_div = side_contents_divs[0]
         img_link = img_div.find(name="a")
-        assert img_link is not None
         self.__image_url = img_link.img['src']
 
         side_contents_divs_index = 4
@@ -291,7 +292,10 @@ class Anime(MALObject):
         episodes_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Episodes', episodes_div)
         episodes_span, self_episodes = episodes_div.contents
-        self.__episodes = int(self_episodes.strip())
+        if 'Unknown' == self_episodes.strip():
+            self.__episodes = float('inf')
+        else:
+            self.__episodes = int(self_episodes.strip())
         side_contents_divs_index += 1
 
         # status <div>
@@ -374,12 +378,8 @@ class Anime(MALObject):
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
         if DEBUG:
-            assert 6 == len(synopsis_cell_contents), \
-                "Got len(synopsis_cell_contents) == {0:d}".format(len(synopsis_cell_contents))
-        len(synopsis_cell.contents)
-        if DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text.strip()
-        self.__synopsis = synopsis_cell_contents[1]
+            assert 'Synopsis' == synopsis_cell.h2.text.strip(), synopsis_cell.h2.text.strip()
+        self.__synopsis = os.linesep.join([synopsis_cell_content.strip() for synopsis_cell_content in synopsis_cell_contents[1:-1] if type(synopsis_cell_content) == NavigableString])
 
         # Getting other data
         main_content_other_data = main_content_other_data.td
