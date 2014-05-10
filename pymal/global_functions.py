@@ -1,10 +1,9 @@
-from http import cookiejar
 from pymal.consts import USER_AGENT, HOST_NAME
 import requests
 from urllib import request
 
 
-cj = cookiejar.CookieJar()
+s = requests.session()
 
 
 def url_fixer(url: str) -> str:
@@ -27,7 +26,11 @@ def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) ->
     url = url_fixer(url)
 
     headers['User-Agent'] = USER_AGENT
-    sock = requests.get(url, data=data, headers=headers, cookies=cj, auth=auth)
+    if data is not None:
+        print(type(data), data)
+        sock = s.post(url, data=data, headers=headers, auth=auth)
+    else:
+        sock = s.get(url, headers=headers, auth=auth)
     return sock
 
 
