@@ -1,15 +1,14 @@
 from urllib import request
-from pymal.consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
+from pymal.consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, MALAPPINFO_FORMAT_TIME, XMLS_DIRECTORY
 from pymal.decorators import load
 from pymal.MALObject import MALObject, check_side_content_div
 from pymal.global_functions import connect, make_list, get_next_index
 import time
+from os import path
 
 
 class Manga(MALObject):
     MANGA_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
-
-    MY_MANGA_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, manga_id: int, manga_xml=None):
         self._manga_id = manga_id
@@ -435,3 +434,17 @@ class Manga(MALObject):
 
     def __repr__(self):
         return "<{0:s} id={1:d}>".format(self.__class__.__name__, self._manga_id)
+
+    MY_MANGA_XML_PATH = path.join(path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
+
+    @property
+    def MY_MANGA_XML_DATA(self):
+        with open(self.MY_MANGA_XML_PATH) as f:
+            data = f.read()
+        return data
+
+    MY_MANGA_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
+
+    def add(self):
+        data = self.MY_MANGA_XML_DATA.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '', 0)
+        connect(self.MY_MANGA_ADD_URL.format())

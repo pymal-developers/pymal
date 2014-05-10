@@ -1,6 +1,5 @@
 from urllib import request
-from pymal.consts import HOST_NAME, XMLS_DIRECTORY
-from os import path
+from pymal.consts import HOST_NAME
 from pymal.decorators import my_load
 from pymal.Manga import Manga
 
@@ -10,28 +9,21 @@ class MyManga(Manga):
     MY_MANGA_EPISODES_URL = request.urljoin(HOST_NAME, 'ajaxtb.php?detailedaid={0:d}')
     MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
     TAG_SEPARETOR = ';'
-    MY_MANGA_XML_PATH = path.join(path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
 
     MY_MANGA_DELETE_URL = request.urljoin(HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
     MY_MANGA_UPDATE_URL = request.urljoin(HOST_NAME, 'api/mangalist/update/{0:d}.xml')
 
-    @property
-    def MY_MANGA_XML_DATA(self):
-        with open(self.MY_MANGA_XML_PATH) as f:
-            data = f.read()
-        return data
-
-    def __init__(self, manga_id: int or Manga, account, my_xml: None=None):
+    def __init__(self, manga_id: int or Manga, my_manga_id, account, my_xml: None=None):
         if type(manga_id) == Manga:
             manga_id = manga_id.manga_id
         super().__init__(manga_id, manga_xml=my_xml)
 
-        self.__my_manga_url = self.MY_MANGA_URL.format(self._manga_id)
+        self.__my_manga_url = self.MY_MANGA_URL.format(my_manga_id)
 
         self._is_my_loaded = False
         self.__account = account
 
-        self.__my_id = None
+        self.__my_id = my_manga_id
         self.__my_status = None
         self.__my_is_rereading = None
         self.my_enable_discussion = False
