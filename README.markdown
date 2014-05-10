@@ -1,49 +1,91 @@
 [TOC]
 
-# MAL Client
-
+pymal
+==========
 Provides programmatic access to MyAnimeList data with python.
+Objects in pymal are lazy-loading: they won't go out and fetch MAL info until you first-request it.
 
-# Dependencies
-
+Dependencies
+===========
 * python 3.4.*
 * BeautifulSoup
 * requests
 
-# Installation
-
+Installation
+============
 After cloning the repository, navigate to the directory and run `python setup.py install`.
 
-# Usage
-Pretty much everything on MAL requires authentication, so you'll want to do that first
+
+Testing
+=======
+To run the tests that come with MAL Client:
+1. Install nose (A really good package for running tests - `pip install nose`). For more data look on [nose](https://github.com/nose-devs/nose2 "nose").
+2. Navigate to the python-mal directory
+3. Create a textfile named credentials.txt and put your MAL username and password in it, and user user agent.
+4. Run `nosetests` or `python -m unittest` with alot of parameters that i don't know.
+
+Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
+
+Usage
+=====
+Most objects data can be requiered by not authentication mal, but all list manipulations on MAL requires authentication.
+
+Account
+------
+To connect MAL you need an Account object.
 
 ```!#python
-from myanimelist.Account import Account
+from pymal.Account import Account
 account = Account('mal-username', 'mal-password')
 ```
 
-Then if you want to fetch an anime, say:
+Then all your mangas and animes will be like this:
 
 ```!#python
-anime = account.animes[1]
-print(anime)
+animelist = account.animes
+mangalist = account.mangas
 ```
 
-Objects in MAL Clinet are lazy-loading: they won't go out and fetch MAL info until you first-request it. So here, if you want to retrieve all your anime title:
+Anime
+-----
+Right now, give him the anime id and it will generate the most of the things.
 
 ```!#python
-for anime in account.animes:
-    print(anime.title)
+from pymal.Anime import Anime
+anime = Anime(1887)  # Lucky star's anime id
 ```
 
-You'll note that there's a pause while anime's information is fetched from MAL.
+For all data that can be used look in the python.
+To add it its need an account object to related on.
 
-# Testing
+```!#python
+my_anime = anime.add_anime(account)
+assert type(my_anime) != type(anime)
+assert issubclass(my_anime.__class__, anime.__class__)
+```
 
-To run the tests that come with MAL Client:
+MyAnime
+-------
+A subclass of Anime which has more attribute like the account's number of watched episodes and so on.
 
-1. Navigate to the python-mal directory
-2. Create a textfile named credentials.txt and put your MAL username and password in it, and user user agent.
-3. Run `python -m unittest`.
+Manga
+-----
+Right now, give him the manga id and it will generate the most of the things.
 
-Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
+```!#python
+from pymal.Manga import Manga
+manga = Manga(587)  # Lucky star's manga id
+```
+
+All the objects under account are subclass of Anime and Manga.
+To add it its need an account object to related on.
+
+```!#python
+my_manga = manga.add_anime(account)
+assert type(my_manga) != type(manga)
+assert issubclass(my_manga.__class__, manga.__class__)
+```
+
+MyManga
+-------
+A subclass of Manga which has more attribute like the account's number of read chapters and so on.
