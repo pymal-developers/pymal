@@ -171,8 +171,12 @@ class AccountAnimes(object):
     def __get_anime(self, anime_xml: ElementTree.Element):
         anime_id_xml = anime_xml.find('series_animedb_id')
         assert anime_id_xml is not None
+        anime_id = int(anime_id_xml.text.strip())
+        my_anime_id_xml = anime_xml.find('my_id')
+        assert my_anime_id_xml is not None
+        my_anime_id = int(my_anime_id_xml.text.strip())
         try:
-            anime = MyAnime(int(anime_id_xml.text.strip()), self.__connection, my_xml=anime_xml)
+            anime = MyAnime(anime_id, my_anime_id, self.__connection, my_xml=anime_xml)
         except AssertionError as err:
             #print('AssertionError', err)
             return

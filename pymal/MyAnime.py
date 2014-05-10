@@ -13,7 +13,7 @@ class MyAnime(Anime):
     MY_ANIME_DELETE_URL = request.urljoin(HOST_NAME, 'api/animelist/delete/{0:d}.xml')
     MY_ANIME_UPDATE_URL = request.urljoin(HOST_NAME, 'api/animelist/update/{0:d}.xml')
 
-    def __init__(self, anime_id: int or Anime, account, my_xml: None=None):
+    def __init__(self, anime_id: int or Anime, my_anime_id, account, my_xml: None=None):
         if type(anime_id) == Anime:
             anime_id = anime_id.anime_id
         super().__init__(anime_id, anime_xml=my_xml)

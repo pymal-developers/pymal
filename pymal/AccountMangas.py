@@ -176,8 +176,12 @@ class AccountMangas(object):
         def _get_manga(self, xml_manga: ElementTree.Element):
             manga_id_xml = xml_manga.find('series_mangadb_id')
             assert manga_id_xml is not None
+            manga_id = int(manga_id_xml.text.strip())
+            my_manga_id_xml = xml_manga.find('my_id')
+            assert my_manga_id_xml is not None
+            my_manga_id = int(my_manga_id_xml.text.strip())
             try:
-                manga = MyManga(int(manga_id_xml.text.strip()), self.__connection, my_xml=xml_manga)
+                manga = MyManga(manga_id, my_manga_id, self.__connection, my_xml=xml_manga)
             except AssertionError as err:
                 #print('AssertionError', err)
                 return
