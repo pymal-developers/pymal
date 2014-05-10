@@ -23,6 +23,7 @@ class MyManga(Manga):
         self.__my_id = None
         self.__my_status = None
         self.__my_is_rereading = None
+        self.my_enable_discussion = False
         self.__my_completed_chapters = None
         self.__my_completed_volumes = None
         self.__my_score = None
@@ -31,7 +32,7 @@ class MyManga(Manga):
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_storage_value = 0.0
-        self.__my_download_episodes = 0
+        self.__my_downloaded_chapters = 0
         self.__my_times_reread = 0
         self.__my_reread_value = None
         self.__my_tags = None
@@ -69,10 +70,16 @@ class MyManga(Manga):
         return self.__my_is_rereading
 
     @property
-    def my_completed_episodes(self):
-        if self.__my_completed_episodes is None:
+    def my_completed_chapters(self):
+        if self.__my_completed_chapters is None:
             self.my_reload()
-        return self.__my_completed_episodes
+        return self.__my_completed_chapters
+
+    @property
+    def my_completed_volumes(self):
+        if self.__my_completed_volumes is None:
+            self.my_reload()
+        return self.__my_completed_volumes
 
     @property
     def my_score(self):
@@ -109,8 +116,8 @@ class MyManga(Manga):
 
     @property
     @my_load
-    def my_download_episodes(self):
-        return self.__my_download_episodes
+    def my_downloaded_chapters(self):
+        return self.__my_downloaded_chapters
 
     @property
     def my_times_reread(self):
@@ -138,7 +145,7 @@ class MyManga(Manga):
         #Getting content <div>
         content_td_divs = content_td.findAll(name="div", recursive=False)
         if 0 == len(content_td_divs):
-            data_form = 'username={0:s}&password={1:s}&sublogin=Login'
+            data_form = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
             data_form = data_form .format(self.__account._username, self.__account._password)
             data_form = data_form.encode('utf-8')
 
@@ -237,7 +244,7 @@ class MyManga(Manga):
         # Getting downloaded episodes
         download_episodes_node = content_rows[12].find(name="input", attrs={'id': "epDownloaded", 'name': 'list_downloaded_eps'})
         assert download_episodes_node is not None
-        self.__my_download_episodes == int(download_episodes_node['value'])
+        self.__my_downloaded_chapters == int(download_episodes_node['value'])
 
         # Getting time reread
         times_reread_node = content_rows[13].find(name="input", attrs={'name': 'list_times_readed'})
