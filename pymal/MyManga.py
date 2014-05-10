@@ -1,5 +1,6 @@
 from urllib import request
-from pymal.consts import HOST_NAME
+from pymal.consts import HOST_NAME, XMLS_DIRECTORY
+from os import path
 from pymal.decorators import my_load
 from pymal.Manga import Manga
 
@@ -9,6 +10,13 @@ class MyManga(Manga):
     MY_MANGA_EPISODES_URL = request.urljoin(HOST_NAME, 'ajaxtb.php?detailedaid={0:d}')
     MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
     TAG_SEPARETOR = ';'
+    MY_MANGA_XML_PATH = path.join(path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
+
+    @property
+    def MY_MANGA_XML_DATA(self):
+        with open(self.MY_MANGA_XML_PATH) as f:
+            data = f.read()
+        return data
 
     def __init__(self, manga_id: int or Manga, account, my_xml: None=None):
         if type(manga_id) == Manga:
@@ -265,3 +273,10 @@ class MyManga(Manga):
         discuss_node = content_rows[16].find(name='select', attrs={"name": "discuss"})
         assert discuss_node is not None
         self._is_my_loaded = True
+
+    def to_xml(self):
+        self.MY_MANGA_XML_DATA.format(
+            self.my_completed_chapters, self.my_completed_volumes, self.my_status, self.my_score,
+            self.my_downloaded_chapters, self.my_times_reread, self.my_reread_value, self.my_start_date,
+            self.my_end_date, self.my_priority, self.my_is_rereading, self.my_enable_discussion, self.my_comments,
+            self.my_groups, self.my_tags, self.my_retail_volumes)
