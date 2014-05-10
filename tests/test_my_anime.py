@@ -7,7 +7,7 @@ class MyAnimeTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        cls.anime = cls.account.anime[0]
+        cls.anime = cls.account.animes[0]
 
     def test_anime_title(self):
         self.anime.my_score

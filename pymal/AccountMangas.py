@@ -114,7 +114,7 @@ class AccountMangas(object):
             KeyError("{0:s} doesn't have the anime '{1:s}'".format(self.__class__.__name__, key))
 
         def reload(self):
-            resp_data = self.__connection.auth_connect(self.__url)
+            resp_data = self.__connection.connect(self.__url)
             xml_tree = ElementTree.fromstring(resp_data)
             assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(xml_tree.tag)
             xml_mangas = xml_tree.getchildren()
@@ -150,7 +150,6 @@ class AccountMangas(object):
             self.__plan_to_read.clear()
 
             threads = []
-            print(len(xml_mangas))
             for xml_manga in xml_mangas:
                 if DEBUG:
                     self._get_manga(xml_manga)
@@ -162,28 +161,16 @@ class AccountMangas(object):
             while threads:
                 threads.pop().join()
 
-            if len(self.__reading) != int(xml_user_reading.text.strip()):
-                print("reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip())))
-            if len(self.__completed) != int(xml_user_completed.text.strip()):
-                print("completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip())))
-            if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
-                print("on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
-            if len(self.__dropped) != int(xml_user_dropped.text.strip()):
-                print("dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip())))
-            if len(self.__plan_to_read) != int(xml_user_plantoread.text.strip()):
-                print("plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip())))
-            """
-            assert len(self.__reading) == int(xml_user_reading.text.strip()),\
-                "reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip()))
-            assert len(self.__completed) == int(xml_user_completed.text.strip()),\
-                "completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip()))
-            assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
-                "on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
-            assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
-                "dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip()))
-            assert len(self.__plan_to_read) == int(xml_user_plantoread.text.strip()),\
-                "plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip()))
-            """
+            #if len(self.__reading) != int(xml_user_reading.text.strip()):
+            #    print("reading: {0:d} != {1:d}".format(len(self.__reading), int(xml_user_reading.text.strip())))
+            #if len(self.__completed) != int(xml_user_completed.text.strip()):
+            #    print("completed: {0:d} != {1:d}".format(len(self.__completed), int(xml_user_completed.text.strip())))
+            #if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
+            #    print("on hold: {0:d} != {1:d}".format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
+            #if len(self.__dropped) != int(xml_user_dropped.text.strip()):
+            #    print("dropped: {0:d} != {1:d}".format(len(self.__dropped), int(xml_user_dropped.text.strip())))
+            #if len(self.__plan_to_read) != int(xml_user_plantoread.text.strip()):
+            #    print("plan to read: {0:d} != {1:d}".format(len(self.__plan_to_read), int(xml_user_plantoread.text.strip())))
             self._is_loaded = True
 
         def _get_manga(self, xml_manga: ElementTree.Element):
@@ -192,13 +179,14 @@ class AccountMangas(object):
             try:
                 manga = MyManga(int(manga_id_xml.text.strip()), self.__connection, my_xml=xml_manga)
             except AssertionError as err:
-                print('AssertionError', err)
+                #print('AssertionError', err)
                 return
             try:
                 self.map_of_lists[manga.my_status].append(manga)
                 #print("Added", manga, "to ", manga.my_status)
             except KeyError as err:
-                print("Got an key error:", err)
+                #print("Got an key error:", err)
+                pass
 
         def __len__(self):
             return len(self.reading) + len(self.completed) + len(self.on_hold) + len(self.dropped) +\

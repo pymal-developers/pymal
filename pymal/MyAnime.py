@@ -143,7 +143,7 @@ class MyAnime(Anime):
             data_form = data_form .format(self.__account._username, self.__account._password)
             data_form = data_form.encode('utf-8')
 
-            self.__account.auth_connect(self.MY_LOGIN_URL, data=data_form)
+            self.__account.connect(self.MY_LOGIN_URL, data=data_form)
 
             # Getting content wrapper <div>
             content_wrapper_div = self._get_content_wrapper_div(self.__my_anime_url, self.__account.auth_connect)

@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from pymal.global_functions import _connect
+from pymal.global_functions import _connect, connect
 from pymal.decorators import load
 from pymal.AccountAnimes import AccountAnimes
 from pymal.AccountMangas import AccountMangas
@@ -12,6 +12,7 @@ class Account(object):
     def __init__(self, username: str, password: str or None=None):
         self._username = username
         self._password = password
+        self.connect = connect
         self.__user_id = 0
         self.__auth_object = None
         self.__cookies = dict()

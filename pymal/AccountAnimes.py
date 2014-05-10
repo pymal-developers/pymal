@@ -111,7 +111,7 @@ class AccountAnimes(object):
         KeyError("{0:s} doesn't have the anime '{1:s}'".format(self.__class__.__name__, key))
 
     def reload(self):
-        resp_data = self.__connection.auth_connect(self.__url)
+        resp_data = self.__connection.connect(self.__url)
         xml_tree = ElementTree.fromstring(resp_data)
         assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(xml_tree.tag)
         xml_animes = xml_tree.getchildren()
@@ -156,28 +156,16 @@ class AccountAnimes(object):
         while threads:
             threads.pop().join()
 
-        if len(self.__watching) != int(xml_user_watching.text.strip()):
-            print('watching: {0:d} != {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip())))
-        if len(self.__completed) != int(xml_user_completed.text.strip()):
-            print('completed: {0:d} != {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip())))
-        if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
-            print('on hold:{0:d} != {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
-        if len(self.__dropped) != int(xml_user_dropped.text.strip()):
-            print('dropped: {0:d} != {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip())))
-        if len(self.__plan_to_watch) != int(xml_user_plantowatch.text.strip()):
-            print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
-        """
-        assert len(self.__watching) == int(xml_user_watching.text.strip()),\
-            '{0:d} == {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip()))
-        assert len(self.__completed) == int(xml_user_completed.text.strip()),\
-            '{0:d} == {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip()))
-        assert len(self.__on_hold) == int(xml_user_onhold.text.strip()),\
-            '{0:d} == {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip()))
-        assert len(self.__dropped) == int(xml_user_dropped.text.strip()),\
-            '{0:d} == {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip()))
-        assert len(self.__plan_to_watch) == int(xml_user_plantowatch.text.strip()),\
-            '{0:d} == {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip()))
-        """
+        #if len(self.__watching) != int(xml_user_watching.text.strip()):
+        #    print('watching: {0:d} != {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip())))
+        #if len(self.__completed) != int(xml_user_completed.text.strip()):
+        #    print('completed: {0:d} != {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip())))
+        #if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
+        #    print('on hold:{0:d} != {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
+        #if len(self.__dropped) != int(xml_user_dropped.text.strip()):
+        #    print('dropped: {0:d} != {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip())))
+        #if len(self.__plan_to_watch) != int(xml_user_plantowatch.text.strip()):
+        #    print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
         self._is_loaded = True
 
     def __get_anime(self, anime_xml: ElementTree.Element):
@@ -186,13 +174,14 @@ class AccountAnimes(object):
         try:
             anime = MyAnime(int(anime_id_xml.text.strip()), self.__connection, my_xml=anime_xml)
         except AssertionError as err:
-            print('AssertionError', err)
+            #print('AssertionError', err)
             return
         try:
             self.map_of_lists[anime.my_status].append(anime)
             #print("Added", anime, "to ", anime.my_status)
         except KeyError as err:
-            print("Got an key error:", err)
+            #print("Got an key error:", err)
+            pass
 
     def __len__(self):
         return len(self.watching) + len(self.completed) + len(self.on_hold) + len(self.dropped) +\

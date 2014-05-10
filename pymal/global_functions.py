@@ -27,7 +27,6 @@ def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) ->
 
     headers['User-Agent'] = USER_AGENT
     if data is not None:
-        print(type(data), data)
         sock = s.post(url, data=data, headers=headers, auth=auth)
     else:
         sock = s.get(url, headers=headers, auth=auth)
