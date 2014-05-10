@@ -9,6 +9,8 @@ import time
 class Manga(MALObject):
     MANGA_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
 
+    MY_MANGA_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
+
     def __init__(self, manga_id: int, manga_xml=None):
         self._manga_id = manga_id
         self._is_loaded = False

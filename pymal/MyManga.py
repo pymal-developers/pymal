@@ -12,6 +12,9 @@ class MyManga(Manga):
     TAG_SEPARETOR = ';'
     MY_MANGA_XML_PATH = path.join(path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
 
+    MY_MANGA_DELETE_URL = request.urljoin(HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
+    MY_MANGA_UPDATE_URL = request.urljoin(HOST_NAME, 'api/mangalist/update/{0:d}.xml')
+
     @property
     def MY_MANGA_XML_DATA(self):
         with open(self.MY_MANGA_XML_PATH) as f:

@@ -11,6 +11,8 @@ import time
 class Anime(MALObject):
     ANIME_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
 
+    MY_ANIME_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
+
     def __init__(self, anime_id: int, anime_xml=None):
         self._anime_id = anime_id
         self._is_loaded = False
