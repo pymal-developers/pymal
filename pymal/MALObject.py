@@ -74,11 +74,11 @@ class MALObject(object):
         self.__prequel = set()
         self.__spin_offs = set()
         self.__alternative_versions = set()
-        self.__side_story = set()
-        self.__summary = set()
-        self.__other = set()
-        self.__parent_story = set()
-        self.__alternative_setting = set()
+        self.__side_stories = set()
+        self.__summaries = set()
+        self.__others = set()
+        self.__parent_stories = set()
+        self.__alternative_settings = set()
 
         self.related_str_to_list_dict = {
             'Adaptation:': self.__adaptations,
@@ -87,11 +87,11 @@ class MALObject(object):
             'Prequel:': self.__prequel,
             'Spin-off:': self.__spin_offs,
             'Alternative version:': self.__alternative_versions,
-            'Side story:': self.__side_story,
-            'Summary:': self.__summary,
-            'Other:': self.__other,
-            'Parent story:': self.__parent_story,
-            'Alternative setting:': self.__alternative_setting,
+            'Side story:': self.__side_stories,
+            'Summary:': self.__summaries,
+            'Other:': self.__others,
+            'Parent story:': self.__parent_stories,
+            'Alternative setting:': self.__alternative_settings,
         }
 
     @property
@@ -218,28 +218,28 @@ class MALObject(object):
 
     @property
     @load
-    def side_story(self):
-        return self.__side_story
+    def side_stories(self):
+        return self.__side_stories
 
     @property
     @load
-    def summary(self):
-        return self.__summary
+    def summaries(self):
+        return self.__summaries
 
     @property
     @load
-    def other(self):
-        return self.__other
+    def others(self):
+        return self.__others
 
     @property
     @load
-    def parent_story(self):
-        return self.__parent_story
+    def parent_stories(self):
+        return self.__parent_stories
 
     @property
     @load
-    def alternative_setting(self):
-        return self.__alternative_setting
+    def alternative_settings(self):
+        return self.__alternative_settings
 
     def reload(self):
         raise NotImplemented

@@ -13,10 +13,17 @@ class Manga(MALObject):
     MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, manga_id: int, manga_xml=None):
+        super().__init__(self)
+
         self._id = manga_id
         self._is_loaded = False
 
         self.__mal_url = self.GLOBAL_MAL_URL.format(self._id)
+
+        ### Getting staff from html
+        ## staff from side content
+        self.__chapters = None
+        self.__volumes = None
 
         if manga_xml is not None:
             self.__title = manga_xml.find('series_title').text.strip()
@@ -25,7 +32,7 @@ class Manga(MALObject):
                 self.__synonyms = self.__synonyms.strip()
             # TODO: make this number to a string (or the string to a number?)
             self.__type = manga_xml.find('series_type').text.strip()
-            self.__episodes = int(manga_xml.find('series_chapters').text.strip())
+            self.__chapters = int(manga_xml.find('series_chapters').text.strip())
             self.__volumes = int(manga_xml.find('series_volumes').text.strip())
             try:
                 self.__status = int(manga_xml.find('series_status').text.strip())
@@ -223,11 +230,11 @@ class Manga(MALObject):
         #    'Prequel:': self.__prequel,
         #    'Spin-off:': self.__spin_offs,
         #    'Alternative version:': self.__alternative_versions,
-        #    'Side story:': self.__side_story,
-        #    'Summary:': self.__summary,
-        #    'Other:': self.__other,
-        #    'Parent story:': self.__parent_story,
-        #    'Alternative setting:': self.__alternative_setting,
+        #    'Side story:': self.__side_stories,
+        #    'Summary:': self.__summaries,
+        #    'Other:': self.__others,
+        #    'Parent story:': self.__parent_stories,
+        #    'Alternative setting:': self.__alternative_settings,
         #}
 
         index = 0
@@ -253,3 +260,8 @@ class Manga(MALObject):
     def add(self):
         data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '', 0)
         print(connect(self.MY_MAL_ADD_URL.format()))
+
+    def __eq__(self, other):
+        if not issubclass(Manga, other):
+            return False
+        return self._id == other._id

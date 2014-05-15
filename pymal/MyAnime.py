@@ -18,7 +18,7 @@ class MyAnime(Anime):
             anime_id = anime_id.anime_id
         super().__init__(anime_id, anime_xml=my_xml)
 
-        self.__my_anime_url = self.MY_ANIME_URL.format(self._anime_id)
+        self.__my_anime_url = self.MY_ANIME_URL.format(self._id)
 
         self._is_my_loaded = False
         self.__account = account

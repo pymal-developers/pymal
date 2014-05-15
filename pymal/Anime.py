@@ -14,46 +14,16 @@ class Anime(MALObject):
     MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
     def __init__(self, anime_id: int, anime_xml=None):
-        self._anime_id = anime_id
+        super().__init__(self)
+
+        self._id = anime_id
         self._is_loaded = False
 
-        self.__anime_url = self.GLOBAL_MAL_URL.format(self._anime_id)
+        self.__mal_url = self.GLOBAL_MAL_URL.format(self._id)
 
         ### Getting staff from html
         ## staff from side content
-        self.__title = None
-        self.__image_url = None
-        self.__english = ''
-        self.__synonyms = None
-        self.__japanese = ''
-        self.__type = None
         self.__episodes = None
-        self.__status = None
-        self.__start_time = None
-        self.__end_time = None
-        self.__producers = dict()
-        self.__genres = dict()
-        self.__rating = 0
-        self.__score = 0.0
-        self.__rank = 0
-        self.__popularity = 0
-
-        ## staff from main content
-        #staff from row 1
-        self.__synopsis = ''
-
-        #staff from row 2
-        self.__adaptations = list()
-        self.__characters = list()
-        self.__sequals = list()
-        self.__prequel = list()
-        self.__spin_offs = list()
-        self.__alternative_versions = list()
-        self.__side_story = list()
-        self.__summary = list()
-        self.__other = list()
-        self.__parent_story = list()
-        self.__alternative_setting = list()
 
         if anime_xml is not None:
             self.__title = anime_xml.find('series_title').text.strip()
@@ -88,11 +58,9 @@ class Anime(MALObject):
             self.reload()
         return self.__episodes
 
-
-
     def reload(self):
         # Getting content wrapper <div>
-        content_wrapper_div = self._get_content_wrapper_div(self.__anime_url, connect)
+        content_wrapper_div = self._get_content_wrapper_div(self.__mal_url, connect)
 
         # Getting title <div>
         rank_div, self.__title = content_wrapper_div.h1.contents
@@ -250,11 +218,11 @@ class Anime(MALObject):
         #    'Prequel:': self.__prequel,
         #    'Spin-off:': self.__spin_offs,
         #    'Alternative version:': self.__alternative_versions,
-        #    'Side story:': self.__side_story,
-        #    'Summary:': self.__summary,
-        #    'Other:': self.__other,
-        #    'Parent story:': self.__parent_story,
-        #    'Alternative setting:': self.__alternative_setting,
+        #    'Side story:': self.__side_stories,
+        #    'Summary:': self.__summaries,
+        #    'Other:': self.__others,
+        #    'Parent story:': self.__parent_stories,
+        #    'Alternative setting:': self.__alternative_settings,
         #}
 
         index = 0
@@ -280,4 +248,4 @@ class Anime(MALObject):
     def __eq__(self, other):
         if not issubclass(Anime, other):
             return False
-        return self._anime_id == other._anime_id
+        return self._id == other._id
