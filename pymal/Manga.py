@@ -47,11 +47,11 @@ class Manga(MALObject):
         self.__prequel = list()
         self.__spin_offs = list()
         self.__alternative_versions = list()
-        self.__side_story = list()
-        self.__summary = list()
-        self.__other = list()
-        self.__parent_story = list()
-        self.__alternative_setting = list()
+        self.__side_stories = list()
+        self.__summaries = list()
+        self.__others = list()
+        self.__parent_stories = list()
+        self.__alternative_settings = list()
 
         if manga_xml is not None:
             self.__title = manga_xml.find('series_title').text.strip()
@@ -217,28 +217,28 @@ class Manga(MALObject):
 
     @property
     @load
-    def side_story(self):
-        return self.__side_story
+    def side_stories(self):
+        return self.__side_stories
 
     @property
     @load
-    def summary(self):
-        return self.__summary
+    def summaries(self):
+        return self.__summaries
 
     @property
     @load
-    def other(self):
-        return self.__other
+    def others(self):
+        return self.__others
 
     @property
     @load
-    def parent_story(self):
-        return self.__parent_story
+    def parent_stories(self):
+        return self.__parent_stories
 
     @property
     @load
-    def alternative_setting(self):
-        return self.__alternative_setting
+    def alternative_settings(self):
+        return self.__alternative_settings
 
     def reload(self):
         # Getting content wrapper <div>
@@ -405,11 +405,11 @@ class Manga(MALObject):
             'Prequel:': self.__prequel,
             'Spin-off:': self.__spin_offs,
             'Alternative version:': self.__alternative_versions,
-            'Side story:': self.__side_story,
-            'Summary:': self.__summary,
-            'Other:': self.__other,
-            'Parent story:': self.__parent_story,
-            'Alternative setting:': self.__alternative_setting,
+            'Side story:': self.__side_stories,
+            'Summary:': self.__summaries,
+            'Other:': self.__others,
+            'Parent story:': self.__parent_stories,
+            'Alternative setting:': self.__alternative_settings,
         }
 
         index = 0
