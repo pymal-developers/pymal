@@ -9,15 +9,15 @@ import time
 
 
 class Anime(MALObject):
-    ANIME_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
+    GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
 
-    MY_ANIME_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
+    MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
     def __init__(self, anime_id: int, anime_xml=None):
         self._anime_id = anime_id
         self._is_loaded = False
 
-        self.__anime_url = self.ANIME_URL.format(self._anime_id)
+        self.__anime_url = self.GLOBAL_MAL_URL.format(self._anime_id)
 
         ### Getting staff from html
         ## staff from side content
@@ -83,157 +83,12 @@ class Anime(MALObject):
             self.__image_url = anime_xml.find('series_image').text.strip()
 
     @property
-    def id(self):
-        return self._anime_id
-
-    @property
-    def title(self):
-        if self.__title is None:
-            self.reload()
-        return self.__title
-
-    @property
-    def image_url(self):
-        if self.__image_url is None:
-            self.reload()
-        return self.__image_url
-
-    @property
-    @load
-    def english(self):
-        return self.__english
-
-    @property
-    def synonyms(self):
-        if self.__synonyms is None:
-            self.reload()
-        return self.__synonyms
-
-    @property
-    @load
-    def japanese(self):
-        return self.__japanese
-
-    @property
-    def type(self):
-        if self.__type is None:
-            self.reload()
-        return self.__type
-
-    @property
     def episodes(self):
         if self.__episodes is None:
             self.reload()
         return self.__episodes
 
-    @property
-    def status(self):
-        if self.__status is None:
-            self.reload()
-        return self.__status
 
-    @property
-    def start_time(self):
-        if self.__start_time is None:
-            self.reload()
-        return self.__start_time
-
-    @property
-    def end_time(self):
-        if self.__end_time is None:
-            self.reload()
-        return self.__end_time
-
-    @property
-    @load
-    def producers(self):
-        return self.__producers
-
-    @property
-    @load
-    def genres(self):
-        return self.__genres
-
-    @property
-    @load
-    def rating(self):
-        return self.__rating
-
-    @property
-    @load
-    def score(self):
-        return self.__score
-
-    @property
-    @load
-    def rank(self):
-        return self.__rank
-
-    @property
-    @load
-    def popularity(self):
-        return self.__popularity
-
-    @property
-    @load
-    def synopsis(self):
-        return self.__synopsis
-
-    # staff from main content
-    @property
-    @load
-    def adaptations(self):
-        return self.__adaptations
-
-    @property
-    @load
-    def characters(self):
-        return self.__characters
-
-    @property
-    @load
-    def sequals(self):
-        return self.__sequals
-
-    @property
-    @load
-    def prequel(self):
-        return self.__prequel
-
-    @property
-    @load
-    def spin_offs(self):
-        return self.__spin_offs
-
-    @property
-    @load
-    def alternative_versions(self):
-        return self.__alternative_versions
-
-    @property
-    @load
-    def side_story(self):
-        return self.__side_story
-
-    @property
-    @load
-    def summary(self):
-        return self.__summary
-
-    @property
-    @load
-    def other(self):
-        return self.__other
-
-    @property
-    @load
-    def parent_story(self):
-        return self.__parent_story
-
-    @property
-    @load
-    def alternative_setting(self):
-        return self.__alternative_setting
 
     def reload(self):
         # Getting content wrapper <div>
@@ -388,26 +243,26 @@ class Anime(MALObject):
         other_data_kids = [i for i in main_content_other_data.children]
 
         # Getting all the data under 'Related Anime'
-        related_str_to_list_dict = {
-            'Adaptation:': self.__adaptations,
-            'Character:': self.__characters,
-            'Sequel:': self.__sequals,
-            'Prequel:': self.__prequel,
-            'Spin-off:': self.__spin_offs,
-            'Alternative version:': self.__alternative_versions,
-            'Side story:': self.__side_story,
-            'Summary:': self.__summary,
-            'Other:': self.__other,
-            'Parent story:': self.__parent_story,
-            'Alternative setting:': self.__alternative_setting,
-        }
+        #related_str_to_list_dict = {
+        #    'Adaptation:': self.__adaptations,
+        #    'Character:': self.__characters,
+        #    'Sequel:': self.__sequals,
+        #    'Prequel:': self.__prequel,
+        #    'Spin-off:': self.__spin_offs,
+        #    'Alternative version:': self.__alternative_versions,
+        #    'Side story:': self.__side_story,
+        #    'Summary:': self.__summary,
+        #    'Other:': self.__other,
+        #    'Parent story:': self.__parent_story,
+        #    'Alternative setting:': self.__alternative_setting,
+        #}
 
         index = 0
         index = get_next_index(index, other_data_kids)
         if 'h2' == other_data_kids[index].name and 'Related Anime' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = make_list(related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
+                index = make_list(self.related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
         else:
             index -= 2
         next_index = get_next_index(index, other_data_kids)
@@ -426,6 +281,3 @@ class Anime(MALObject):
         if not issubclass(Anime, other):
             return False
         return self._anime_id == other._anime_id
-
-    def __repr__(self):
-        return "<{0:s} id={1:d}>".format(self.__class__.__name__, self._anime_id)

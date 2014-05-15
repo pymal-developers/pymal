@@ -8,50 +8,15 @@ from os import path
 
 
 class Manga(MALObject):
-    MANGA_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
+    GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
+    MY_MAL_XML_TEMPLATE_PATH = path.join(path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
+    MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, manga_id: int, manga_xml=None):
-        self._manga_id = manga_id
+        self._id = manga_id
         self._is_loaded = False
 
-        self.__manga_url = self.MANGA_URL.format(self._manga_id)
-
-        ### Getting staff from html
-        ## staff from side content
-        self.__title = None
-        self.__image_url = None
-        self.__english = ''
-        self.__synonyms = None
-        self.__japanese = ''
-        self.__type = None
-        self.__volumes = None
-        self.__chapters = None
-        self.__status = None
-        self.__start_time = None
-        self.__end_time = None
-        self.__authors = dict()
-        self.__genres = dict()
-        self.__rating = 0
-        self.__score = 0.0
-        self.__rank = 0
-        self.__popularity = 0
-
-        ## staff from main content
-        #staff from row 1
-        self.__synopsis = ''
-
-        #staff from row 2
-        self.__adaptations = list()
-        self.__characters = list()
-        self.__sequals = list()
-        self.__prequel = list()
-        self.__spin_offs = list()
-        self.__alternative_versions = list()
-        self.__side_story = list()
-        self.__summary = list()
-        self.__other = list()
-        self.__parent_story = list()
-        self.__alternative_setting = list()
+        self.__mal_url = self.GLOBAL_MAL_URL.format(self._id)
 
         if manga_xml is not None:
             self.__title = manga_xml.find('series_title').text.strip()
@@ -82,44 +47,6 @@ class Manga(MALObject):
             self.__image_url = manga_xml.find('series_image').text.strip()
 
     @property
-    def id(self):
-        return self._manga_id
-
-    @property
-    def title(self):
-        if self.__title is None:
-            self.reload()
-        return self.__title
-
-    @property
-    def image_url(self):
-        if self.__image_url is None:
-            self.reload()
-        return self.__image_url
-
-    @property
-    @load
-    def english(self):
-        return self.__english
-
-    @property
-    def synonyms(self):
-        if self.__synonyms is None:
-            self.reload()
-        return self.__synonyms
-
-    @property
-    @load
-    def japanese(self):
-        return self.__japanese
-
-    @property
-    def type(self):
-        if self.__type is None:
-            self.reload()
-        return self.__type
-
-    @property
     def volumes(self):
         if self.__volumes is None:
             self.reload()
@@ -131,118 +58,9 @@ class Manga(MALObject):
             self.reload()
         return self.__chapters
 
-    @property
-    def status(self):
-        if self.__status is None:
-            self.reload()
-        return self.__status
-
-    @property
-    def start_time(self):
-        if self.__start_time is None:
-            self.reload()
-        return self.__start_time
-
-    @property
-    def end_time(self):
-        if self.__end_time is None:
-            self.reload()
-        return self.__end_time
-
-    @property
-    @load
-    def authors(self):
-        return self.__authors
-
-    @property
-    @load
-    def genres(self):
-        return self.__genres
-
-    @property
-    @load
-    def rating(self):
-        return self.__rating
-
-    @property
-    @load
-    def score(self):
-        return self.__score
-
-    @property
-    @load
-    def rank(self):
-        return self.__rank
-
-    @property
-    @load
-    def popularity(self):
-        return self.__popularity
-
-    @property
-    @load
-    def synopsis(self):
-        return self.__synopsis
-
-    # staff from main content
-    @property
-    @load
-    def adaptations(self):
-        return self.__adaptations
-
-    @property
-    @load
-    def characters(self):
-        return self.__characters
-
-    @property
-    @load
-    def sequals(self):
-        return self.__sequals
-
-    @property
-    @load
-    def prequel(self):
-        return self.__prequel
-
-    @property
-    @load
-    def spin_offs(self):
-        return self.__spin_offs
-
-    @property
-    @load
-    def alternative_versions(self):
-        return self.__alternative_versions
-
-    @property
-    @load
-    def side_story(self):
-        return self.__side_story
-
-    @property
-    @load
-    def summary(self):
-        return self.__summary
-
-    @property
-    @load
-    def other(self):
-        return self.__other
-
-    @property
-    @load
-    def parent_story(self):
-        return self.__parent_story
-
-    @property
-    @load
-    def alternative_setting(self):
-        return self.__alternative_setting
-
     def reload(self):
         # Getting content wrapper <div>
-        content_wrapper_div = self._get_content_wrapper_div(self.__manga_url, connect)
+        content_wrapper_div = self._get_content_wrapper_div(self.__mal_url, connect)
 
         # Getting title <div>
         self.__title = content_wrapper_div.h1.contents[1].strip()
@@ -346,7 +164,7 @@ class Manga(MALObject):
         authors_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Authors', authors_div)
         for authors_link in authors_div.findAll(name='a'):
-            self.__authors[authors_link.text.strip()] = authors_link['href']
+            self.__creators[authors_link.text.strip()] = authors_link['href']
         side_contents_divs_index += 1
 
         side_contents_divs_index += 1
@@ -398,26 +216,26 @@ class Manga(MALObject):
         other_data_kids = [i for i in main_content_other_data.children]
 
         # Getting all the data under 'Related Manga'
-        related_str_to_list_dict = {
-            'Adaptation:': self.__adaptations,
-            'Character:': self.__characters,
-            'Sequel:': self.__sequals,
-            'Prequel:': self.__prequel,
-            'Spin-off:': self.__spin_offs,
-            'Alternative version:': self.__alternative_versions,
-            'Side story:': self.__side_story,
-            'Summary:': self.__summary,
-            'Other:': self.__other,
-            'Parent story:': self.__parent_story,
-            'Alternative setting:': self.__alternative_setting,
-        }
+        #related_str_to_list_dict = {
+        #    'Adaptation:': self.__adaptations,
+        #    'Character:': self.__characters,
+        #    'Sequel:': self.__sequals,
+        #    'Prequel:': self.__prequel,
+        #    'Spin-off:': self.__spin_offs,
+        #    'Alternative version:': self.__alternative_versions,
+        #    'Side story:': self.__side_story,
+        #    'Summary:': self.__summary,
+        #    'Other:': self.__other,
+        #    'Parent story:': self.__parent_story,
+        #    'Alternative setting:': self.__alternative_setting,
+        #}
 
         index = 0
         index = get_next_index(index, other_data_kids)
         if 'h2' == other_data_kids[index].name and 'Related Manga' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = make_list(related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
+                index = make_list(self.related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
         else:
             index -= 2
         next_index = get_next_index(index, other_data_kids)
@@ -432,19 +250,6 @@ class Manga(MALObject):
 
         self._is_loaded = True
 
-    def __repr__(self):
-        return "<{0:s} id={1:d}>".format(self.__class__.__name__, self._manga_id)
-
-    MY_MANGA_XML_PATH = path.join(path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
-
-    @property
-    def MY_MANGA_XML_DATA(self):
-        with open(self.MY_MANGA_XML_PATH) as f:
-            data = f.read()
-        return data
-
-    MY_MANGA_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
-
     def add(self):
-        data = self.MY_MANGA_XML_DATA.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '', 0)
-        connect(self.MY_MANGA_ADD_URL.format())
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '', 0)
+        print(connect(self.MY_MAL_ADD_URL.format()))

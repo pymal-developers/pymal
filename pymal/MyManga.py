@@ -270,7 +270,7 @@ class MyManga(Manga):
         self._is_my_loaded = True
 
     def to_xml(self):
-        self.MY_MANGA_XML_DATA.format(
+        self.MY_MAL_XML_TEMPLATE.format(
             self.my_completed_chapters, self.my_completed_volumes, self.my_status, self.my_score,
             self.my_downloaded_chapters, self.my_times_reread, self.my_reread_value, self.my_start_date,
             self.my_end_date, self.my_priority, self.my_is_rereading, self.my_enable_discussion, self.my_comments,
