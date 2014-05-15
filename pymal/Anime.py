@@ -14,7 +14,7 @@ class Anime(MALObject):
     MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
     def __init__(self, anime_id: int, anime_xml=None):
-        super().__init__(self)
+        super().__init__()
 
         self._id = anime_id
         self._is_loaded = False
@@ -144,7 +144,7 @@ class Anime(MALObject):
         producers_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Producers', producers_div)
         for producer_link in producers_div.findAll(name='a'):
-            self.__producers[producer_link.text.strip()] = producer_link['href']
+            self.__creators[producer_link.text.strip()] = producer_link['href']
         side_contents_divs_index += 1
 
         # genres <div>

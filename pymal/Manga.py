@@ -13,7 +13,7 @@ class Manga(MALObject):
     MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, manga_id: int, manga_xml=None):
-        super().__init__(self)
+        super().__init__()
 
         self._id = manga_id
         self._is_loaded = False
