@@ -1,7 +1,8 @@
 from urllib import request
-from pymal.consts import HOST_NAME
+from pymal.consts import HOST_NAME, MALAPPINFO_FORMAT_TIME, MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
 from pymal.decorators import my_load
 from pymal.Anime import Anime
+import time
 
 
 class MyAnime(Anime):
@@ -45,8 +46,16 @@ class MyAnime(Anime):
                 self.__my_is_rewatching = bool(int(my_xml.find('my_rewatching').text.strip()))
             self.__my_completed_episodes = int(my_xml.find('my_watched_episodes').text.strip())
             self.__my_score = int(my_xml.find('my_score').text.strip())
-            self.__my_start_date = my_xml.find('my_start_date').text.strip()
-            self.__my_end_date = my_xml.find('my_finish_date').text.strip()
+            my_start_date = my_xml.find('my_start_date').text.strip()
+            if my_start_date == MALAPPINFO_NONE_TIME:
+                self.__my_start_date = MALAPI_NONE_TIME
+            else:
+                self.__my_start_date = time.strftime(MALAPI_FORMAT_TIME, time.strptime(my_start_date, MALAPPINFO_FORMAT_TIME))
+            my_end_date = my_xml.find('my_finish_date').text.strip()
+            if my_end_date == MALAPPINFO_NONE_TIME:
+                self.__my_end_date = MALAPI_NONE_TIME
+            else:
+                self.__my_end_date = time.strftime(MALAPI_FORMAT_TIME, time.strptime(my_end_date, MALAPPINFO_FORMAT_TIME))
             self.__my_rewatch_value = int(my_xml.find('my_rewatching_ep').text.strip())
             my_tags_xml = my_xml.find('my_tags')
             if my_tags_xml.text is not None:
@@ -165,97 +174,125 @@ class MyAnime(Anime):
         assert 'myAnimeForm' == content_form['id'], "Got content_form['id'] == {0:s}".format(content_form['id'])
         content_rows = content_form.table.tbody.findAll(name="tr", recursive=False)
 
+        contents_divs_index = 2
+
         # Getting my_status
-        status_select = content_rows[3].find(name="select", attrs={"id": "status", "name": "status"})
+        status_select = content_rows[contents_divs_index].find(name="select", attrs={"id": "status", "name": "status"})
         assert status_select is not None
         status_selected_option = status_select.find(name="option", attrs={"selected": ""})
         assert status_selected_option is not None
         self.__my_status = int(status_selected_option['value'])
-        is_rewatch_node = content_rows[3].find(name="input", attrs={"id": "rewatchingBox"})
+
+        is_rewatch_node = content_rows[contents_divs_index].find(name="input", attrs={"id": "rewatchingBox"})
         assert is_rewatch_node is not None
         self.__my_is_rewatching = bool(is_rewatch_node['value'])
+        contents_divs_index += 1
 
         # Getting watched episodes
-        watched_input = content_rows[4].find(name="input", attrs={"id": "completedEpsID", "name": "completed_eps"})
+        watched_input = content_rows[contents_divs_index].find(name="input", attrs={"id": "completedEpsID", "name": "completed_eps"})
         assert watched_input is not None
         self.__my_completed_episodes = int(watched_input['value'])
+        contents_divs_index += 1
 
         # Getting my_score
-        score_select = content_rows[5].find(name="select", attrs={"id": "inputtext", "name": "score"})
+        score_select = content_rows[contents_divs_index].find(name="select", attrs={"name": "score"})
         assert score_select is not None
         score_selected_option = score_select.find(name="option", attrs={"selected": ""})
         assert score_selected_option is not None
-        self.__my_score = int(score_selected_option['value'])
+        self.__my_score = int(float(score_selected_option['value']))
+        contents_divs_index += 1
 
         # Getting my_tags...
-        tag_content = content_rows[6]
+        # tag_content = content_rows[contents_divs_index]
+        contents_divs_index += 1
 
         # Getting start date
-        start_month_date_node = content_rows[7].find(name="select", attrs={"name": "startMonth"})
+        start_month_date_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "startMonth"})
         assert start_month_date_node is not None
-        start_day_date = content_rows[7].find(name="select", attrs={"name": "startDay"})
-        assert start_day_date is not None
-        start_year_date = content_rows[7].find(name="select", attrs={"name": "startYear"})
-        assert start_year_date is not None
-        start_month_date = str(start_month_date_node).zfill(2)
-        start_day_date = str(start_day_date).zfill(2)
-        start_year_date = str(start_year_date).zfill(2)
+        start_month_date = start_month_date_node.find(name="option", attrs={"selected": ""})
+
+        start_day_date_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "startDay"})
+        assert start_day_date_node is not None
+        start_day_date = start_day_date_node.find(name="option", attrs={"selected": ""})
+
+        start_year_date_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "startYear"})
+        assert start_year_date_node is not None
+        start_year_date = start_year_date_node.find(name="option", attrs={"selected": ""})
+
+        start_month_date = str(start_month_date['value']).zfill(2)
+        start_day_date = str(start_day_date['value']).zfill(2)
+        start_year_date = str(start_year_date['value']).zfill(2)
         self.__my_start_date = start_month_date + start_day_date + start_year_date
+        contents_divs_index += 1
 
         # Getting end date
-        end_month_date_node = content_rows[8].find(name="select", attrs={"name": "endMonth"})
+        end_month_date_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "endMonth"})
         assert end_month_date_node is not None
-        end_day_date = content_rows[8].find(name="select", attrs={"name": "endDay"})
-        assert end_day_date is not None
-        end_year_date = content_rows[8].find(name="select", attrs={"name": "endYear"})
-        assert end_year_date is not None
-        end_month_date = str(end_month_date_node).zfill(2)
-        end_day_date = str(end_day_date).zfill(2)
-        end_year_date = str(end_year_date).zfill(2)
+        end_month_date = end_month_date_node.find(name="option", attrs={"selected": ""})
+
+        end_day_date_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "endDay"})
+        assert end_day_date_node is not None
+        end_day_date = end_day_date_node.find(name="option", attrs={"selected": ""})
+
+        end_year_date_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "endYear"})
+        assert end_year_date_node is not None
+        end_year_date = end_year_date_node.find(name="option", attrs={"selected": ""})
+
+        end_month_date = str(end_month_date['value']).zfill(2)
+        end_day_date = str(end_day_date['value']).zfill(2)
+        end_year_date = str(end_year_date['value']).zfill(2)
         self.__my_end_date = end_month_date + end_day_date + end_year_date
+        contents_divs_index += 1
 
         # Getting fansub group
-        # content_rows[9]
+        # content_rows[contents_divs_index]
+        contents_divs_index += 1
 
         # Getting priority
-        priority_node = content_rows[10].find(name="select", attrs={"name": "priority"})
+        priority_node = content_rows[contents_divs_index].find(name="select", attrs={"name": "priority"})
         assert priority_node is not None
         selected_priority_node = priority_node.find(name="option", attrs={"selected": ""})
         assert selected_priority_node is not None
-        self.__my_priority = selected_priority_node['value']
+        self.__my_priority = int(selected_priority_node['value'])
+        contents_divs_index += 1
 
         # Getting storage
-        storage_type_node = content_rows[11].find(name="select", attrs={"id": "storage"})
+        storage_type_node = content_rows[contents_divs_index].find(name="select", attrs={"id": "storage"})
         assert storage_type_node is not None
         selected_storage_type_node = storage_type_node.find(name="option", attrs={"selected": ""})
         assert selected_storage_type_node is not None
-        self.__my_storage_type = selected_storage_type_node['value']
+        self.__my_storage_type = int(selected_storage_type_node['value'])
 
-        storage_value_node = content_rows[11].find(name="input", attrs={"id": "storageValue"})
+        storage_value_node = content_rows[contents_divs_index].find(name="input", attrs={"id": "storageValue"})
         assert storage_value_node is not None
         self.__my_storage_value = float(storage_value_node['value'])
+        contents_divs_index += 1
 
         # Getting downloaded episodes
-        download_episodes_node = content_rows[12].find(name="input", attrs={'id': "epDownloaded", 'name': 'list_downloaded_eps'})
+        download_episodes_node = content_rows[contents_divs_index].find(name="input", attrs={'id': "epDownloaded", 'name': 'list_downloaded_eps'})
         assert download_episodes_node is not None
         self.__my_download_episodes == int(download_episodes_node['value'])
+        contents_divs_index += 1
 
         # Getting time rewatched
-        times_rewatched_node = content_rows[13].find(name="input", attrs={'name': 'list_times_watched'})
+        times_rewatched_node = content_rows[contents_divs_index].find(name="input", attrs={'name': 'list_times_watched'})
         self.__my_times_rewatched == int(times_rewatched_node['value'])
         assert times_rewatched_node is not None
+        contents_divs_index += 1
 
         # Getting rewatched value
-        rewatch_value_node = content_rows[14].find(name="select", attrs={'name': 'list_rewatch_value'})
+        rewatch_value_node = content_rows[contents_divs_index].find(name="select", attrs={'name': 'list_rewatch_value'})
         assert rewatch_value_node is not None
         rewatch_value_option = rewatch_value_node.find(name='option', attrs={'selected': ''})
         assert rewatch_value_option is not None
         self.__my_rewatch_value == int(rewatch_value_option['value'])
+        contents_divs_index += 1
 
         # Getting comments
-        content_rows[15]
+        #content_rows[contents_divs_index]
+        contents_divs_index += 1
 
         # Getting discuss flag
-        discuss_node = content_rows[16].find(name='select', attrs={"name": "discuss"})
+        discuss_node = content_rows[contents_divs_index].find(name='select', attrs={"name": "discuss"})
         assert discuss_node is not None
         self._is_my_loaded = True
