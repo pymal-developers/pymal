@@ -58,7 +58,6 @@ class MALObject(object):
         self._end_time = None
         self._creators = dict()
         self._genres = dict()
-        self._rating = ''
         self._score = 0.0
         self._rank = 0
         self._popularity = 0
@@ -159,11 +158,6 @@ class MALObject(object):
     @load
     def genres(self):
         return self._genres
-
-    @property
-    @load
-    def rating(self):
-        return self._rating
 
     @property
     @load

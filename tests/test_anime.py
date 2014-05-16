@@ -7,6 +7,7 @@ class AnimeTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.anime = Anime(ANIME_ID)
+        cls.anime.reload()
 
     def test_anime_id(self):
         self.assertIsInstance(self.anime.id, int)

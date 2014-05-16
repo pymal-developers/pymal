@@ -23,6 +23,10 @@ class Anime(MALObject):
 
         ### Getting staff from html
         ## staff from side content
+        self._rating = ''
+
+        ### Getting staff from html
+        ## staff from side content
         self._episodes = None
 
         if anime_xml is not None:
@@ -51,6 +55,11 @@ class Anime(MALObject):
                 end_time = end_time[:4] + end_time[4:].replace('00', '01')
                 self._end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
             self._image_url = anime_xml.find('series_image').text.strip()
+
+    @property
+    @load
+    def rating(self):
+        return self._rating
 
     @property
     def episodes(self):

@@ -15,7 +15,7 @@ class MangaTestCase(unittest.TestCase):
 
     def test_manga_title(self):
         self.assertIsInstance(self.manga.english, str)
-        self.assertEqual(self.manga.english, 'Lucky☆Star')
+        self.assertEqual(self.manga.english, 'Lucky ☆ Star')
 
     def test_manga_image_url(self):
         self.assertIsInstance(self.manga.image_url, str)
@@ -33,19 +33,23 @@ class MangaTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.type, str)
 
     def test_manga_chapters(self):
-        self.assertIsInstance(self.manga.chapters, int)
+        try:
+            self.assertIsInstance(self.manga.chapters, int)
+        except AssertionError:
+            self.assertEqual(self.manga.chapters, float('inf'))
+            self.assertEqual(self.manga.chapters, self.manga.volumes)
 
     def test_manga_volumes(self):
-        self.assertIsInstance(self.manga.volumes, int)
+        try:
+            self.assertIsInstance(self.manga.volumes, int)
+        except AssertionError:
+            self.assertEqual(self.manga.volumes, float('inf'))
 
     def test_manga_start_time(self):
         self.assertIsInstance(self.manga.start_time, float)
 
     def test_manga_end_time(self):
         self.assertIsInstance(self.manga.end_time, float)
-
-    def test_manga_rating(self):
-        self.assertIsInstance(self.manga.rating, int)
 
     def test_manga_score(self):
         self.assertIsInstance(self.manga.score, float)
@@ -73,7 +77,7 @@ class MangaTestCase(unittest.TestCase):
     def test_manga_characters(self):
         self.assertIsInstance(self.manga.characters, list)
         for character in self.manga.characters:
-            self.assertIsInstance(character, str)
+            self.assertIsInstance(character, Manga)
 
     def test_manga_sequals(self):
         self.assertIsInstance(self.manga.sequals, list)

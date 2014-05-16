@@ -91,13 +91,15 @@ class Manga(MALObject):
         assert img_link is not None
         self._image_url = img_link.img['src']
 
-        side_contents_divs_index = 4
+        side_contents_divs_index = 3
         # english <div>
         english_div = side_contents_divs[side_contents_divs_index]
         if check_side_content_div('English', english_div):
             english_span, self._english = english_div.contents
             self._english = self._english.strip()
             side_contents_divs_index += 1
+        else:
+            self._english = ''
 
         # synonyms <div>
         synonyms_div = side_contents_divs[side_contents_divs_index]
@@ -105,6 +107,8 @@ class Manga(MALObject):
             synonyms_span, self._synonyms = synonyms_div.contents
             self._synonyms = self._synonyms.strip()
             side_contents_divs_index += 1
+        else:
+            self._synonyms = ''
 
         # japanese <div>
         japanese_div = side_contents_divs[side_contents_divs_index]
@@ -112,6 +116,8 @@ class Manga(MALObject):
             japanese_span, self._japanese = japanese_div.contents
             self._japanese = self._japanese.strip()
             side_contents_divs_index += 1
+        else:
+            self._japanese = ''
 
         # type <div>
         type_div = side_contents_divs[side_contents_divs_index]
@@ -127,14 +133,22 @@ class Manga(MALObject):
         self_volumes = self_volumes.strip()
         if self_volumes.isdigit():
             self._volumes = int(self_volumes)
+        else:
+            assert 'Unknown' == self_volumes, "Unknown == '{0:s}'".format(self_volumes)
+            self._volumes = float('inf')
+
         side_contents_divs_index += 1
 
         # chapters <div>
         chapters_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Chapters', chapters_div)
         chapters_span, self_chapters = chapters_div.contents
+        self_chapters = self_chapters .strip()
         if self_chapters.isdigit():
             self._chapters = int(self_chapters)
+        else:
+            assert 'Unknown' == self_chapters, "Unknown == '{0:s}'".format(self_chapters)
+            self._chapters = float('inf')
         side_contents_divs_index += 1
 
         # status <div>
