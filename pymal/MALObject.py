@@ -1,5 +1,5 @@
 import bs4
-from pymal.consts import RETRY_NUMBER, RETRY_SLEEP
+from pymal.consts import RETRY_NUMBER, RETRY_SLEEP, MALAPPINFO_FORMAT_TIME
 from pymal.decorators import load
 import time
 
@@ -39,7 +39,7 @@ class MALObject(object):
     MY_MAL_XML_TEMPLATE_PATH = None
     MY_MAL_ADD_URL = None
 
-    def __init__(self):
+    def __init__(self, mal_xml=None):
         self._id = 0
         self._is_loaded = False
 
@@ -92,6 +92,32 @@ class MALObject(object):
             'Parent story:': self._parent_stories,
             'Alternative setting:': self._alternative_settings,
         }
+
+        if mal_xml is not None:
+            self._title = mal_xml.find('series_title').text.strip()
+            self._synonyms = mal_xml.find('series_synonyms').text
+            if self._synonyms is not None:
+                self._synonyms = self._synonyms.strip()
+            # TODO: make this number to a string (or the string to a number?)
+            self._type = mal_xml.find('series_type').text.strip()
+            try:
+                self._status = int(mal_xml.find('series_status').text.strip())
+            except ValueError:
+                self._status = mal_xml.find('series_status').text.strip()
+                print('self._status=', self._status)
+            start_time = mal_xml.find('series_start').text.strip()
+            if start_time == '0000-00-00':
+                self._start_time = float('inf')
+            else:
+                start_time = start_time[:4] + start_time[4:].replace('00', '01')
+                self._start_time = time.mktime(time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
+            end_time = mal_xml.find('series_end').text.strip()
+            if end_time == '0000-00-00':
+                self._end_time = float('inf')
+            else:
+                end_time = end_time[:4] + end_time[4:].replace('00', '01')
+                self._end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
+            self._image_url = mal_xml.find('series_image').text.strip()
 
     @property
     def id(self):

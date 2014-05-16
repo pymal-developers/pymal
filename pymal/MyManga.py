@@ -13,10 +13,10 @@ class MyManga(Manga):
     MY_MANGA_DELETE_URL = request.urljoin(HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
     MY_MANGA_UPDATE_URL = request.urljoin(HOST_NAME, 'api/mangalist/update/{0:d}.xml')
 
-    def __init__(self, manga_id: int or Manga, my_manga_id, account, my_xml: None=None):
+    def __init__(self, manga_id: int or Manga, my_manga_id, account, my_mal_xml: None=None):
         if type(manga_id) == Manga:
             manga_id = manga_id.manga_id
-        super().__init__(manga_id, manga_xml=my_xml)
+        super().__init__(manga_id, mal_xml=my_mal_xml)
 
         self.__my_manga_url = self.MY_MANGA_URL.format(my_manga_id)
 
@@ -54,7 +54,6 @@ class MyManga(Manga):
             my_tags_xml = my_xml.find('my_tags')
             if my_tags_xml.text is not None:
                 self.__my_tags = my_tags_xml.text.strip().split(self.TAG_SEPARETOR)
-
 
     @property
     def my_id(self):

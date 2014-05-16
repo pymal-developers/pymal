@@ -1,5 +1,5 @@
 from urllib import request
-from pymal.consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, MALAPPINFO_FORMAT_TIME
+from pymal.consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, XMLS_DIRECTORY
 from pymal.decorators import load
 from pymal.MALObject import MALObject, check_side_content_div
 from pymal.global_functions import connect, make_list, get_next_index
@@ -10,13 +10,13 @@ import time
 
 class Anime(MALObject):
     GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
-
+    MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_anime.xml')
     MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
-    def __init__(self, anime_id: int, anime_xml=None):
-        super().__init__()
+    def __init__(self, mal_id: int, mal_xml=None):
+        super().__init__(mal_xml=mal_xml)
 
-        self._id = anime_id
+        self._id = mal_id
         self._is_loaded = False
 
         self._mal_url = self.GLOBAL_MAL_URL.format(self._id)
@@ -29,32 +29,8 @@ class Anime(MALObject):
         ## staff from side content
         self._episodes = None
 
-        if anime_xml is not None:
-            self._title = anime_xml.find('series_title').text.strip()
-            self._synonyms = anime_xml.find('series_synonyms').text
-            if self._synonyms is not None:
-                self._synonyms = self._synonyms.strip()
-            # TODO: make this number to a string (or the string to a number?)
-            self._type = anime_xml.find('series_type').text.strip()
-            self._episodes = int(anime_xml.find('series_episodes').text.strip())
-            try:
-                self._status = int(anime_xml.find('series_status').text.strip())
-            except ValueError:
-                self._status = anime_xml.find('series_status').text.strip()
-                print('self._status=', self._status)
-            start_time = anime_xml.find('series_start').text.strip()
-            if start_time == '0000-00-00':
-                self._start_time = float('inf')
-            else:
-                start_time = start_time[:4] + start_time[4:].replace('00', '01')
-                self._start_time = time.mktime(time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
-            end_time = anime_xml.find('series_end').text.strip()
-            if end_time == '0000-00-00':
-                self._end_time = float('inf')
-            else:
-                end_time = end_time[:4] + end_time[4:].replace('00', '01')
-                self._end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
-            self._image_url = anime_xml.find('series_image').text.strip()
+        if mal_xml is not None:
+            self._episodes = int(mal_xml.find('series_episodes').text.strip())
 
     @property
     @load
@@ -72,7 +48,7 @@ class Anime(MALObject):
         content_wrapper_div = self._get_content_wrapper_div(self._mal_url, connect)
 
         # Getting title <div>
-        rank_div, self._title = content_wrapper_div.h1.contents
+        self._title = content_wrapper_div.h1.contents[1].strip()
 
         #Getting content <div>
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
@@ -90,6 +66,7 @@ class Anime(MALObject):
         # Getting anime image url <img>
         img_div = side_contents_divs[0]
         img_link = img_div.find(name="a")
+        assert img_link is not None
         self._image_url = img_link.img['src']
 
         side_contents_divs_index = 4
@@ -100,6 +77,8 @@ class Anime(MALObject):
             english_span, self._english = english_div.contents
             self._english = self._english.strip()
             side_contents_divs_index += 1
+        else:
+            self._english = ''
 
         # synonyms <div>
         synonyms_div = side_contents_divs[side_contents_divs_index]
@@ -107,6 +86,8 @@ class Anime(MALObject):
             synonyms_span, self._synonyms = synonyms_div.contents
             self._synonyms = self._synonyms.strip()
             side_contents_divs_index += 1
+        else:
+            self._synonyms = ''
 
         # japanese <div>
         japanese_div = side_contents_divs[side_contents_divs_index]
@@ -114,6 +95,8 @@ class Anime(MALObject):
             japanese_span, self._japanese = japanese_div.contents
             self._japanese = self._japanese.strip()
             side_contents_divs_index += 1
+        else:
+            self._japanese = ''
 
         # type <div>
         type_div = side_contents_divs[side_contents_divs_index]
@@ -126,10 +109,12 @@ class Anime(MALObject):
         episodes_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Episodes', episodes_div)
         episodes_span, self_episodes = episodes_div.contents
-        if 'Unknown' == self_episodes.strip():
+        self_episodes= self_episodes.strip()
+        if 'Unknown' == self_episodes:
             self._episodes = float('inf')
         else:
             self._episodes = int(self_episodes.strip())
+
         side_contents_divs_index += 1
 
         # status <div>
@@ -203,10 +188,9 @@ class Anime(MALObject):
             assert 2 == len(main_content_inner_divs), \
                 "Got len(main_content_inner_divs) == {0:d}".format(len(main_content_inner_divs))
         main_content_datas = main_content_inner_divs[1].table.tbody.findAll(name="tr", recursive=False)
-        assert 2 == len(main_content_datas), \
-            "Got len(main_content_datas) == {0:d}".format(len(main_content_datas))
 
-        synopsis_cell, main_content_other_data = main_content_datas
+        synopsis_cell = main_content_datas[0]
+        main_content_other_data = main_content_datas[1]
 
         # Getting synopsis
         synopsis_cell = synopsis_cell.td
@@ -235,10 +219,14 @@ class Anime(MALObject):
             index = next_index + 1
 
             # Getting all the data under 'Characters & Voice Actors'
-            assert 'h2' == other_data_kids[index].name, other_data_kids[index].name
-            assert 'Characters & Voice Actors' == other_data_kids[index].contents[-1], other_data_kids[index].contents[-1]
+            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(other_data_kids[index].name)
+            assert 'Characters & Voice Actors' == other_data_kids[index].contents[-1], 'Characters & Voice Actors == {0:s}'.format(other_data_kids[index].contents[-1])
 
         self._is_loaded = True
+
+    def add(self):
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '', 0)
+        print(connect(self.MY_MAL_ADD_URL.format(), data=data))
 
     def __eq__(self, other):
         if not issubclass(Anime, other):

@@ -181,7 +181,7 @@ class AccountMangas(object):
             assert my_manga_id_xml is not None
             my_manga_id = int(my_manga_id_xml.text.strip())
             try:
-                manga = MyManga(manga_id, my_manga_id, self.__connection, my_xml=xml_manga)
+                manga = MyManga(manga_id, my_manga_id, self.__connection, my_mal_xml=xml_manga)
             except AssertionError as err:
                 #print('AssertionError', err)
                 return
