@@ -7,6 +7,7 @@ class MangaTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.manga = Manga(MANGA_ID)
+        cls.manga.reload()
 
     def test_manga_id(self):
         self.assertIsInstance(self.manga.id, int)
@@ -38,11 +39,10 @@ class MangaTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.volumes, int)
 
     def test_manga_start_time(self):
-        self.assertTrue(self.manga.start_time == float('inf') or type(self.manga.start_time) == int)
+        self.assertIsInstance(self.manga.start_time, float)
 
     def test_manga_end_time(self):
-        self.assertTrue(self.manga.end_time == float('inf') or type(self.manga.end_time) == int)
-
+        self.assertIsInstance(self.manga.end_time, float)
 
     def test_manga_rating(self):
         self.assertIsInstance(self.manga.rating, int)
@@ -60,62 +60,63 @@ class MangaTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.synopsis, str)
 
     def test_manga_spinoff(self):
-        self.assertIsInstance(self.manga.spin_offs, set)
+        self.assertIsInstance(self.manga.spin_offs, list)
         for spin_off in self.manga.spin_offs:
             self.assertIsInstance(spin_off, Manga)
 
     def test_manga_adaptations(self):
-        self.assertIsInstance(self.manga.adaptations, set)
+        from pymal.Anime import Anime
+        self.assertIsInstance(self.manga.adaptations, list)
         for adaptation in self.manga.adaptations:
-            self.assertIsInstance(adaptation, Manga)
+            self.assertIsInstance(adaptation, Anime)
 
     def test_manga_characters(self):
-        self.assertIsInstance(self.manga.characters, set)
+        self.assertIsInstance(self.manga.characters, list)
         for character in self.manga.characters:
             self.assertIsInstance(character, str)
 
     def test_manga_sequals(self):
-        self.assertIsInstance(self.manga.sequals, set)
+        self.assertIsInstance(self.manga.sequals, list)
         for sequal in self.manga.sequals:
             self.assertIsInstance(sequal, Manga)
 
     def test_manga_prequel(self):
-        self.assertIsInstance(self.manga.prequel, set)
+        self.assertIsInstance(self.manga.prequel, list)
         for preque in self.manga.prequel:
             self.assertIsInstance(preque, Manga)
 
     def test_manga_spinoffs(self):
-        self.assertIsInstance(self.manga.spin_offs, set)
+        self.assertIsInstance(self.manga.spin_offs, list)
         for spin_off in self.manga.spin_offs:
             self.assertIsInstance(spin_off, Manga)
 
     def test_manga_alternative_versions(self):
-        self.assertIsInstance(self.manga.alternative_versions, set)
+        self.assertIsInstance(self.manga.alternative_versions, list)
         for alternative_version in self.manga.alternative_versions:
             self.assertIsInstance(alternative_version, Manga)
 
     def test_manga_side_story(self):
-        self.assertIsInstance(self.manga.side_stories, set)
+        self.assertIsInstance(self.manga.side_stories, list)
         for side_story in self.manga.side_stories:
             self.assertIsInstance(side_story, Manga)
 
     def test_manga_summaries(self):
-        self.assertIsInstance(self.manga.summaries, set)
+        self.assertIsInstance(self.manga.summaries, list)
         for summary in self.manga.summaries:
             self.assertIsInstance(summary, Manga)
 
     def test_manga_other(self):
-        self.assertIsInstance(self.manga.others, set)
+        self.assertIsInstance(self.manga.others, list)
         for other in self.manga.others:
             self.assertIsInstance(other, Manga)
 
     def test_manga_parent_stories(self):
-        self.assertIsInstance(self.manga.parent_stories, set)
+        self.assertIsInstance(self.manga.parent_stories, list)
         for parent_story in self.manga.parent_stories:
             self.assertIsInstance(parent_story, Manga)
 
     def test_manga_alternative_settings(self):
-        self.assertIsInstance(self.manga.alternative_settings, set)
+        self.assertIsInstance(self.manga.alternative_settings, list)
         for alternative_setting in self.manga.alternative_settings:
             self.assertIsInstance(alternative_setting, Manga)
 
