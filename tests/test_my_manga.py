@@ -1,6 +1,8 @@
 import unittest
 from pymal.Account import Account
+from pymal.consts import MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+import time
 
 
 class MyMangaTestCase(unittest.TestCase):
@@ -8,6 +10,7 @@ class MyMangaTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.manga = cls.account.mangas[0]
+        cls.manga.my_reload()
 
     def test_my_manga_my_id(self):
         self.assertIsInstance(self.manga.my_id, int)
@@ -25,10 +28,18 @@ class MyMangaTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.my_completed_volumes, int)
 
     def test_my_manga_my_score(self):
-        self.assertIsInstance(self.manga.my_score, int)
+        self.assertIsInstance(self.manga.my_start_date, str)
+        try:
+            self.assertEqual(self.manga.my_start_date, MALAPI_NONE_TIME)
+        except AssertionError:
+            time.strptime(self.manga.my_start_date, MALAPI_FORMAT_TIME)
 
     def test_my_manga_my_start_date(self):
-        self.assertTrue(self.manga.my_start_date == float('inf') or type(self.manga.my_start_date) == int)
+        self.assertIsInstance(self.manga.my_end_date, str)
+        try:
+            self.assertEqual(self.manga.my_end_date, MALAPI_NONE_TIME)
+        except AssertionError:
+            time.strptime(self.manga.my_end_date, MALAPI_FORMAT_TIME)
 
     def test_my_manga_my_end_date(self):
         self.assertTrue(self.manga.my_end_date == float('inf') or type(self.manga.my_end_date) == int)

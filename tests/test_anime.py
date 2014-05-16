@@ -33,7 +33,10 @@ class AnimeTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.type, str)
 
     def test_anime_episodes(self):
-        self.assertIsInstance(self.anime.episodes, int)
+        try:
+            self.assertIsInstance(self.anime.episodes, int)
+        except AssertionError:
+            self.assertEqual(self.anime.episodes, float('inf'))
 
     def test_anime_start_time(self):
         self.assertIsInstance(self.anime.start_time, float)
