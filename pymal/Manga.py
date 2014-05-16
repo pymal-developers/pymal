@@ -445,7 +445,8 @@ class Manga(object):
 
             # Getting all the data under 'Characters & Voice Actors'
             assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(other_data_kids[index].name)
-            assert 'Characters' == other_data_kids[index].contents[-1], 'Characters == {0:s}'.format(other_data_kids[index].contents[-1])
+            assert 'Characters' == other_data_kids[index].contents[-1],\
+                'Characters == {0:s}'.format(other_data_kids[index].contents[-1])
 
         self._is_loaded = True
 
@@ -455,10 +456,12 @@ class Manga(object):
             data = f.read()
         return data
 
-    def add(self):
+    def add(self, account):
         data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
                                                0)
-        print(connect(self.MY_MAL_ADD_URL.format(), data=data))
+        self.ret_data = account.auth_connect(self.MY_MAL_ADD_URL.format(self.id), data=data)
+        print(self.ret_data)
+        assert self.ret_data.isdigit()
 
     def __eq__(self, other):
         if not isinstance(other, Manga):

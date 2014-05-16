@@ -32,6 +32,8 @@ class MyAnime(Anime):
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_storage_value = 0.0
+        self.my_comments = ''
+        self.my_groups = ''
         self.__my_tags = None
 
         self.__my_is_rewatching = None
@@ -303,12 +305,35 @@ class MyAnime(Anime):
         self._is_my_loaded = True
 
     def to_xml(self):
-        data = self.MY_MAL_XML_TEMPLATE.format(self.my_completed_episodes, self.my_status, self.my_score,
-                                               self.my_download_episodes, self.my_storage_type, self.my_storage_value,
-                                               self.my_times_rewatched, self.my_rewatch_value, self.my_start_date,
-                                               self.my_end_date, self.my_priority, self.my_enable_discussion,
-                                               self.my_is_rewatching, '', '', '')
+        data = self.MY_MAL_XML_TEMPLATE.format(
+            self.my_completed_episodes,
+            self.my_status,
+            self.my_score,
+            self.my_download_episodes,
+            self.my_storage_type,
+            self.my_storage_value,
+            self.my_times_rewatched,
+            self.my_rewatch_value,
+            self.my_start_date,
+            self.my_end_date,
+            self.my_priority,
+            self.my_enable_discussion,
+            self.my_is_rewatching,
+            self.my_comments,
+            self.my_groups,
+            self.my_tags
+        )
         return data
 
+    def add(self, account):
+        return self
 
+    def update(self):
+        self.ret_data = self._account.auth_connect(self.MY_MAL_UPDATE_URL, data=self.to_xml())
+        print(self.ret_data)
+        assert self.ret_data == 'Updated'
 
+    def delete(self):
+        self.ret_data = self._account.auth_connect(self.MY_MAL_UPDATE_URL, data='')
+        print(self.ret_data)
+        assert self.ret_data == 'Deleted'

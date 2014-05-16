@@ -444,10 +444,12 @@ class Anime(object):
             data = f.read()
         return data
 
-    def add(self):
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 0, 0, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '',
+    def add(self, account):
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '',
                                                '')
-        print(connect(self.MY_MAL_ADD_URL.format(), data=data))
+        self.ret_data = account.auth_connect(self.MY_MAL_ADD_URL.format(self.id), data=data)
+        print(self.ret_data)
+        assert self.ret_data.isdigit()
 
     def __eq__(self, other):
         if not isinstance(other, Anime):

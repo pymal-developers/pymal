@@ -32,6 +32,8 @@ class MyManga(Manga):
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_storage_value = 0.0
+        self.my_comments = ''
+        self.my_groups = ''
         self.__my_tags = None
 
         self.__my_is_rereading = None
@@ -305,8 +307,35 @@ class MyManga(Manga):
         self._is_my_loaded = True
 
     def to_xml(self):
-        self.MY_MAL_XML_TEMPLATE.format(
-            self.my_completed_chapters, self.my_completed_volumes, self.my_status, self.my_score,
-            self.my_downloaded_chapters, self.my_times_reread, self.my_reread_value, self.my_start_date,
-            self.my_end_date, self.my_priority, self.my_is_rereading, self.my_enable_discussion, self.my_comments,
-            self.my_groups, self.my_tags, self.my_retail_volumes)
+        data = self.MY_MAL_XML_TEMPLATE.format(
+            self.my_completed_chapters,
+            self.my_completed_volumes,
+            self.my_status,
+            self.my_score,
+            self.my_downloaded_chapters,
+            self.my_times_reread,
+            self.my_reread_value,
+            self.my_start_date,
+            self.my_end_date,
+            self.my_priority,
+            self.my_is_rereading,
+            self.my_enable_discussion,
+            self.my_comments,
+            self.my_groups,
+            self.my_tags,
+            self.my_retail_volumes
+        )
+        return data
+
+    def add(self, account):
+        return self
+
+    def update(self):
+        self.ret_data = self._account.auth_connect(self.MY_MAL_UPDATE_URL, data=self.to_xml())
+        print(self.ret_data)
+        assert self.ret_data == 'Updated'
+
+    def delete(self):
+        self.ret_data = self._account.auth_connect(self.MY_MAL_UPDATE_URL, data='')
+        print(self.ret_data)
+        assert self.ret_data == 'Deleted'
