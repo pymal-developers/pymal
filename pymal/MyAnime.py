@@ -148,7 +148,7 @@ class MyAnime(Anime):
         #Getting content <div>
         content_td_divs = content_td.findAll(name="div", recursive=False)
         if 0 == len(content_td_divs):
-            data_form = 'username={0:s}&password={1:s}&sublogin=Login'
+            data_form = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
             data_form = data_form .format(self.__account._username, self.__account._password)
             data_form = data_form.encode('utf-8')
 
