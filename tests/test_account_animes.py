@@ -1,5 +1,6 @@
 import unittest
 from pymal.Account import Account
+from pymal.Anime import Anime
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
@@ -10,13 +11,12 @@ class AccountAnimeListTestCase(unittest.TestCase):
         cls.animes = cls.account.animes
 
     def test_animes_len(self):
-        """
-        errors:
-            completed: 72 != 145
-            dropped: 0 != 13
-            plan to watch: 111 != 110
-        """
         self.assertGreater(len(self.animes), 0)
+
+    def test_animes_contains(self):
+        my_anime = self.animes[0]
+        anime = Anime(my_anime.id)
+        self.assertIn(anime, self.animes)
 
 
 def main():

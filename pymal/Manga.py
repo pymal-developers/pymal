@@ -461,12 +461,16 @@ class Manga(object):
         print(connect(self.MY_MAL_ADD_URL.format(), data=data))
 
     def __eq__(self, other):
-        if not issubclass(Manga, other):
+        if not isinstance(other, Manga):
             return False
         return self.id == other.id
 
     def __hash__(self):
-        return self.id
+        import hashlib
+        hash_md5 = hashlib.md5()
+        hash_md5.update(str(self.id).encode())
+        hash_md5.update(b'Manga')
+        return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
         title = '' if self._title is None else ' ' + self._title

@@ -445,17 +445,21 @@ class Anime(object):
         return data
 
     def add(self):
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
-                                               0)
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 0, 0, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '',
+                                               '')
         print(connect(self.MY_MAL_ADD_URL.format(), data=data))
 
     def __eq__(self, other):
-        if not issubclass(Anime, other):
+        if not isinstance(other, Anime):
             return False
         return self.id == other.id
 
     def __hash__(self):
-        return self.id
+        import hashlib
+        hash_md5 = hashlib.md5()
+        hash_md5.update(str(self.id).encode())
+        hash_md5.update(b'Anime')
+        return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
         title = '' if self._title is None else ' ' + self._title

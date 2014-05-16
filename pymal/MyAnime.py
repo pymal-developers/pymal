@@ -303,4 +303,12 @@ class MyAnime(Anime):
         self._is_my_loaded = True
 
     def to_xml(self):
-        raise NotImplemented("Need to write data")
+        data = self.MY_MAL_XML_TEMPLATE.format(self.my_completed_episodes, self.my_status, self.my_score,
+                                               self.my_download_episodes, self.my_storage_type, self.my_storage_value,
+                                               self.my_times_rewatched, self.my_rewatch_value, self.my_start_date,
+                                               self.my_end_date, self.my_priority, self.my_enable_discussion,
+                                               self.my_is_rewatching, '', '', '')
+        return data
+
+
+
