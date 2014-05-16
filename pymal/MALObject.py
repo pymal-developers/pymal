@@ -43,55 +43,55 @@ class MALObject(object):
         self._id = 0
         self._is_loaded = False
 
-        self.__malurl = ''
+        self._mal_url = ''
 
         ### Getting staff from html
         ## staff from side content
-        self.__title = None
-        self.__image_url = None
-        self.__english = ''
-        self.__synonyms = None
-        self.__japanese = ''
-        self.__type = None
-        self.__status = None
-        self.__start_time = None
-        self.__end_time = None
-        self.__creators = dict()
-        self.__genres = dict()
-        self.__rating = 0
-        self.__score = 0.0
-        self.__rank = 0
-        self.__popularity = 0
+        self._title = None
+        self._image_url = None
+        self._english = ''
+        self._synonyms = None
+        self._japanese = ''
+        self._type = None
+        self._status = None
+        self._start_time = None
+        self._end_time = None
+        self._creators = dict()
+        self._genres = dict()
+        self._rating = ''
+        self._score = 0.0
+        self._rank = 0
+        self._popularity = 0
 
         ## staff from main content
         #staff from row 1
-        self.__synopsis = ''
+        self._synopsis = ''
 
         #staff from row 2
-        self.__adaptations = set()
-        self.__characters = set()
-        self.__sequals = set()
-        self.__prequel = set()
-        self.__spin_offs = set()
-        self.__alternative_versions = set()
-        self.__side_stories = set()
-        self.__summaries = set()
-        self.__others = set()
-        self.__parent_stories = set()
-        self.__alternative_settings = set()
+        self._adaptations = list()
+        self._characters = list()
+        self._sequals = list()
+        self._prequel = list()
+        self._spin_offs = list()
+        self._alternative_versions = list()
+        self._side_stories = list()
+        self._summaries = list()
+        self._others = list()
+        self._parent_stories = list()
+        self._alternative_settings = list()
 
         self.related_str_to_list_dict = {
-            'Adaptation:': self.__adaptations,
-            'Character:': self.__characters,
-            'Sequel:': self.__sequals,
-            'Prequel:': self.__prequel,
-            'Spin-off:': self.__spin_offs,
-            'Alternative version:': self.__alternative_versions,
-            'Side story:': self.__side_stories,
-            'Summary:': self.__summaries,
-            'Other:': self.__others,
-            'Parent story:': self.__parent_stories,
-            'Alternative setting:': self.__alternative_settings,
+            'Adaptation:': self._adaptations,
+            'Character:': self._characters,
+            'Sequel:': self._sequals,
+            'Prequel:': self._prequel,
+            'Spin-off:': self._spin_offs,
+            'Alternative version:': self._alternative_versions,
+            'Side story:': self._side_stories,
+            'Summary:': self._summaries,
+            'Other:': self._others,
+            'Parent story:': self._parent_stories,
+            'Alternative setting:': self._alternative_settings,
         }
 
     @property
@@ -100,152 +100,156 @@ class MALObject(object):
 
     @property
     def title(self):
-        if self.__title is None:
+        if self._title is None:
             self.reload()
-        return self.__title
+        return self._title
 
     @property
     def image_url(self):
-        if self.__image_url is None:
+        if self._image_url is None:
             self.reload()
-        return self.__image_url
+        return self._image_url
 
     @property
     @load
     def english(self):
-        return self.__english
+        return self._english
 
     @property
     def synonyms(self):
-        if self.__synonyms is None:
+        if self._synonyms is None:
             self.reload()
-        return self.__synonyms
+        return self._synonyms
 
     @property
     @load
     def japanese(self):
-        return self.__japanese
+        return self._japanese
 
     @property
     def type(self):
-        if self.__type is None:
+        if self._type is None:
             self.reload()
-        return self.__type
+        return self._type
 
     @property
     def status(self):
-        if self.__status is None:
+        if self._status is None:
             self.reload()
-        return self.__status
+        return self._status
 
     @property
     def start_time(self):
-        if self.__start_time is None:
+        if self._start_time is None:
             self.reload()
-        return self.__start_time
+        return self._start_time
 
     @property
     def end_time(self):
-        if self.__end_time is None:
+        if self._end_time is None:
             self.reload()
-        return self.__end_time
+        return self._end_time
 
     @property
     @load
     def creators(self):
-        return self.__creators
+        return self._creators
 
     @property
     @load
     def genres(self):
-        return self.__genres
+        return self._genres
 
     @property
     @load
     def rating(self):
-        return self.__rating
+        return self._rating
 
     @property
     @load
     def score(self):
-        return self.__score
+        return self._score
 
     @property
     @load
     def rank(self):
-        return self.__rank
+        return self._rank
 
     @property
     @load
     def popularity(self):
-        return self.__popularity
+        return self._popularity
 
     @property
     @load
     def synopsis(self):
-        return self.__synopsis
+        return self._synopsis
 
     # staff from main content
     @property
     @load
     def adaptations(self):
-        return self.__adaptations
+        return self._adaptations
 
     @property
     @load
     def characters(self):
-        return self.__characters
+        return self._characters
 
     @property
     @load
     def sequals(self):
-        return self.__sequals
+        return self._sequals
 
     @property
     @load
     def prequel(self):
-        return self.__prequel
+        return self._prequel
 
     @property
     @load
     def spin_offs(self):
-        return self.__spin_offs
+        return self._spin_offs
 
     @property
     @load
     def alternative_versions(self):
-        return self.__alternative_versions
+        return self._alternative_versions
 
     @property
     @load
     def side_stories(self):
-        return self.__side_stories
+        return self._side_stories
 
     @property
     @load
     def summaries(self):
-        return self.__summaries
+        return self._summaries
 
     @property
     @load
     def others(self):
-        return self.__others
+        return self._others
 
     @property
     @load
     def parent_stories(self):
-        return self.__parent_stories
+        return self._parent_stories
 
     @property
     @load
     def alternative_settings(self):
-        return self.__alternative_settings
+        return self._alternative_settings
 
     def reload(self):
         raise NotImplemented
 
     def __repr__(self):
-        return "<{0:s} id={1:d}>".format(self.__class__.__name__, self._id)
+        try:
+            title = ' ' + self.title
+        except:
+            title = ''
+        return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title, self._id)
 
     @property
     def to_xml(self):
