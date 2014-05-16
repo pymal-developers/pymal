@@ -418,7 +418,11 @@ class Manga(object):
         synopsis_cell_contents = synopsis_cell.contents
         if DEBUG:
             assert 'Synopsis' == synopsis_cell.h2.text.strip(), synopsis_cell.h2.text.strip()
-        self._synopsis = os.linesep.join([synopsis_cell_content.strip() for synopsis_cell_content in synopsis_cell_contents[1:-1] if type(synopsis_cell_content) == NavigableString])
+        self._synopsis = os.linesep.join([
+            synopsis_cell_content.strip()
+            for synopsis_cell_content in synopsis_cell_contents[1:-1]
+            if type(synopsis_cell_content) == NavigableString
+        ])
 
         # Getting other data
         main_content_other_data = main_content_other_data.td
@@ -452,7 +456,8 @@ class Manga(object):
         return data
 
     def add(self):
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '', 0)
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
+                                               0)
         print(connect(self.MY_MAL_ADD_URL.format(), data=data))
 
     def __eq__(self, other):

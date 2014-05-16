@@ -1,7 +1,6 @@
 from urllib import request
 from pymal.decorators import load
 from pymal.consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
-from pymal.decorators import load
 from pymal.MALObject import check_side_content_div, get_content_wrapper_div
 from pymal.global_functions import connect, make_list, get_next_index
 import os
@@ -241,6 +240,7 @@ class Anime(object):
     @load
     def alternative_settings(self):
         return self._alternative_settings
+
     @property
     @load
     def rating(self):
@@ -407,9 +407,9 @@ class Anime(object):
         if DEBUG:
             assert 'Synopsis' == synopsis_cell.h2.text.strip(), synopsis_cell.h2.text.strip()
         self._synopsis = os.linesep.join([
-                synopsis_cell_content.strip()
-                for synopsis_cell_content in synopsis_cell_contents[1:-1]
-                if type(synopsis_cell_content) == NavigableString
+            synopsis_cell_content.strip()
+            for synopsis_cell_content in synopsis_cell_contents[1:-1]
+            if type(synopsis_cell_content) == NavigableString
         ])
 
         # Getting other data
