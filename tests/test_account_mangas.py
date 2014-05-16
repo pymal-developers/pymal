@@ -1,5 +1,6 @@
 import unittest
 from pymal.Account import Account
+from pymal.Manga import Manga
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
@@ -11,6 +12,11 @@ class AccountMangaListTestCase(unittest.TestCase):
 
     def test_animes_len(self):
         self.assertGreater(len(self.mangas), 0)
+
+    def test_animes_contains(self):
+        my_manga = self.mangas[0]
+        manga = Manga(my_manga.id)
+        self.assertIn(manga, self.mangas)
 
 
 def main():

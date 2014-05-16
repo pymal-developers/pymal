@@ -105,17 +105,17 @@ class AccountAnimes(object):
                 return self.plan_to_watch[key]
             raise IndexError('list index out of range (the size if {0:d}'.format(len(self)))
         key = str(key)
-        for anime in self:
-            if anime.title == key:
-                return anime
+        for mal_object in self:
+            if mal_object.title == key:
+                return mal_object
         KeyError("{0:s} doesn't have the anime '{1:s}'".format(self.__class__.__name__, key))
 
     def reload(self):
         resp_data = self.__connection.connect(self.__url)
         xml_tree = ElementTree.fromstring(resp_data)
         assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(xml_tree.tag)
-        xml_animes = xml_tree.getchildren()
-        xml_general_data = xml_animes[0]
+        xml_mal_objects = xml_tree.getchildren()
+        xml_general_data = xml_mal_objects[0]
         assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(xml_general_data.tag)
         l = xml_general_data.getchildren()
         xml_user_id = l[0]
@@ -134,8 +134,11 @@ class AccountAnimes(object):
         assert 'user_dropped' == xml_user_dropped.tag, 'user_dropped == {0:s}'.format(xml_user_dropped.tag)
         xml_user_plantowatch = l[6]
         assert 'user_plantowatch' == xml_user_plantowatch.tag, 'user_plantowatch == {0:s}'.format(xml_user_plantowatch.tag)
+        xml_user_days_spent_watching = l[7]
+        assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag, 'user_days_spent_watching == {0:s}'.format(xml_user_days_spent_watching.tag)
+        self.user_days_spent_watching = float(xml_user_days_spent_watching.text.strip())
 
-        xml_animes = xml_animes[1:]
+        xml_mal_objects = xml_mal_objects[1:]
 
         self.__watching.clear()
         self.__completed.clear()
@@ -144,12 +147,11 @@ class AccountAnimes(object):
         self.__plan_to_watch.clear()
 
         threads = []
-        for xml_anime in xml_animes:
-            pass
+        for xml_mal_object in xml_mal_objects:
             if DEBUG:
-                self.__get_anime(xml_anime)
+                self.__get_my_mal_object(xml_mal_object)
             else:
-                thread = Thread(target=self.__get_anime, args=(xml_anime, ))
+                thread = Thread(target=self.__get_my_mal_object, args=(xml_mal_object, ))
                 thread.start()
                 threads.append(thread)
 
@@ -168,24 +170,15 @@ class AccountAnimes(object):
         #    print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
         self._is_loaded = True
 
-    def __get_anime(self, anime_xml: ElementTree.Element):
-        anime_id_xml = anime_xml.find('series_animedb_id')
-        assert anime_id_xml is not None
-        anime_id = int(anime_id_xml.text.strip())
-        my_anime_id_xml = anime_xml.find('my_id')
-        assert my_anime_id_xml is not None
-        my_anime_id = int(my_anime_id_xml.text.strip())
-        try:
-            anime = MyAnime(anime_id, my_anime_id, self.__connection, my_xml=anime_xml)
-        except AssertionError as err:
-            #print('AssertionError', err)
-            return
-        try:
-            self.map_of_lists[anime.my_status].append(anime)
-            #print("Added", anime, "to ", anime.my_status)
-        except KeyError as err:
-            #print("Got an key error:", err)
-            pass
+    def __get_my_mal_object(self, xml_mal_object: ElementTree.Element):
+        mal_object_id_xml = xml_mal_object.find('series_animedb_id')
+        assert mal_object_id_xml is not None
+        mal_object_id = int(mal_object_id_xml.text.strip())
+        my_mal_object_id_xml = xml_mal_object.find('my_id')
+        assert my_mal_object_id_xml is not None
+        my_mal_object_id = int(my_mal_object_id_xml.text.strip())
+        mal_object = MyAnime(mal_object_id, my_mal_object_id, self.__connection, my_mal_xml=xml_mal_object)
+        self.map_of_lists[mal_object.my_status].append(mal_object)
 
     def __len__(self):
         return len(self.watching) + len(self.completed) + len(self.on_hold) + len(self.dropped) +\
