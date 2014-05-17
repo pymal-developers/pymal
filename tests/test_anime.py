@@ -4,7 +4,7 @@ from pymal.Anime import Anime
 from tests.constants_for_testing import ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
-class AnimeReloadTestCase(unittest.TestCase):
+class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.anime = Anime(ANIME_ID)
@@ -117,7 +117,7 @@ class AnimeReloadTestCase(unittest.TestCase):
             self.assertIsInstance(alternative_setting, Anime)
 
 
-class AnimeNoReloadTestCase(unittest.TestCase):
+class NoReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

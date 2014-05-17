@@ -6,7 +6,7 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 import time
 
 
-class MyAnimeReloadTestCase(unittest.TestCase):
+class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
@@ -23,7 +23,7 @@ class MyAnimeReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.my_is_rewatching, bool)
 
     def test_my_manga_my_completed_episodes(self):
-        self.assertIsInstance(self.anime.my_completed_episodes, int
+        self.assertIsInstance(self.anime.my_completed_episodes, int)
 
     def test_my_tags(self):
         self.assertIsInstance(self.anime.my_tags, str)
@@ -79,7 +79,7 @@ class MyAnimeReloadTestCase(unittest.TestCase):
             self.assertTrue(False)
 
 
-class MyAnimeNoReloadTestCase(unittest.TestCase):
+class NoReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

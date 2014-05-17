@@ -4,7 +4,7 @@ from pymal.Manga import Manga
 from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
-class MangaReloadTestCase(unittest.TestCase):
+class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.manga = Manga(MANGA_ID)
@@ -121,7 +121,7 @@ class MangaReloadTestCase(unittest.TestCase):
             self.assertIsInstance(alternative_setting, Manga)
 
 
-class MangaNoReloadTestCase(unittest.TestCase):
+class NoReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

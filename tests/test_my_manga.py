@@ -6,7 +6,7 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 import time
 
 
-class MyMangaReloadTestCase(unittest.TestCase):
+class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
@@ -82,7 +82,7 @@ class MyMangaReloadTestCase(unittest.TestCase):
             self.assertTrue(False)
 
 
-class MyAnimeNoReloadTestCase(unittest.TestCase):
+class NoReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
@@ -94,8 +94,8 @@ class MyAnimeNoReloadTestCase(unittest.TestCase):
     def test_my_status(self):
         self.assertIsInstance(self.manga.my_status, int)
 
-    def test_my_is_rewatching(self):
-        self.assertIsInstance(self.manga.my_is_rewatching, bool)
+    def test_my_is_rereading(self):
+        self.assertIsInstance(self.manga.my_is_rereading, bool)
 
     def test_my_completed_chapters(self):
         self.assertIsInstance(self.manga.my_completed_chapters, int)
@@ -120,14 +120,14 @@ class MyAnimeNoReloadTestCase(unittest.TestCase):
         except AssertionError:
             time.strptime(self.manga.my_end_date, MALAPI_FORMAT_TIME)
 
-    def test_my_times_rewatched(self):
-        self.assertIsInstance(self.manga.my_times_rewatched, int)
+    def test_my_times_reread(self):
+        self.assertIsInstance(self.manga.my_times_reread, int)
 
-    def test_my_rewatch_value(self):
-        self.assertIsInstance(self.manga.my_rewatch_value, int)
+    def test_my_reread_value(self):
+        self.assertIsInstance(self.manga.my_reread_value, int)
 
     def test_equal(self):
-        anime = Manga(self.anime.id)
+        anime = Manga(self.manga.id)
         self.assertEqual(anime, self.manga)
 
 

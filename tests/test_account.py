@@ -5,7 +5,7 @@ from pymal.AccountMangas import AccountMangas
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
-class AccountInitTestCase(unittest.TestCase):
+class InitTestCase(unittest.TestCase):
     def test_init_not_auth(self):
         account = Account(ACCOUNT_TEST_USERNAME)
         self.assertFalse(account.is_auth)
@@ -33,7 +33,7 @@ class AccountInitTestCase(unittest.TestCase):
         self.assertFalse(account.is_auth)
 
 
-class AccountFunctionsTestCase(unittest.TestCase):
+class FunctionsTestCase(unittest.TestCase):
     def setUp(self):
         self.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
