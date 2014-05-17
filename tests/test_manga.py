@@ -3,7 +3,7 @@ from pymal.Manga import Manga
 from tests.constants_for_testing import MANGA_ID
 
 
-class MangaTestCase(unittest.TestCase):
+class MangaReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.manga = Manga(MANGA_ID)

@@ -10,10 +10,10 @@ class AccountAnimeListTestCase(unittest.TestCase):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.animes = cls.account.animes
 
-    def test_animes_len(self):
+    def test_len(self):
         self.assertGreater(len(self.animes), 0)
 
-    def test_animes_contains(self):
+    def test_contains(self):
         my_anime = self.animes[0]
         anime = Anime(my_anime.id)
         self.assertIn(anime, self.animes)

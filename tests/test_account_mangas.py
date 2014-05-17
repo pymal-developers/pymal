@@ -10,10 +10,10 @@ class AccountMangaListTestCase(unittest.TestCase):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.mangas = cls.account.mangas
 
-    def test_animes_len(self):
+    def test_len(self):
         self.assertGreater(len(self.mangas), 0)
 
-    def test_animes_contains(self):
+    def test_contains(self):
         my_manga = self.mangas[0]
         manga = Manga(my_manga.id)
         self.assertIn(manga, self.mangas)
