@@ -21,6 +21,7 @@ Testing
 =======
 To run the tests that come with MAL Client:
 1. Install nose2 (A really good package for running tests - `pip install nose2`). For more data look on [nose2](https://github.com/nose-devs/nose2 "nose2").
+  If you decided to install nose 2, i recommend on the plugin nose2-cov for code statistics - `pip install nose2-cov`.
 2. Navigate to the python-mal directory
 3. Create a text file named account_settings.json and put your MAL username and password in dict under 'password' and 'username'.
 4. Run `nose2` or `python -m unittest` with a lot of parameters that i don't know.

@@ -21,7 +21,8 @@ test dependencies
     Please don't add anything else like pytest and his friends. If it is really needed ask.
  * Recommended to install nose2 (we have a config for it in the main folder and its really easy).
     With pip `pip install nose2`.
- * Ofcorse you can use the native python unittest with `python -m unittest`.
+    Together with it, install the the plugin nose2-cov - `pip install nose2-cov`.
+ * Of course you can use the native python unittest with `python -m unittest`.
 
 Usage
 =====
