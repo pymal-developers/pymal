@@ -3,7 +3,7 @@ import requests
 from urllib import request
 
 
-s = requests.session()
+__SESSION = requests.session()
 
 
 def url_fixer(url: str) -> str:
@@ -27,9 +27,9 @@ def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) ->
 
     headers['User-Agent'] = USER_AGENT
     if data is not None:
-        sock = s.post(url, data=data, headers=headers, auth=auth)
+        sock = __SESSION.post(url, data=data, headers=headers, auth=auth)
     else:
-        sock = s.get(url, headers=headers, auth=auth)
+        sock = __SESSION.get(url, headers=headers, auth=auth)
     return sock
 
 
