@@ -1,1 +1,4 @@
 *.pyc
+htmlcov/
+nose2-junit.xml
+.coverage*
