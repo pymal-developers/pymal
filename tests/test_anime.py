@@ -1,6 +1,7 @@
 import unittest
+from pymal.Account import Account
 from pymal.Anime import Anime
-from tests.constants_for_testing import ANIME_ID
+from tests.constants_for_testing import ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
 class AnimeReloadTestCase(unittest.TestCase):
@@ -85,11 +86,6 @@ class AnimeReloadTestCase(unittest.TestCase):
         for preque in self.anime.prequel:
             self.assertIsInstance(preque, Anime)
 
-    def test_spinoffs(self):
-        self.assertIsInstance(self.anime.spin_offs, list)
-        for spin_off in self.anime.spin_offs:
-            self.assertIsInstance(spin_off, Anime)
-
     def test_alternative_versions(self):
         self.assertIsInstance(self.anime.alternative_versions, list)
         for alternative_version in self.anime.alternative_versions:
@@ -119,6 +115,40 @@ class AnimeReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.alternative_settings, list)
         for alternative_setting in self.anime.alternative_settings:
             self.assertIsInstance(alternative_setting, Anime)
+
+
+class AnimeNoReloadTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.anime = cls.account.animes[0]
+
+    def test_id(self):
+        self.assertIsInstance(self.anime.id, int)
+
+    def test_title(self):
+        self.assertIsInstance(self.anime.english, str)
+
+    def test_image_url(self):
+        self.assertIsInstance(self.anime.image_url, str)
+
+    def test_synonyms(self):
+        self.assertIsInstance(self.anime.synonyms, str)
+
+    def test_type(self):
+        self.assertIsInstance(self.anime.type, str)
+
+    def test_episodes(self):
+        try:
+            self.assertIsInstance(self.anime.episodes, int)
+        except AssertionError:
+            self.assertEqual(self.anime.episodes, float('inf'))
+
+    def test_start_time(self):
+        self.assertIsInstance(self.anime.start_time, float)
+
+    def test_end_time(self):
+        self.assertIsInstance(self.anime.end_time, float)
 
 
 def main():

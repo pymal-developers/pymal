@@ -1,6 +1,7 @@
 import unittest
+from pymal.Account import Account
 from pymal.Manga import Manga
-from tests.constants_for_testing import MANGA_ID
+from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
 class MangaReloadTestCase(unittest.TestCase):
@@ -89,11 +90,6 @@ class MangaReloadTestCase(unittest.TestCase):
         for preque in self.manga.prequel:
             self.assertIsInstance(preque, Manga)
 
-    def test_manga_spinoffs(self):
-        self.assertIsInstance(self.manga.spin_offs, list)
-        for spin_off in self.manga.spin_offs:
-            self.assertIsInstance(spin_off, Manga)
-
     def test_manga_alternative_versions(self):
         self.assertIsInstance(self.manga.alternative_versions, list)
         for alternative_version in self.manga.alternative_versions:
@@ -123,6 +119,47 @@ class MangaReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.alternative_settings, list)
         for alternative_setting in self.manga.alternative_settings:
             self.assertIsInstance(alternative_setting, Manga)
+
+
+class MangaNoReloadTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.manga = cls.account.animes[0]
+
+    def test_id(self):
+        self.assertIsInstance(self.manga.id, int)
+
+    def test_title(self):
+        self.assertIsInstance(self.manga.english, str)
+
+    def test_image_url(self):
+        self.assertIsInstance(self.manga.image_url, str)
+
+    def test_synonyms(self):
+        self.assertIsInstance(self.manga.synonyms, str)
+
+    def test_type(self):
+        self.assertIsInstance(self.manga.type, str)
+
+    def test_manga_chapters(self):
+        try:
+            self.assertIsInstance(self.manga.chapters, int)
+        except AssertionError:
+            self.assertEqual(self.manga.chapters, float('inf'))
+            self.assertEqual(self.manga.chapters, self.manga.volumes)
+
+    def test_manga_volumes(self):
+        try:
+            self.assertIsInstance(self.manga.volumes, int)
+        except AssertionError:
+            self.assertEqual(self.manga.volumes, float('inf'))
+
+    def test_start_time(self):
+        self.assertIsInstance(self.manga.start_time, float)
+
+    def test_end_time(self):
+        self.assertIsInstance(self.manga.end_time, float)
 
 
 def main():
