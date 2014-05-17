@@ -48,6 +48,8 @@ class MyAnime(Anime):
             self.__my_status = int(my_mal_xml.find('my_status').text.strip())
             if my_mal_xml.find('my_rewatching').text is not None:
                 self.__my_is_rewatching = bool(int(my_mal_xml.find('my_rewatching').text.strip()))
+            else:
+                self.__my_is_rewatching = False
             self.__my_completed_episodes = int(my_mal_xml.find('my_watched_episodes').text.strip())
             self.__my_score = int(my_mal_xml.find('my_score').text.strip())
             my_start_date = my_mal_xml.find('my_start_date').text.strip()

@@ -34,15 +34,11 @@ class MyMangaReloadTestCase(unittest.TestCase):
     def test_my_comments(self):
         self.assertIsInstance(self.manga.my_comments, str)
 
-    def test_my_fansub_group(self):
-        self.assertIsInstance(self.manga.my_fansub_group, str)
+    def test_my_fan_sub_group(self):
+        self.assertIsInstance(self.manga.my_fan_sub_group, str)
 
     def test_my_score(self):
         self.assertIsInstance(self.manga.my_start_date, str)
-        try:
-            self.assertEqual(self.manga.my_start_date, MALAPI_NONE_TIME)
-        except AssertionError:
-            time.strptime(self.manga.my_start_date, MALAPI_FORMAT_TIME)
 
     def test_my_start_date(self):
         self.assertIsInstance(self.manga.my_end_date, str)
@@ -52,7 +48,11 @@ class MyMangaReloadTestCase(unittest.TestCase):
             time.strptime(self.manga.my_end_date, MALAPI_FORMAT_TIME)
 
     def test_my_end_date(self):
-        self.assertTrue(self.manga.my_end_date == float('inf') or type(self.manga.my_end_date) == int)
+        self.assertIsInstance(self.manga.my_end_date, str)
+        try:
+            self.assertEqual(self.manga.my_end_date, MALAPI_NONE_TIME)
+        except AssertionError:
+            time.strptime(self.manga.my_end_date, MALAPI_FORMAT_TIME)
 
     def test_my_priority(self):
         self.assertIsInstance(self.manga.my_priority, int)
@@ -81,9 +81,54 @@ class MyMangaReloadTestCase(unittest.TestCase):
             print(err)
             self.assertTrue(False)
 
+
+class MyAnimeNoReloadTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.manga = cls.account.mangas[0]
+
+    def test_my_id(self):
+        self.assertIsInstance(self.manga.my_id, int)
+
+    def test_my_status(self):
+        self.assertIsInstance(self.manga.my_status, int)
+
+    def test_my_is_rewatching(self):
+        self.assertIsInstance(self.manga.my_is_rewatching, bool)
+
+    def test_my_completed_chapters(self):
+        self.assertIsInstance(self.manga.my_completed_chapters, int)
+
+    def test_my_completed_volumes(self):
+        self.assertIsInstance(self.manga.my_completed_volumes, int)
+
+    def test_my_tags(self):
+        self.assertIsInstance(self.manga.my_tags, str)
+
+    def test_my_start_date(self):
+        self.assertIsInstance(self.manga.my_start_date, str)
+        try:
+            self.assertEqual(self.manga.my_start_date, MALAPI_NONE_TIME)
+        except AssertionError:
+            time.strptime(self.manga.my_start_date, MALAPI_FORMAT_TIME)
+
+    def test_my_end_date(self):
+        self.assertIsInstance(self.manga.my_end_date, str)
+        try:
+            self.assertEqual(self.manga.my_end_date, MALAPI_NONE_TIME)
+        except AssertionError:
+            time.strptime(self.manga.my_end_date, MALAPI_FORMAT_TIME)
+
+    def test_my_times_rewatched(self):
+        self.assertIsInstance(self.manga.my_times_rewatched, int)
+
+    def test_my_rewatch_value(self):
+        self.assertIsInstance(self.manga.my_rewatch_value, int)
+
     def test_equal(self):
-        manga = Manga(self.manga.id)
-        self.assertEqual(manga, self.manga)
+        anime = Manga(self.anime.id)
+        self.assertEqual(anime, self.manga)
 
 
 def main():

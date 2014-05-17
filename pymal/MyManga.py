@@ -49,6 +49,8 @@ class MyManga(Manga):
             self.__my_status = int(my_mal_xml.find('my_status').text.strip())
             if my_mal_xml.find('my_rereadingg').text is not None:
                 self.__my_is_rereading = bool(int(my_mal_xml.find('my_rereadingg').text.strip()))
+            else:
+                self.__my_is_rereading = False
             self.__my_completed_episodes = int(my_mal_xml.find('my_read_chapters').text.strip())
             self.__my_completed_volumes = int(my_mal_xml.find('my_read_volumes').text.strip())
             self.__my_score = int(my_mal_xml.find('my_score').text.strip())
