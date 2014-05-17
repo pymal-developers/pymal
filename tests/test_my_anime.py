@@ -31,8 +31,8 @@ class ReloadTestCase(unittest.TestCase):
     def test_my_comments(self):
         self.assertIsInstance(self.anime.my_comments, str)
 
-    def test_my_fan_sub_group(self):
-        self.assertIsInstance(self.anime.my_fan_sub_group, str)
+    def test_my_fan_sub_groups(self):
+        self.assertIsInstance(self.anime.my_fan_sub_groups, str)
 
     def test_my_score(self):
         self.assertIsInstance(self.anime.my_score, int)
