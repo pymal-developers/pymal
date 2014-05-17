@@ -63,7 +63,9 @@ class MyManga(Manga):
                 self.__my_end_date = time.strftime(MALAPI_FORMAT_TIME, time.strptime(my_end_date, MALAPPINFO_FORMAT_TIME))
             self.__my_reread_value = int(my_mal_xml.find('my_rereading_chap').text.strip())
             my_tags_xml = my_mal_xml.find('my_tags')
-            if my_tags_xml.text is not None:
+            if my_tags_xml.text is None:
+                self.__my_tags = ''
+            else:
                 self.__my_tags = my_tags_xml.text.strip().split(self.TAG_SEPARATOR)
 
     @property
