@@ -7,5 +7,5 @@ __settings_dict = json.load(open(TEST_SETTINGS, "r"))
 ACCOUNT_TEST_USERNAME = __settings_dict['username']
 ACCOUNT_TEST_PASSWORD = __settings_dict['password']
 
-ANIME_ID = 1887
-MANGA_ID = 587
+ANIME_ID = __settings_dict['ANIME_ID']
+MANGA_ID = __settings_dict['MANGA_ID']
