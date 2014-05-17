@@ -63,7 +63,7 @@ class Account(object):
         return True
 
     def auth_connect(self, url: str, data: str or None=None, headers: dict or None=None) -> str:
-        assert self.__auth_object is not None, "Not auth yet!"
+        assert self.is_auth, "Not auth yet!"
         return _connect(url, data=data, headers=headers, auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
