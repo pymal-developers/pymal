@@ -12,6 +12,7 @@ class MyManga(Manga):
     MY_MAL_URL = request.urljoin(HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
     MY_MAL_DELETE_URL = request.urljoin(HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
     MY_MAL_UPDATE_URL = request.urljoin(HOST_NAME, 'api/mangalist/update/{0:d}.xml')
+    DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, mal_id: int or Manga, my_mal_id, account, my_mal_xml: None=None):
         if type(mal_id) == Manga:
@@ -32,8 +33,8 @@ class MyManga(Manga):
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_storage_value = 0.0
-        self.my_comments = ''
-        self.my_groups = ''
+        self.__my_comments = ''
+        self.__my_fan_sub_groups = ''
         self.__my_tags = None
 
         self.__my_is_rereading = None
@@ -55,12 +56,14 @@ class MyManga(Manga):
             if my_start_date == MALAPPINFO_NONE_TIME:
                 self.__my_start_date = MALAPI_NONE_TIME
             else:
-                self.__my_start_date = time.strftime(MALAPI_FORMAT_TIME, time.strptime(my_start_date, MALAPPINFO_FORMAT_TIME))
+                my_start_date = time.strptime(my_start_date, MALAPPINFO_FORMAT_TIME)
+                self.__my_start_date = time.strftime(MALAPI_FORMAT_TIME, my_start_date)
             my_end_date = my_mal_xml.find('my_finish_date').text.strip()
             if my_end_date == MALAPPINFO_NONE_TIME:
                 self.__my_end_date = MALAPI_NONE_TIME
             else:
-                self.__my_end_date = time.strftime(MALAPI_FORMAT_TIME, time.strptime(my_end_date, MALAPPINFO_FORMAT_TIME))
+                my_end_date = time.strptime(my_end_date, MALAPPINFO_FORMAT_TIME)
+                self.__my_end_date = time.strftime(MALAPI_FORMAT_TIME, my_end_date)
             self.__my_reread_value = int(my_mal_xml.find('my_rereading_chap').text.strip())
             my_tags_xml = my_mal_xml.find('my_tags')
             if my_tags_xml.text is None:
@@ -146,6 +149,22 @@ class MyManga(Manga):
             self.my_reload()
         return self.__my_reread_value
 
+    @property
+    def my_tags(self):
+        if self.__my_tags is None:
+            self.my_reload()
+        return self.__my_tags
+
+    @property
+    @my_load
+    def my_comments(self):
+        return self.__my_comments
+
+    @property
+    @my_load
+    def my_fan_sub_groups(self):
+        return self.__my_fan_sub_groups
+
     def my_reload(self):
         # Getting content wrapper <div>
         content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
@@ -160,10 +179,7 @@ class MyManga(Manga):
         #Getting content <div>
         content_td_divs = content_td.findAll(name="div", recursive=False)
         if 0 == len(content_td_divs):
-            data_form = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
-            data_form = data_form .format(self._account._username, self._account._password)
-            data_form = data_form.encode('utf-8')
-
+            data_form = self.DATA_FORM.format(self._account._username, self._account._password).encode('utf-8')
             self._account.connect(self.MY_LOGIN_URL, data=data_form)
 
             # Getting content wrapper <div>
@@ -200,7 +216,8 @@ class MyManga(Manga):
         contents_divs_index += 1
 
         # Getting read chapters
-        read_input = content_rows[contents_divs_index].find(name="input", attrs={"id": "completedEpsID", "name": "completed_eps"})
+        read_input = content_rows[contents_divs_index].find(name="input", attrs={"id": "completedEpsID",
+                                                                                 "name": "completed_eps"})
         assert read_input is not None
         self.__my_completed_episodes = int(read_input['value'])
         contents_divs_index += 1
@@ -214,7 +231,9 @@ class MyManga(Manga):
         contents_divs_index += 1
 
         # Getting my_tags...
-        # tag_content = content_rows[contents_divs_index]
+        tag_content = content_rows[contents_divs_index]
+        tag_textarea = tag_content.find(name="textarea", attrs={"name": "tags"})
+        self.__my_tags = tag_textarea.text
         contents_divs_index += 1
 
         # Getting start date
@@ -256,7 +275,9 @@ class MyManga(Manga):
         contents_divs_index += 1
 
         # Getting fansub group
-        # content_rows[contents_divs_index]
+        fansub_group_content = content_rows[contents_divs_index]
+        fansub_group_input = fansub_group_content.find(name="input", attrs={"name": "fansub_group"})
+        self.__my_fan_sub_groups = fansub_group_input.text
         contents_divs_index += 1
 
         # Getting priority
@@ -300,7 +321,9 @@ class MyManga(Manga):
         contents_divs_index += 1
 
         # Getting comments
-        #content_rows[contents_divs_index]
+        comment_content = content_rows[contents_divs_index]
+        comment_textarea = comment_content.find(name="textarea", attrs={"name": "list_comments"})
+        self.__my_comments = comment_textarea.text
         contents_divs_index += 1
 
         # Getting discuss flag
@@ -323,7 +346,7 @@ class MyManga(Manga):
             self.my_is_rereading,
             self.my_enable_discussion,
             self.my_comments,
-            self.my_groups,
+            self.my_fan_sub_groups,
             self.my_tags,
             self.my_retail_volumes
         )
