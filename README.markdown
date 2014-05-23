@@ -28,6 +28,22 @@ To run the tests that come with MAL Client:
 
 Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
 
+    ----------- coverage: platform win32, python 3.4.0-final-0 -----------
+    Name                     Stmts   Miss Branch BrMiss     Cover
+    -------------------------------------------------------------
+    pymal\Account               46     10      4      2    76.00%
+    pymal\AccountAnimes        112     38     24     15    61.03%
+    pymal\AccountMangas        112     38     24     15    61.03%
+    pymal\Anime                232     34     48     16    82.14%
+    pymal\Manga                242     48     56     22    76.51%
+    pymal\MyAnime              216     33     36     14    81.35%
+    pymal\MyManga              218    149     36     18    34.25%
+    pymal\Season                34     10      2      1    69.44%
+    pymal\Seasons               52     23     10      4    56.45%
+    pymal\global_functions      55     14     20      5    74.67%
+    -------------------------------------------------------------
+    TOTAL                     1319    397    260    112    67.76%
+
 Usage
 =====
 Most objects data can be required by not authentication mal, but all list manipulations on MAL requires authentication.
