@@ -67,7 +67,7 @@ class AccountAnimes(object):
         return self.__plan_to_watch
 
     def __contains__(self, item: MyAnime) -> bool:
-        return item in self.watching or item in self.completed or item in self.on_hold or item in self.dropped or item in self.plan_to_watch
+        return any(map(lambda x: item == x, self))
 
     def __iter__(self):
         class AccountAnimesIterator(object):
@@ -181,8 +181,7 @@ class AccountAnimes(object):
         self.map_of_lists[mal_object.my_status].append(mal_object)
 
     def __len__(self):
-        return len(self.watching) + len(self.completed) + len(self.on_hold) + len(self.dropped) +\
-               len(self.plan_to_watch)
+        return sum([1 for obj in self])
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))

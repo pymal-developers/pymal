@@ -67,7 +67,7 @@ class AccountMangas(object):
         return self.__plan_to_read
 
     def __contains__(self, item: MyManga) -> bool:
-        return item in self.reading or item in self.completed or item in self.on_hold or item in self.dropped or item in self.plan_to_read
+        return any(map(lambda x: item == x, self))
 
     def __iter__(self):
         class AccountMangasIterator(object):
@@ -181,8 +181,7 @@ class AccountMangas(object):
         self.map_of_lists[mal_object.my_status].append(mal_object)
 
     def __len__(self):
-        return len(self.reading) + len(self.completed) + len(self.on_hold) + len(self.dropped) +\
-               len(self.plan_to_read)
+        return sum([1 for obj in self])
 
     def __repr__(self):
         return "<User mangas' number is {0:d}>".format(len(self))

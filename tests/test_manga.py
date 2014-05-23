@@ -1,7 +1,8 @@
 import unittest
 from pymal.Account import Account
-from pymal.Manga import Manga
+from pymal.Anime import Anime
 from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from pymal.Manga import Manga
 
 
 class ReloadTestCase(unittest.TestCase):
@@ -70,7 +71,6 @@ class ReloadTestCase(unittest.TestCase):
             self.assertIsInstance(spin_off, Manga)
 
     def test_manga_adaptations(self):
-        from pymal.Anime import Anime
         self.assertIsInstance(self.manga.adaptations, list)
         for adaptation in self.manga.adaptations:
             self.assertIsInstance(adaptation, Anime)

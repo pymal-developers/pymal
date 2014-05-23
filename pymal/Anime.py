@@ -1,3 +1,4 @@
+import hashlib
 from urllib import request
 from pymal.decorators import load
 from pymal.consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
@@ -456,7 +457,6 @@ class Anime(object):
         return self.id == other.id
 
     def __hash__(self):
-        import hashlib
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(b'Anime')

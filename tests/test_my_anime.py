@@ -4,6 +4,7 @@ from pymal.Anime import Anime
 from pymal.consts import MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 import time
+from xml.etree import ElementTree
 
 
 class ReloadTestCase(unittest.TestCase):
@@ -70,7 +71,6 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.my_rewatch_value, int)
 
     def test_to_xml(self):
-        from xml.etree import ElementTree
         xml = self.anime.to_xml()
         try:
             ElementTree.fromstring(xml)
