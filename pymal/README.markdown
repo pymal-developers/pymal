@@ -66,3 +66,9 @@ Can manipulate the anime data in the account's list.
 This object and `MyAnime` should have a very close interface (except for volumes-chapters vs episodes).
 A basic object to obtain account specific data about a manga.
 Can manipulate the manga data in the account's list.
+
+### Seasons
+This object is loaded from a different db.
+
+#### Season
+An inner object of Seasons. Don't use it.

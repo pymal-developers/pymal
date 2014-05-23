@@ -1,4 +1,4 @@
-__all__ = ['Account', 'Anime', 'Manga']
+__all__ = ['Account', 'Anime', 'Manga', 'Seasons']
 
 
 def get_version():
