@@ -114,10 +114,10 @@ class AccountAnimes(object):
         resp_data = self.__connection.connect(self.__url)
         xml_tree = ElementTree.fromstring(resp_data)
         assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(xml_tree.tag)
-        xml_mal_objects = xml_tree.getchildren()
+        xml_mal_objects = list(xml_tree)
         xml_general_data = xml_mal_objects[0]
         assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(xml_general_data.tag)
-        l = xml_general_data.getchildren()
+        l = list(xml_general_data)
         xml_user_id = l[0]
         assert 'user_id' == xml_user_id.tag, 'user_id == {0:s}'.format(xml_user_id.tag)
         assert self.__connection.is_user_by_id(int(xml_user_id.text.strip())), int(xml_user_id.text.strip())

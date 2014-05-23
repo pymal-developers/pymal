@@ -49,7 +49,7 @@ class Account(object):
         xml_user = ElementTree.fromstring(data)
 
         assert 'user' == xml_user.tag, 'user == {0:s}'.format(xml_user.tag)
-        l = xml_user.getchildren()
+        l = list(xml_user)
         xml_username = l[1]
         assert 'username' == xml_username.tag, 'username == {0:s}'.format(xml_username.tag)
         assert self.is_user_by_name(xml_username.text.strip()), 'username = {0:s}'.format(xml_username.text.strip())
