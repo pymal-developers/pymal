@@ -1,8 +1,7 @@
 from urllib import request
 from pymal.decorators import load
 from pymal.consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
-from pymal.MALObject import check_side_content_div, get_content_wrapper_div
-from pymal.global_functions import connect, make_list, get_next_index
+from pymal.global_functions import connect, make_list, get_next_index, check_side_content_div, get_content_wrapper_div
 import os
 from bs4.element import NavigableString
 import time

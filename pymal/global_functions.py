@@ -1,6 +1,8 @@
-from pymal.consts import USER_AGENT, HOST_NAME
+from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP
 import requests
 from urllib import request
+import bs4
+import time
 
 
 __SESSION = requests.session()
@@ -84,3 +86,35 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
         else:
             self_list.append(request.urljoin(HOST_NAME, list_of_tags[i]['href']))
     return n_i
+
+
+def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
+    span_node = div_node.span
+    assert span_node is not None, div_node
+    expected_text += ":"
+    return ['dark_text'] == span_node['class'] and expected_text == span_node.text.strip()
+
+
+def __get_myanimelist_div(url: str, connection_function) -> bs4.element.Tag:
+    got_robot = False
+    for try_number in range(RETRY_NUMBER):
+        time.sleep(RETRY_SLEEP)
+        data = connection_function(url)
+        html = bs4.BeautifulSoup(data, "html5lib").html
+        if html.head.find(name="meta", attrs={"name": "robots"}) is not None:
+            got_robot = True
+            continue
+        div = html.body.find(name="div", attrs={"id": 'myanimelist'})
+        if div is not None:
+            return div
+    assert not got_robot, "Got robot."
+    assert False, "my anime list div wasnt found"
+
+
+def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
+    myanimelist_div = __get_myanimelist_div(url, connection_function)
+
+    # Getting content wrapper <div>
+    content_wrapper_div = myanimelist_div.find(name="div", attrs={"id": "contentWrapper"}, recursive=False)
+    assert content_wrapper_div is not None
+    return content_wrapper_div
