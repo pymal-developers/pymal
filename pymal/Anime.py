@@ -452,9 +452,13 @@ class Anime(object):
         assert self.ret_data.isdigit()
 
     def __eq__(self, other):
-        if not isinstance(other, Anime):
-            return False
-        return self.id == other.id
+        if isinstance(other, Anime):
+            return self.id == other.id
+        elif isinstance(other, int):
+            return self.id == other
+        elif isinstance(other, str) and other.isdigit():
+            return self.id == int(other)
+        return False
 
     def __hash__(self):
         hash_md5 = hashlib.md5()
