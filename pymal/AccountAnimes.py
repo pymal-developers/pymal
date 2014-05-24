@@ -7,11 +7,11 @@ from urllib import request
 
 
 class AccountAnimes(object):
-    URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=anime")
+    __URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=anime")
 
     def __init__(self, username: str, connection):
         self.__connection = connection
-        self.__url = self.URL.format(username)
+        self.__url = self.__URL.format(username)
 
         self.__watching = []
         self.__completed = []

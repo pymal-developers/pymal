@@ -8,8 +8,8 @@ import bs4
 
 
 class Seasons(object):
-    HOSTNAME = 'http://github.com'
-    SEASONS_URL = request.urljoin(HOSTNAME, 'erengy/taiga/tree/master/data/db/season')
+    __HOSTNAME = 'http://github.com'
+    __SEASONS_URL = request.urljoin(__HOSTNAME, 'erengy/taiga/tree/master/data/db/season')
 
     def __init__(self):
         self.__seasons = set()
@@ -21,14 +21,14 @@ class Seasons(object):
         return self.__seasons
 
     def reload(self):
-        sock = requests.get(self.SEASONS_URL)
+        sock = requests.get(self.__SEASONS_URL)
         table = bs4.BeautifulSoup(sock.text).find(name="table", attrs={'class': 'files'})
         assert table is not None
 
         contents = table.findAll(name='td', attrs={'class': 'content'})
         assert 0 < len(contents)
         for i in contents:
-            xml_url = request.urljoin(self.HOSTNAME, i.span.a['href'])
+            xml_url = request.urljoin(self.__HOSTNAME, i.span.a['href'])
             sock = requests.get(xml_url)
             xml_html = sock.text
 

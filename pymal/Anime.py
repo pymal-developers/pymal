@@ -9,15 +9,15 @@ import time
 
 
 class Anime(object):
-    GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
-    MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_anime.xml')
-    MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
+    __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
+    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_anime.xml')
+    __MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
     def __init__(self, mal_id: int, mal_xml=None):
         self._id = mal_id
         self._is_loaded = False
 
-        self._mal_url = self.GLOBAL_MAL_URL.format(self._id)
+        self._mal_url = self.__GLOBAL_MAL_URL.format(self._id)
 
         ### Getting staff from html
         ## staff from side content
@@ -440,14 +440,14 @@ class Anime(object):
 
     @property
     def MY_MAL_XML_TEMPLATE(self):
-        with open(self.MY_MAL_XML_TEMPLATE_PATH) as f:
+        with open(self.__MY_MAL_XML_TEMPLATE_PATH) as f:
             data = f.read()
         return data
 
     def add(self, account):
         data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '',
                                                '')
-        self.ret_data = account.auth_connect(self.MY_MAL_ADD_URL.format(self.id), data=data)
+        self.ret_data = account.auth_connect(self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
         assert self.ret_data.isdigit()
 

@@ -9,10 +9,10 @@ from urllib import parse
 
 
 class Account(object):
-    AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
-    SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
-    ANIME_SEARCH_URL = SEARCH_URL.format('anime')
-    MANGA_SEARCH_URL = SEARCH_URL.format('manga')
+    __AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
+    __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
+    __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
+    __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
     def __init__(self, username: str, password: str or None=None):
         self._username = username
@@ -47,12 +47,12 @@ class Account(object):
     def search(self, search_line: str, is_anime: bool=True) -> set:
         params = {'q': search_line}
         if is_anime:
-            base_url = self.ANIME_SEARCH_URL
+            base_url = self.__ANIME_SEARCH_URL
             from pymal.Anime import Anime
             searched_object = Anime
             account_object_list = self.animes
         else:
-            base_url = self.MANGA_SEARCH_URL
+            base_url = self.__MANGA_SEARCH_URL
             from pymal.Anime import Manga
             searched_object = Manga
             account_object_list = self.mangas
@@ -76,7 +76,7 @@ class Account(object):
     def change_password(self, password: str) -> bool:
         """Checking if the new password is valid"""
         self.__auth_object = HTTPBasicAuth(self._username, password)
-        data = self.auth_connect(self.AUTH_CHECKER_URL)
+        data = self.auth_connect(self.__AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
             self.__auth_object = None
             return False
