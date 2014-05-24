@@ -1,13 +1,16 @@
 from xml.etree import ElementTree
+import bs4
 from pymal.global_functions import _connect, connect
 from pymal.decorators import load
 from pymal.AccountAnimes import AccountAnimes
 from pymal.AccountMangas import AccountMangas
 from requests.auth import HTTPBasicAuth
+from urllib import parse
 
 
 class Account(object):
     AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
+    SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
 
     def __init__(self, username: str, password: str or None=None):
         self._username = username
@@ -38,6 +41,36 @@ class Account(object):
         self.__animes = AccountAnimes(self._username, self)
         self.__mangas = AccountMangas(self._username, self)
         self._is_loaded = True
+
+    def search(self, search_line: str, is_anime: bool=True) -> list:
+        if is_anime:
+            search_word = 'anime'
+            from pymal.Anime import Anime
+            searched_object = Anime
+            account_object_list = self.animes
+        else:
+            search_word = 'manga'
+            from pymal.Anime import Manga
+            searched_object = Manga
+            account_object_list = self.mangas
+        base_url = self.SEARCH_URL.format(search_word)
+        params = {'q': search_line}
+        url_parts = list(parse.urlparse(base_url))
+        query = dict(parse.parse_qsl(url_parts[4]))
+        query.update(params)
+        url_parts[4] = parse.urlencode(query)
+        search_url = parse.urlunparse(url_parts)
+        data = self.auth_connect(search_url)
+        entries = bs4.BeautifulSoup(data).body.anime.findAll(name='entry', recursive=False)
+        ret_list = list()
+        for entry in entries:
+            id = int(entry.id.text)
+            if id in account_object_list:
+                obj = [x for x in account_object_list if x == id][0]
+            else:
+                obj = searched_object(id)
+            ret_list.append(obj)
+        return ret_list
 
     def change_password(self, password: str) -> bool:
         """Checking if the new password is valid"""

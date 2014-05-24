@@ -464,9 +464,13 @@ class Manga(object):
         assert self.ret_data.isdigit()
 
     def __eq__(self, other):
-        if not isinstance(other, Manga):
-            return False
-        return self.id == other.id
+        if isinstance(other, Manga):
+            return self.id == other.id
+        elif isinstance(other, int):
+            return self.id == other
+        elif isinstance(other, str) and other.isdigit():
+            return self.id == int(other)
+        return False
 
     def __hash__(self):
         hash_md5 = hashlib.md5()
