@@ -1,13 +1,18 @@
 from xml.etree import ElementTree
+import bs4
 from pymal.global_functions import _connect, connect
 from pymal.decorators import load
 from pymal.AccountAnimes import AccountAnimes
 from pymal.AccountMangas import AccountMangas
 from requests.auth import HTTPBasicAuth
+from urllib import parse
 
 
 class Account(object):
-    AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
+    __AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
+    __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
+    __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
+    __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
     def __init__(self, username: str, password: str or None=None):
         self._username = username
@@ -39,10 +44,39 @@ class Account(object):
         self.__mangas = AccountMangas(self._username, self)
         self._is_loaded = True
 
+    def search(self, search_line: str, is_anime: bool=True) -> set:
+        params = {'q': search_line}
+        if is_anime:
+            base_url = self.__ANIME_SEARCH_URL
+            from pymal.Anime import Anime
+            searched_object = Anime
+            account_object_list = self.animes
+        else:
+            base_url = self.__MANGA_SEARCH_URL
+            from pymal.Anime import Manga
+            searched_object = Manga
+            account_object_list = self.mangas
+
+        url_parts = list(parse.urlparse(base_url))
+        query = dict(parse.parse_qsl(url_parts[4]))
+        query.update(params)
+        url_parts[4] = parse.urlencode(query)
+        search_url = parse.urlunparse(url_parts)
+
+        data = self.auth_connect(search_url)
+        entries = bs4.BeautifulSoup(data).body.anime.findAll(name='entry', recursive=False)
+
+        def get_object(entry):
+            object_id = int(entry.id.text)
+            if object_id in account_object_list:
+                return list(filter(lambda x: x == object_id, account_object_list))[0]
+            return searched_object(object_id)
+        return set(map(get_object, entries))
+
     def change_password(self, password: str) -> bool:
         """Checking if the new password is valid"""
         self.__auth_object = HTTPBasicAuth(self._username, password)
-        data = self.auth_connect(self.AUTH_CHECKER_URL)
+        data = self.auth_connect(self.__AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
             self.__auth_object = None
             return False

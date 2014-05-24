@@ -7,22 +7,23 @@ import time
 
 
 class MyManga(Manga):
-    MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
-    TAG_SEPARATOR = ';'
-    MY_MAL_URL = request.urljoin(HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
-    MY_MAL_DELETE_URL = request.urljoin(HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
-    MY_MAL_UPDATE_URL = request.urljoin(HOST_NAME, 'api/mangalist/update/{0:d}.xml')
-    DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
+    __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
+    __TAG_SEPARATOR = ';'
+    __MY_MAL_URL = request.urljoin(HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
+    __MY_MAL_DELETE_URL = request.urljoin(HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
+    __MY_MAL_UPDATE_URL = request.urljoin(HOST_NAME, 'api/mangalist/update/{0:d}.xml')
+    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, mal_id: int or Manga, my_mal_id, account, my_mal_xml: None=None):
         if type(mal_id) == Manga:
             mal_id = mal_id.id
         Manga.__init__(self, mal_id, mal_xml=my_mal_xml)
 
-        self.__my_mal_url = self.MY_MAL_URL.format(self.id)
+        self.__my_mal_url = self.__MY_MAL_URL.format(self.id)
 
         self._is_my_loaded = False
         self._account = account
+        self.__data_form = self.__DATA_FORM.format(self._account._username, self._account._password).encode('utf-8')
 
         self.__my_mal_id = my_mal_id
         self.__my_status = None
@@ -71,7 +72,7 @@ class MyManga(Manga):
             if my_tags_xml.text is None:
                 self.__my_tags = ''
             else:
-                self.__my_tags = my_tags_xml.text.strip().split(self.TAG_SEPARATOR)
+                self.__my_tags = my_tags_xml.text.strip().split(self.__TAG_SEPARATOR)
 
     @property
     def my_id(self):
@@ -171,26 +172,18 @@ class MyManga(Manga):
         # Getting content wrapper <div>
         content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
 
+        if content_wrapper_div.find(name='div', attrs={'class': 'badresult'}) is not None:
+            self._account.connect(self.__MY_LOGIN_URL, data=self.__data_form)
+
+            # Getting content wrapper <div>
+            content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
+
         #Getting content <td>
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
         assert content_div is not None
 
         content_td = content_div.table.tr.td
         assert content_td is not None
-
-        #Getting content <div>
-        content_td_divs = content_td.findAll(name="div", recursive=False)
-        if 0 == len(content_td_divs):
-            data_form = self.DATA_FORM.format(self._account._username, self._account._password).encode('utf-8')
-            self._account.connect(self.MY_LOGIN_URL, data=data_form)
-
-            # Getting content wrapper <div>
-            content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
-            #Getting content <td>
-            content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-
-            content_td = content_div.table.tr.td
-            assert content_td is not None
 
         #Getting content <div>
         content_td_divs = content_td.findAll(name="div", recursive=False)
@@ -358,11 +351,11 @@ class MyManga(Manga):
         return self
 
     def update(self):
-        self.ret_data = self._account.auth_connect(self.MY_MAL_UPDATE_URL, data=self.to_xml())
+        self.ret_data = self._account.auth_connect(self.__MY_MAL_UPDATE_URL, data=self.to_xml())
         print(self.ret_data)
         assert self.ret_data == 'Updated'
 
     def delete(self):
-        self.ret_data = self._account.auth_connect(self.MY_MAL_UPDATE_URL, data='')
+        self.ret_data = self._account.auth_connect(self.__MY_MAL_UPDATE_URL, data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'

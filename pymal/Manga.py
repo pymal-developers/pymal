@@ -9,15 +9,15 @@ import time
 
 
 class Manga(object):
-    GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
-    MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
-    MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
+    __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
+    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
+    __MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, mal_id: int, mal_xml=None):
         self._id = mal_id
         self._is_loaded = False
 
-        self._mal_url = self.GLOBAL_MAL_URL.format(self._id)
+        self._mal_url = self.__GLOBAL_MAL_URL.format(self._id)
 
         ### Getting staff from html
         ## staff from side content
@@ -452,21 +452,25 @@ class Manga(object):
 
     @property
     def MY_MAL_XML_TEMPLATE(self):
-        with open(self.MY_MAL_XML_TEMPLATE_PATH) as f:
+        with open(self.__MY_MAL_XML_TEMPLATE_PATH) as f:
             data = f.read()
         return data
 
     def add(self, account):
         data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
                                                0)
-        self.ret_data = account.auth_connect(self.MY_MAL_ADD_URL.format(self.id), data=data)
+        self.ret_data = account.auth_connect(self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
         assert self.ret_data.isdigit()
 
     def __eq__(self, other):
-        if not isinstance(other, Manga):
-            return False
-        return self.id == other.id
+        if isinstance(other, Manga):
+            return self.id == other.id
+        elif isinstance(other, int):
+            return self.id == other
+        elif isinstance(other, str) and other.isdigit():
+            return self.id == int(other)
+        return False
 
     def __hash__(self):
         hash_md5 = hashlib.md5()

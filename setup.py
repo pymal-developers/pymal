@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-# Dynamically calculate the version based on django.VERSION.
+# Dynamically calculate the version based on pymal.VERSION.
 version = __import__('pymal').get_version()
 
 
@@ -10,11 +10,9 @@ setup(
     packages=['pymal'],
     version=version,
     description='A pythonapi for the website MyAnimeList (or MAL).',
-    author='pymal-developersn',
-    author_email='tomergelber@gmail.com',
-    url='https://bitbucket.org/pymal-developers/pyma/',
-    #download_url=
-    keywords = ["encoding", "MyAnimeList", "MAL"],
+    author='pymal-developers',
+    url='https://bitbucket.org/pymal-developers/pymal/',
+    keywords=["MyAnimeList", "MAL", "pymal"],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
