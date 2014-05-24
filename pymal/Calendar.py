@@ -79,4 +79,3 @@ class Calendar(object):
         month_jumps = dateutils.relativedelta(months=1)
         while self.__parse_calendar_html(request.urljoin(self.HOST_NAME, now_datetime.strftime(self.QUERY_CALENDAR))):
             now_datetime += month_jumps
-        print(self.__ical.subcomponents)
