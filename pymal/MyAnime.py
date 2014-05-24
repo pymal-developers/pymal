@@ -23,6 +23,7 @@ class MyAnime(Anime):
 
         self._is_my_loaded = False
         self._account = account
+        self.__data_form = self.DATA_FORM.format(self._account._username, self._account._password).encode('utf-8')
 
         self.__my_mal_id = my_mal_id
         self.__my_status = None
@@ -169,26 +170,18 @@ class MyAnime(Anime):
         # Getting content wrapper <div>
         content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
 
+        if content_wrapper_div.find(name='div', attrs={'class': 'badresult'}) is not None:
+            self._account.connect(self.MY_LOGIN_URL, data=self.__data_form)
+
+            # Getting content wrapper <div>
+            content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
+
         #Getting content <td>
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
         assert content_div is not None
 
         content_td = content_div.table.tr.td
         assert content_td is not None
-
-        #Getting content <div>
-        content_td_divs = content_td.findAll(name="div", recursive=False)
-        if 0 == len(content_td_divs):
-            data_form = self.DATA_FORM.format(self._account._username, self._account._password).encode('utf-8')
-            self._account.connect(self.MY_LOGIN_URL, data=data_form)
-
-            # Getting content wrapper <div>
-            content_wrapper_div = get_content_wrapper_div(self.__my_mal_url, self._account.auth_connect)
-            #Getting content <td>
-            content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-
-            content_td = content_div.table.tr.td
-            assert content_td is not None
 
         #Getting content <div>
         content_td_divs = content_td.findAll(name="div", recursive=False)
