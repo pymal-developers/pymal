@@ -1,5 +1,6 @@
 from urllib import request
-from pymal.consts import HOST_NAME, MALAPPINFO_FORMAT_TIME, MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
+from pymal.consts import HOST_NAME, MALAPI_NONE_TIME, MALAPPINFO_FORMAT_TIME,\
+    MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME
 from pymal.decorators import my_load
 from pymal.Anime import Anime
 from pymal.global_functions import get_content_wrapper_div
@@ -17,7 +18,8 @@ class MyAnime(Anime):
         HOST_NAME, 'api/animelist/update/{0:d}.xml')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
-    def __init__(self, mal_id: int or Anime, my_mal_id, account, my_mal_xml: None=None):
+    def __init__(self, mal_id: int or Anime, my_mal_id, account,
+                 my_mal_xml: None=None):
         if type(mal_id) == Anime:
             mal_id = mal_id.id
         Anime.__init__(self, mal_id, mal_xml=my_mal_xml)
@@ -183,7 +185,9 @@ class MyAnime(Anime):
         content_wrapper_div = get_content_wrapper_div(
             self.__my_mal_url, self._account.auth_connect)
 
-        if content_wrapper_div.find(name='div', attrs={'class': 'badresult'}) is not None:
+        bas_result = content_wrapper_div.find(name='div',
+                                              attrs={'class': 'badresult'})
+        if bas_result is not None:
             self._account.connect(self.__MY_LOGIN_URL, data=self.__data_form)
 
             # Getting content wrapper <div>
@@ -200,15 +204,13 @@ class MyAnime(Anime):
 
         # Getting content <div>
         content_td_divs = content_td.findAll(name="div", recursive=False)
-        assert 2 == len(content_td_divs), "Got len(content_td_divs) == {0:d}".format(
-            len(content_td_divs))
+        assert 2 == len(content_td_divs), len(content_td_divs)
 
         content_div = content_td_divs[1]
 
         # Getting content rows <tr>
         content_form = content_div.form
-        assert 'myAnimeForm' == content_form[
-            'id'], "Got content_form['id'] == {0:s}".format(content_form['id'])
+        assert 'myAnimeForm' == content_form['id'], content_form['id']
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
 
@@ -219,7 +221,10 @@ class MyAnime(Anime):
             name="select", attrs={"id": "status", "name": "status"})
         assert status_select is not None
         status_selected_options = [
-            x for x in status_select.findAll(name="option") if 'selected' in x.attrs]
+            x
+            for x in status_select.findAll(name="option")
+            if 'selected' in x.attrs
+        ]
         assert 1 == len(status_selected_options)
         self.__my_status = int(status_selected_options[0]['value'])
 
@@ -230,8 +235,9 @@ class MyAnime(Anime):
         contents_divs_index += 1
 
         # Getting watched episodes
-        watched_input = content_rows[contents_divs_index].find(name="input", attrs={"id": "completedEpsID",
-                                                                                    "name": "completed_eps"})
+        watched_input = content_rows[contents_divs_index].\
+            find(name="input", attrs={"id": "completedEpsID",
+                                      "name": "completed_eps"})
         assert watched_input is not None
         self.__my_completed_episodes = int(watched_input['value'])
         contents_divs_index += 1
@@ -337,8 +343,9 @@ class MyAnime(Anime):
         contents_divs_index += 1
 
         # Getting downloaded episodes
-        downloaded_episodes_node = content_rows[contents_divs_index].find(
-            name="input", attrs={'id': "epDownloaded", 'name': 'list_downloaded_eps'})
+        downloaded_episodes_node = content_rows[contents_divs_index].\
+            find(name="input", attrs={'id': "epDownloaded",
+                                      'name': 'list_downloaded_eps'})
         assert downloaded_episodes_node is not None
         self.__my_download_episodes == int(downloaded_episodes_node['value'])
         contents_divs_index += 1
