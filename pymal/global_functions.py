@@ -15,7 +15,8 @@ def url_fixer(url: str) -> str:
     return url.decode('utf-8')
 
 
-def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) -> requests.Response:
+def _connect(url: str, data: str=None, headers: dict or None=None,
+             auth=None) -> requests.Response:
     """
     :param url: url
     :param data: data to post
@@ -35,7 +36,8 @@ def _connect(url: str, data: str=None, headers: dict or None=None, auth=None) ->
     return sock
 
 
-def connect(url: str, data: str=None, headers: dict or None=None, auth=None) -> str:
+def connect(url: str, data: str=None, headers: dict or None=None,
+            auth=None) -> str:
     """
     :param url: url
     :param data: data to post
@@ -81,10 +83,14 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
         assert 'a' == list_of_tags[i].name, list_of_tags[i].name
         if '/anime/' in list_of_tags[i]['href']:
             self_list.append(
-                Anime(int(list_of_tags[i]['href'].split('/anime/')[1].split('/')[0])))
+                Anime(int(
+                    list_of_tags[i]['href'].split('/anime/')[1].split('/')[0]
+                )))
         elif '/manga/' in list_of_tags[i]['href']:
             self_list.append(
-                Manga(int(list_of_tags[i]['href'].split('/manga/')[1].split('/')[0])))
+                Manga(int(
+                    list_of_tags[i]['href'].split('/manga/')[1].split('/')[0]
+                )))
         else:
             self_list.append(
                 request.urljoin(HOST_NAME, list_of_tags[i]['href']))
@@ -95,7 +101,9 @@ def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
     span_node = div_node.span
     assert span_node is not None, div_node
     expected_text += ":"
-    return ['dark_text'] == span_node['class'] and expected_text == span_node.text.strip()
+    if ['dark_text'] != span_node['class']:
+        return False
+    return expected_text == span_node.text.strip()
 
 
 def __get_myanimelist_div(url: str, connection_function) -> bs4.element.Tag:

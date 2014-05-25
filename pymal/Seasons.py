@@ -61,7 +61,8 @@ class Seasons(object):
         return any(map(lambda x: item in x, self.seasons))
 
     def __repr__(self):
-        return (os.linesep + '\t').join(map(str, ['<Seasons>'] + list(self.seasons)))
+        return (os.linesep + '\t').join(map(str, ['<Seasons>'] +
+                                            list(self.seasons)))
 
     def __iter__(self):
         class SeasonsIterator(object):

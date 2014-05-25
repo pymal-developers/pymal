@@ -51,4 +51,5 @@ class Season(object):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        return "<{0:s} {1:s} {2:d}>".format(self.__class__.__name__, self.season_name, self.year)
+        return "<{0:s} {1:s} {2:d}>".format(self.__class__.__name__,
+                                            self.season_name, self.year)
