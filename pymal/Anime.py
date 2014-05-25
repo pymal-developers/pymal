@@ -9,8 +9,18 @@ from pymal.decorators import load
 from pymal.consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
 from pymal.global_functions import connect, make_list, get_next_index, check_side_content_div, get_content_wrapper_div
 
+__all__ = ['Anime']
+
 
 class Anime(object):
+    __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
+               'type', 'status', 'start_time', 'end_time', 'creators',
+               'genres', 'score', 'rank', 'popularity', 'synopsis',
+               'adaptations', 'characters', 'sequals', 'prequel', 'spin_offs',
+               'alternative_versions', 'side_stories', 'summaries', 'others',
+               'parent_stories', 'alternative_settings', 'rating', 'episodes',
+               'reload', 'add']
+    
     __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
     __MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_anime.xml')
     __MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')

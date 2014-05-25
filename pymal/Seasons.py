@@ -8,8 +8,12 @@ import bs4
 from pymal.decorators import load
 from pymal.Season import Season
 
+__all__ = ['Seasons']
+
 
 class Seasons(object):
+    __all__ = ['seasons', 'reload']
+
     __HOSTNAME = 'http://github.com'
     __SEASONS_URL = request.urljoin(__HOSTNAME, 'erengy/taiga/tree/master/data/db/season')
 

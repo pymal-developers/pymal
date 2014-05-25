@@ -6,8 +6,18 @@ from pymal.decorators import my_load
 from pymal.Manga import Manga
 from pymal.global_functions import get_content_wrapper_div
 
+__all__ = ['MyManga']
+
 
 class MyManga(Manga):
+    __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
+               'my_start_date', 'my_end_date', 'my_priority',
+               'my_storage_type', 'my_storage_value', 'my_is_rereading',
+               'my_completed_chapters', 'my_completed_volumes',
+               'my_downloaded_chapters', 'my_times_reread', 'my_reread_value',
+               'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
+               'update', 'delete']
+
     __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(HOST_NAME, 'panel.php?go=editmanga&id={0:d}')

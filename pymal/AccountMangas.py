@@ -6,8 +6,13 @@ from pymal.consts import HOST_NAME, DEBUG
 from pymal.decorators import load
 from pymal.MyManga import MyManga
 
+__all__ = ['AccountMangas']
+
 
 class AccountMangas(object):
+    __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
+               'reload']
+
     __URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=manga")
 
     def __init__(self, username: str, connection):
