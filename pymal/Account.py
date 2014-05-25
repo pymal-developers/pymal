@@ -71,7 +71,10 @@ class Account(object):
         def get_object(entry):
             object_id = int(entry.id.text)
             if object_id in account_object_list:
-                return list(filter(lambda x: x == object_id, account_object_list))[0]
+                return list(filter(
+                    lambda x: x == object_id,
+                    account_object_list
+                ))[0]
             return searched_object(object_id)
         return set(map(get_object, entries))
 
@@ -87,10 +90,10 @@ class Account(object):
         assert 'user' == xml_user.tag, 'user == {0:s}'.format(xml_user.tag)
         l = list(xml_user)
         xml_username = l[1]
-        assert 'username' == xml_username.tag, 'username == {0:s}'.format(
-            xml_username.tag)
-        assert self.is_user_by_name(
-            xml_username.text.strip()), 'username = {0:s}'.format(xml_username.text.strip())
+        assert 'username' == xml_username.tag,\
+            'username == {0:s}'.format(xml_username.tag)
+        assert self.is_user_by_name(xml_username.text.strip()),\
+            'username = {0:s}'.format(xml_username.text.strip())
 
         xml_id = l[0]
         assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
@@ -100,9 +103,11 @@ class Account(object):
 
         return True
 
-    def auth_connect(self, url: str, data: str or None=None, headers: dict or None=None) -> str:
+    def auth_connect(self, url: str, data: str or None=None,
+                     headers: dict or None=None) -> str:
         assert self.is_auth, "Not auth yet!"
-        return _connect(url, data=data, headers=headers, auth=self.__auth_object).text.strip()
+        return _connect(url, data=data, headers=headers,
+                        auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
         return username == self._username

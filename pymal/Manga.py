@@ -1,8 +1,10 @@
 import hashlib
 from urllib import request
 from pymal.decorators import load
-from pymal.consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
-from pymal.global_functions import connect, make_list, get_next_index, check_side_content_div, get_content_wrapper_div
+from pymal.consts import HOST_NAME, DEBUG, MALAPPINFO_FORMAT_TIME, XMLS_DIRECTORY,\
+    SITE_PUBLISHED_FORMAT_TIME
+from pymal.global_functions import connect, make_list, get_next_index,\
+    check_side_content_div, get_content_wrapper_div
 import os
 from bs4.element import NavigableString
 import time
@@ -11,7 +13,8 @@ import time
 class Manga(object):
     __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
     __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
-        os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
+        os.path.dirname(__file__), XMLS_DIRECTORY,
+        'myanimelist_official_api_manga.xml')
     __MY_MAL_ADD_URL = request.urljoin(
         HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
@@ -443,11 +446,14 @@ class Manga(object):
         # Getting all the data under 'Related Manga'
         index = 0
         index = get_next_index(index, other_data_kids)
-        if 'h2' == other_data_kids[index].name and 'Related Manga' == other_data_kids[index].text.strip():
+        if 'h2' == other_data_kids[index].name and\
+           'Related Manga' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = make_list(self.related_str_to_list_dict[
-                                  other_data_kids[index].strip()], index, other_data_kids)
+                index = make_list(
+                    self.related_str_to_list_dict[
+                        other_data_kids[index].strip()],
+                    index, other_data_kids)
         else:
             index -= 2
         next_index = get_next_index(index, other_data_kids)
@@ -461,8 +467,7 @@ class Manga(object):
             assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(
                 other_data_kids[index].name)
             assert 'Characters' == other_data_kids[index].contents[-1],\
-                'Characters == {0:s}'.format(
-                    other_data_kids[index].contents[-1])
+                other_data_kids[index].contents[-1]
 
         self._is_loaded = True
 
@@ -473,8 +478,9 @@ class Manga(object):
         return data
 
     def add(self, account):
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
-                                               0)
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0,
+                                               '00000000', '00000000', 0,
+                                               False, False, '', '', '', 0)
         self.ret_data = account.auth_connect(
             self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
@@ -497,4 +503,5 @@ class Manga(object):
 
     def __repr__(self):
         title = '' if self._title is None else ' ' + self._title
-        return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title, self._id)
+        return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title,
+                                              self._id)

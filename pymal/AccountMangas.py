@@ -86,7 +86,9 @@ class AccountMangas(object):
                 value = self.values[self.location]
                 self.location += 1
                 return value
-        return AccountMangasIterator(self.reading + self.completed + self.on_hold + self.dropped + self.plan_to_read)
+        return AccountMangasIterator(self.reading + self.completed +
+                                     self.on_hold + self.dropped +
+                                     self.plan_to_read)
 
     def __getitem__(self, key: str or int) -> list:
         if type(key) == int:
@@ -129,30 +131,26 @@ class AccountMangas(object):
         assert self.__connection.is_user_by_id(
             int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
         xml_user_name = l[1]
-        assert 'user_name' == xml_user_name.tag, 'user_name == {0:s}'.format(
-            xml_user_name.tag)
+        assert 'user_name' == xml_user_name.tag, xml_user_name.tag
         assert self.__connection.is_user_by_name(
             xml_user_name.text.strip()), xml_user_name.text.strip()
         xml_user_reading = l[2]
-        assert 'user_reading' == xml_user_reading.tag, 'user_reading == {0:s}'.format(
-            xml_user_reading.tag)
+        assert 'user_reading' == xml_user_reading.tag, xml_user_reading.tag
         xml_user_completed = l[3]
-        assert 'user_completed' == xml_user_completed.tag, 'user_completed == {0:s}'.format(
-            xml_user_completed.tag)
+        assert 'user_completed' == xml_user_completed.tag,\
+            xml_user_completed.tag
         xml_user_onhold = l[4]
-        assert 'user_onhold' == xml_user_onhold.tag, 'user_onhold == {0:s}'.format(
-            xml_user_onhold.tag)
+        assert 'user_onhold' == xml_user_onhold.tag, xml_user_onhold.tag
         xml_user_dropped = l[5]
-        assert 'user_dropped' == xml_user_dropped.tag, 'user_dropped == {0:s}'.format(
-            xml_user_dropped.tag)
+        assert 'user_dropped' == xml_user_dropped.tag, xml_user_dropped.tag
         xml_user_plantoread = l[6]
-        assert 'user_plantoread' == xml_user_plantoread.tag, 'user_plantoread == {0:s}'.format(
-            xml_user_plantoread.tag)
-        xml_user_days_spent_watching = l[7]
-        assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag, 'user_days_spent_watching == {0:s}'.format(
-            xml_user_days_spent_watching.tag)
+        assert 'user_plantowatch' == xml_user_plantoread.tag,\
+            xml_user_plantoread.tag
+        xml_user_days_spent_reading = l[7]
+        assert 'spent_watching' == xml_user_days_spent_reading.tag,\
+            xml_user_days_spent_reading.tag
         self.user_days_spent_watching = float(
-            xml_user_days_spent_watching.text.strip())
+            xml_user_days_spent_reading.text.strip())
 
         xml_mal_objects = xml_mal_objects[1:]
 
@@ -184,8 +182,8 @@ class AccountMangas(object):
         my_mal_object_id_xml = xml_mal_object.find('my_id')
         assert my_mal_object_id_xml is not None
         my_mal_object_id = int(my_mal_object_id_xml.text.strip())
-        mal_object = MyManga(
-            mal_object_id, my_mal_object_id, self.__connection, my_mal_xml=xml_mal_object)
+        mal_object = MyManga(mal_object_id, my_mal_object_id,
+                             self.__connection, my_mal_xml=xml_mal_object)
         self.map_of_lists[mal_object.my_status].append(mal_object)
 
     def __len__(self):
