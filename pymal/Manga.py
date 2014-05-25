@@ -10,8 +10,10 @@ import time
 
 class Manga(object):
     __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "manga/{0:d}")
-    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
-    __MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
+    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
+        os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_manga.xml')
+    __MY_MAL_ADD_URL = request.urljoin(
+        HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, mal_id: int, mal_xml=None):
         self._id = mal_id
@@ -19,8 +21,8 @@ class Manga(object):
 
         self._mal_url = self.__GLOBAL_MAL_URL.format(self._id)
 
-        ### Getting staff from html
-        ## staff from side content
+        # Getting staff from html
+        # staff from side content
         self._title = None
         self._image_url = None
         self._english = ''
@@ -39,11 +41,11 @@ class Manga(object):
         self._chapters = None
         self._volumes = None
 
-        ## staff from main content
-        #staff from row 1
+        # staff from main content
+        # staff from row 1
         self._synopsis = ''
 
-        #staff from row 2
+        # staff from row 2
         self._adaptations = list()
         self._characters = list()
         self._sequals = list()
@@ -87,14 +89,17 @@ class Manga(object):
             if start_time == '0000-00-00':
                 self._start_time = float('inf')
             else:
-                start_time = start_time[:4] + start_time[4:].replace('00', '01')
-                self._start_time = time.mktime(time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
+                start_time = start_time[:4] + \
+                    start_time[4:].replace('00', '01')
+                self._start_time = time.mktime(
+                    time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
             end_time = mal_xml.find('series_end').text.strip()
             if end_time == '0000-00-00':
                 self._end_time = float('inf')
             else:
                 end_time = end_time[:4] + end_time[4:].replace('00', '01')
-                self._end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
+                self._end_time = time.mktime(
+                    time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
             self._image_url = mal_xml.find('series_image').text.strip()
 
             self._chapters = int(mal_xml.find('series_chapters').text.strip())
@@ -261,8 +266,9 @@ class Manga(object):
         # Getting title <div>
         self._title = content_wrapper_div.h1.contents[1].strip()
 
-        #Getting content <div>
-        content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
+        # Getting content <div>
+        content_div = content_wrapper_div.find(
+            name="div", attrs={"id": "content"}, recursive=False)
         if DEBUG:
             assert content_div is not None
 
@@ -355,11 +361,13 @@ class Manga(object):
         if '?' == start_time:
             self._start_time = float('inf')
         else:
-            self._start_time = time.mktime(time.strptime(start_time, SITE_PUBLISHED_FORMAT_TIME))
+            self._start_time = time.mktime(
+                time.strptime(start_time, SITE_PUBLISHED_FORMAT_TIME))
         if '?' == end_time:
             self._end_time = float('inf')
         else:
-            self._end_time = time.mktime(time.strptime(end_time, SITE_PUBLISHED_FORMAT_TIME))
+            self._end_time = time.mktime(
+                time.strptime(end_time, SITE_PUBLISHED_FORMAT_TIME))
         side_contents_divs_index += 1
 
         # genres <div>
@@ -404,11 +412,14 @@ class Manga(object):
 
         # Data from main content
         main_content = contents[1]
-        main_content_inner_divs = main_content.findAll(name='div', recursive=False)
+        main_content_inner_divs = main_content.findAll(
+            name='div', recursive=False)
         if DEBUG:
             assert 2 == len(main_content_inner_divs), \
-                "Got len(main_content_inner_divs) == {0:d}".format(len(main_content_inner_divs))
-        main_content_datas = main_content_inner_divs[1].table.tbody.findAll(name="tr", recursive=False)
+                "Got len(main_content_inner_divs) == {0:d}".format(
+                    len(main_content_inner_divs))
+        main_content_datas = main_content_inner_divs[
+            1].table.tbody.findAll(name="tr", recursive=False)
 
         synopsis_cell = main_content_datas[0]
         main_content_other_data = main_content_datas[1]
@@ -417,7 +428,8 @@ class Manga(object):
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
         if DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text.strip(), synopsis_cell.h2.text.strip()
+            assert 'Synopsis' == synopsis_cell.h2.text.strip(
+            ), synopsis_cell.h2.text.strip()
         self._synopsis = os.linesep.join([
             synopsis_cell_content.strip()
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
@@ -434,19 +446,23 @@ class Manga(object):
         if 'h2' == other_data_kids[index].name and 'Related Manga' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = make_list(self.related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
+                index = make_list(self.related_str_to_list_dict[
+                                  other_data_kids[index].strip()], index, other_data_kids)
         else:
             index -= 2
         next_index = get_next_index(index, other_data_kids)
 
         if DEBUG:
-            assert next_index - index == 2, "{0:d} - {1:d}".format(next_index, index)
+            assert next_index - \
+                index == 2, "{0:d} - {1:d}".format(next_index, index)
             index = next_index + 1
 
             # Getting all the data under 'Characters & Voice Actors'
-            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(other_data_kids[index].name)
+            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(
+                other_data_kids[index].name)
             assert 'Characters' == other_data_kids[index].contents[-1],\
-                'Characters == {0:s}'.format(other_data_kids[index].contents[-1])
+                'Characters == {0:s}'.format(
+                    other_data_kids[index].contents[-1])
 
         self._is_loaded = True
 
@@ -459,7 +475,8 @@ class Manga(object):
     def add(self, account):
         data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
                                                0)
-        self.ret_data = account.auth_connect(self.__MY_MAL_ADD_URL.format(self.id), data=data)
+        self.ret_data = account.auth_connect(
+            self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
         assert self.ret_data.isdigit()
 

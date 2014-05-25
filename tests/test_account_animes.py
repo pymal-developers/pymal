@@ -5,6 +5,7 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 
 
 class AccountAnimeListTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

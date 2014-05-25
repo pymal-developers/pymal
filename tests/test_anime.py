@@ -6,6 +6,7 @@ from pymal.Manga import Manga
 
 
 class ReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.anime = Anime(ANIME_ID)
@@ -118,6 +119,7 @@ class ReloadTestCase(unittest.TestCase):
 
 
 class NoReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

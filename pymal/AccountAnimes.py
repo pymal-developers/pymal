@@ -71,6 +71,7 @@ class AccountAnimes(object):
 
     def __iter__(self):
         class AccountAnimesIterator(object):
+
             def __init__(self, values):
                 self. values = values
                 self.location = 0
@@ -103,40 +104,55 @@ class AccountAnimes(object):
             key -= len(self.dropped)
             if key < len(self.plan_to_watch):
                 return self.plan_to_watch[key]
-            raise IndexError('list index out of range (the size if {0:d}'.format(len(self)))
+            raise IndexError(
+                'list index out of range (the size if {0:d}'.format(len(self)))
         key = str(key)
         for mal_object in self:
             if mal_object.title == key:
                 return mal_object
-        KeyError("{0:s} doesn't have the anime '{1:s}'".format(self.__class__.__name__, key))
+        KeyError("{0:s} doesn't have the anime '{1:s}'".format(
+            self.__class__.__name__, key))
 
     def reload(self):
         resp_data = self.__connection.connect(self.__url)
         xml_tree = ElementTree.fromstring(resp_data)
-        assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(xml_tree.tag)
+        assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(
+            xml_tree.tag)
         xml_mal_objects = list(xml_tree)
         xml_general_data = xml_mal_objects[0]
-        assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(xml_general_data.tag)
+        assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(
+            xml_general_data.tag)
         l = list(xml_general_data)
         xml_user_id = l[0]
-        assert 'user_id' == xml_user_id.tag, 'user_id == {0:s}'.format(xml_user_id.tag)
-        assert self.__connection.is_user_by_id(int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
+        assert 'user_id' == xml_user_id.tag, 'user_id == {0:s}'.format(
+            xml_user_id.tag)
+        assert self.__connection.is_user_by_id(
+            int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
         xml_user_name = l[1]
-        assert 'user_name' == xml_user_name.tag, 'user_name == {0:s}'.format(xml_user_name.tag)
-        assert self.__connection.is_user_by_name(xml_user_name.text.strip()), xml_user_name.text.strip()
+        assert 'user_name' == xml_user_name.tag, 'user_name == {0:s}'.format(
+            xml_user_name.tag)
+        assert self.__connection.is_user_by_name(
+            xml_user_name.text.strip()), xml_user_name.text.strip()
         xml_user_watching = l[2]
-        assert 'user_watching' == xml_user_watching.tag, 'user_watching == {0:s}'.format(xml_user_watching.tag)
+        assert 'user_watching' == xml_user_watching.tag, 'user_watching == {0:s}'.format(
+            xml_user_watching.tag)
         xml_user_completed = l[3]
-        assert 'user_completed' == xml_user_completed.tag, 'user_completed == {0:s}'.format(xml_user_completed.tag)
+        assert 'user_completed' == xml_user_completed.tag, 'user_completed == {0:s}'.format(
+            xml_user_completed.tag)
         xml_user_onhold = l[4]
-        assert 'user_onhold' == xml_user_onhold.tag, 'user_onhold == {0:s}'.format(xml_user_onhold.tag)
+        assert 'user_onhold' == xml_user_onhold.tag, 'user_onhold == {0:s}'.format(
+            xml_user_onhold.tag)
         xml_user_dropped = l[5]
-        assert 'user_dropped' == xml_user_dropped.tag, 'user_dropped == {0:s}'.format(xml_user_dropped.tag)
+        assert 'user_dropped' == xml_user_dropped.tag, 'user_dropped == {0:s}'.format(
+            xml_user_dropped.tag)
         xml_user_plantowatch = l[6]
-        assert 'user_plantowatch' == xml_user_plantowatch.tag, 'user_plantowatch == {0:s}'.format(xml_user_plantowatch.tag)
+        assert 'user_plantowatch' == xml_user_plantowatch.tag, 'user_plantowatch == {0:s}'.format(
+            xml_user_plantowatch.tag)
         xml_user_days_spent_watching = l[7]
-        assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag, 'user_days_spent_watching == {0:s}'.format(xml_user_days_spent_watching.tag)
-        self.user_days_spent_watching = float(xml_user_days_spent_watching.text.strip())
+        assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag, 'user_days_spent_watching == {0:s}'.format(
+            xml_user_days_spent_watching.tag)
+        self.user_days_spent_watching = float(
+            xml_user_days_spent_watching.text.strip())
 
         xml_mal_objects = xml_mal_objects[1:]
 
@@ -151,23 +167,14 @@ class AccountAnimes(object):
             if DEBUG:
                 self.__get_my_mal_object(xml_mal_object)
             else:
-                thread = Thread(target=self.__get_my_mal_object, args=(xml_mal_object, ))
+                thread = Thread(
+                    target=self.__get_my_mal_object, args=(xml_mal_object, ))
                 thread.start()
                 threads.append(thread)
 
         while threads:
             threads.pop().join()
 
-        #if len(self.__watching) != int(xml_user_watching.text.strip()):
-        #    print('watching: {0:d} != {1:d}'.format(len(self.__watching), int(xml_user_watching.text.strip())))
-        #if len(self.__completed) != int(xml_user_completed.text.strip()):
-        #    print('completed: {0:d} != {1:d}'.format(len(self.__completed), int(xml_user_completed.text.strip())))
-        #if len(self.__on_hold) != int(xml_user_onhold.text.strip()):
-        #    print('on hold:{0:d} != {1:d}'.format(len(self.__on_hold), int(xml_user_onhold.text.strip())))
-        #if len(self.__dropped) != int(xml_user_dropped.text.strip()):
-        #    print('dropped: {0:d} != {1:d}'.format(len(self.__dropped), int(xml_user_dropped.text.strip())))
-        #if len(self.__plan_to_watch) != int(xml_user_plantowatch.text.strip()):
-        #    print('plan to watch: {0:d} != {1:d}'.format(len(self.__plan_to_watch), int(xml_user_plantowatch.text.strip())))
         self._is_loaded = True
 
     def __get_my_mal_object(self, xml_mal_object: ElementTree.Element):
@@ -177,7 +184,8 @@ class AccountAnimes(object):
         my_mal_object_id_xml = xml_mal_object.find('my_id')
         assert my_mal_object_id_xml is not None
         my_mal_object_id = int(my_mal_object_id_xml.text.strip())
-        mal_object = MyAnime(mal_object_id, my_mal_object_id, self.__connection, my_mal_xml=xml_mal_object)
+        mal_object = MyAnime(
+            mal_object_id, my_mal_object_id, self.__connection, my_mal_xml=xml_mal_object)
         self.map_of_lists[mal_object.my_status].append(mal_object)
 
     def __len__(self):

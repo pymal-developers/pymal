@@ -4,6 +4,7 @@ from pymal.Anime import Anime
 
 
 class Season(object):
+
     def __init__(self, season_name: str, year: int or str, animes_ids: set):
         self.season_name = season_name
         self.year = int(year)
@@ -23,6 +24,7 @@ class Season(object):
 
     def __iter__(self):
         class SeasonIterator(object):
+
             def __init__(self, values):
                 self. values = list(values)
                 self.location = 0

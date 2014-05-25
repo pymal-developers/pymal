@@ -8,6 +8,7 @@ from xml.etree import ElementTree
 
 
 class ReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
@@ -83,6 +84,7 @@ class ReloadTestCase(unittest.TestCase):
 
 
 class NoReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

@@ -9,7 +9,8 @@ from urllib import parse
 
 
 class Account(object):
-    __AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
+    __AUTH_CHECKER_URL =\
+        r'http://myanimelist.net/api/account/verify_credentials.xml'
     __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
@@ -64,7 +65,8 @@ class Account(object):
         search_url = parse.urlunparse(url_parts)
 
         data = self.auth_connect(search_url)
-        entries = bs4.BeautifulSoup(data).body.anime.findAll(name='entry', recursive=False)
+        entries = bs4.BeautifulSoup(data).body.anime.findAll(
+            name='entry', recursive=False)
 
         def get_object(entry):
             object_id = int(entry.id.text)
@@ -85,8 +87,10 @@ class Account(object):
         assert 'user' == xml_user.tag, 'user == {0:s}'.format(xml_user.tag)
         l = list(xml_user)
         xml_username = l[1]
-        assert 'username' == xml_username.tag, 'username == {0:s}'.format(xml_username.tag)
-        assert self.is_user_by_name(xml_username.text.strip()), 'username = {0:s}'.format(xml_username.text.strip())
+        assert 'username' == xml_username.tag, 'username == {0:s}'.format(
+            xml_username.tag)
+        assert self.is_user_by_name(
+            xml_username.text.strip()), 'username = {0:s}'.format(xml_username.text.strip())
 
         xml_id = l[0]
         assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
