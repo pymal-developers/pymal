@@ -9,8 +9,12 @@ from pymal.decorators import load
 from pymal.AccountAnimes import AccountAnimes
 from pymal.AccountMangas import AccountMangas
 
+__all__ = ['Account']
+
 
 class Account(object):
+    __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
+    
     __AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
     __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
