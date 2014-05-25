@@ -1,10 +1,12 @@
 import os
-from pymal.decorators import load
-from pymal.Season import Season
 from urllib import request
 from xml.etree import ElementTree
+
 import requests
 import bs4
+
+from pymal.decorators import load
+from pymal.Season import Season
 
 
 class Seasons(object):

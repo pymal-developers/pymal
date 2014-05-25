@@ -1,9 +1,10 @@
 from xml.etree import ElementTree
 from threading import Thread
+from urllib import request
+
 from pymal.consts import HOST_NAME, DEBUG
 from pymal.decorators import load
 from pymal.MyManga import MyManga
-from urllib import request
 
 
 class AccountMangas(object):

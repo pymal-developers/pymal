@@ -1,4 +1,5 @@
 import hashlib
+
 from pymal.decorators import load
 from pymal.Anime import Anime
 

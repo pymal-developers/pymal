@@ -1,11 +1,13 @@
 from xml.etree import ElementTree
+from urllib import parse
+
 import bs4
+from requests.auth import HTTPBasicAuth
+
 from pymal.global_functions import _connect, connect
 from pymal.decorators import load
 from pymal.AccountAnimes import AccountAnimes
 from pymal.AccountMangas import AccountMangas
-from requests.auth import HTTPBasicAuth
-from urllib import parse
 
 
 class Account(object):

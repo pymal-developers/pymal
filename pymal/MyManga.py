@@ -1,9 +1,10 @@
 from urllib import request
+import time
+
 from pymal.consts import HOST_NAME, MALAPPINFO_FORMAT_TIME, MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
 from pymal.decorators import my_load
 from pymal.Manga import Manga
 from pymal.global_functions import get_content_wrapper_div
-import time
 
 
 class MyManga(Manga):

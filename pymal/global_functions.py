@@ -1,9 +1,10 @@
-from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP
-import requests
 from urllib import request
-import bs4
 import time
 
+import requests
+import bs4
+
+from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP
 
 __SESSION = requests.session()
 
