@@ -12,13 +12,13 @@ from xml.etree import ElementTree
 import requests
 import bs4
 
-from pymal.decorators import load
+from pymal.decorators import load, Singleton
 from pymal.Season import Season
 
 __all__ = ['Seasons']
 
 
-class Seasons(object):
+class Seasons(object, metaclass=Singleton):
     """
     """
     __all__ = ['seasons', 'reload']
