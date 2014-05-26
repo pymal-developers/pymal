@@ -1,3 +1,5 @@
+"""
+"""
 import hashlib
 from urllib import request
 import os
@@ -13,6 +15,8 @@ __all__ = ['Manga']
 
 
 class Manga(object):
+    """
+    """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
                'type', 'status', 'start_time', 'end_time', 'creators',
                'genres', 'score', 'rank', 'popularity', 'synopsis',
@@ -26,6 +30,8 @@ class Manga(object):
     __MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
     def __init__(self, mal_id: int, mal_xml=None):
+        """
+        """
         self._id = mal_id
         self._is_loaded = False
 
@@ -469,6 +475,8 @@ class Manga(object):
         return data
 
     def add(self, account):
+        """
+        """
         data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '', '',
                                                0)
         self.ret_data = account.auth_connect(self.__MY_MAL_ADD_URL.format(self.id), data=data)

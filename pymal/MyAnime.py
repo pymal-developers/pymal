@@ -1,3 +1,5 @@
+"""
+"""
 from urllib import request
 import time
 
@@ -10,6 +12,8 @@ __all__ = ['MyAnime']
 
 
 class MyAnime(Anime):
+    """
+    """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status','my_score',
                'my_start_date', 'my_end_date', 'my_priority',
                'my_storage_type', 'my_storage_value', 'my_is_rewatching',
@@ -26,6 +30,8 @@ class MyAnime(Anime):
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, mal_id: int or Anime, my_mal_id, account, my_mal_xml: None=None):
+        """
+        """
         if type(mal_id) == Anime:
             mal_id = mal_id.id
         Anime.__init__(self, mal_id, mal_xml=my_mal_xml)
@@ -360,11 +366,15 @@ class MyAnime(Anime):
         return self
 
     def update(self):
+        """
+        """
         self.ret_data = self._account.auth_connect(self.__MY_MAL_UPDATE_URL, data=self.to_xml())
         print(self.ret_data)
         assert self.ret_data == 'Updated'
 
     def delete(self):
+        """
+        """
         self.ret_data = self._account.auth_connect(self.__MY_MAL_UPDATE_URL, data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'

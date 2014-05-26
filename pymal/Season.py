@@ -1,3 +1,5 @@
+"""
+"""
 import hashlib
 
 from pymal.decorators import load
@@ -7,9 +9,13 @@ __all__ = ['Season']
 
 
 class Season(object):
+    """
+    """
     __all__ = ['animes', 'reload']
 
     def __init__(self, season_name: str, year: int or str, animes_ids: set):
+        """
+        """
         self.season_name = season_name
         self.year = int(year)
         self.__animes_ids = animes_ids

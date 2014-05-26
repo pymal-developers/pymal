@@ -1,3 +1,5 @@
+"""
+"""
 import os
 from urllib import request
 from xml.etree import ElementTree
@@ -12,6 +14,8 @@ __all__ = ['Seasons']
 
 
 class Seasons(object):
+    """
+    """
     __all__ = ['seasons', 'reload']
 
     __HOSTNAME = 'http://github.com'

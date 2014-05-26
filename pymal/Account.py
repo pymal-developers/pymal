@@ -1,3 +1,5 @@
+"""
+"""
 from xml.etree import ElementTree
 from urllib import parse
 
@@ -13,6 +15,8 @@ __all__ = ['Account']
 
 
 class Account(object):
+    """
+    """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
     
     __AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
@@ -21,6 +25,8 @@ class Account(object):
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
     def __init__(self, username: str, password: str or None=None):
+        """
+        """
         self._username = username
         self._password = password
         self.connect = connect
@@ -51,6 +57,8 @@ class Account(object):
         self._is_loaded = True
 
     def search(self, search_line: str, is_anime: bool=True) -> set:
+        """
+        """
         params = {'q': search_line}
         if is_anime:
             base_url = self.__ANIME_SEARCH_URL
@@ -80,7 +88,9 @@ class Account(object):
         return set(map(get_object, entries))
 
     def change_password(self, password: str) -> bool:
-        """Checking if the new password is valid"""
+        """
+        Checking if the new password is valid
+        """
         self.__auth_object = HTTPBasicAuth(self._username, password)
         data = self.auth_connect(self.__AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
@@ -103,13 +113,19 @@ class Account(object):
         return True
 
     def auth_connect(self, url: str, data: str or None=None, headers: dict or None=None) -> str:
+        """
+        """
         assert self.is_auth, "Not auth yet!"
         return _connect(url, data=data, headers=headers, auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
+        """
+        """
         return username == self._username
 
     def is_user_by_id(self, user_id: int) -> bool:
+        """
+        """
         return user_id == self.__user_id
 
     @property
@@ -118,6 +134,8 @@ class Account(object):
 
     @property
     def is_auth(self) -> bool:
+        """
+        """
         return self.__auth_object is not None
 
     def __repr__(self):
