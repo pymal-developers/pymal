@@ -7,6 +7,7 @@ from urllib import request
 import time
 
 import requests
+import httpcache
 import bs4
 
 from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP
@@ -14,7 +15,7 @@ from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP
 __all__ = ['connect', 'get_next_index', 'make_list', 'check_side_content_div', 'get_content_wrapper_div']
 
 __SESSION = requests.session()
-
+__SESSION.mount('http://', httpcache.CachingHTTPAdapter())
 
 def url_fixer(url: str) -> str:
     url = url.encode('utf-8')
