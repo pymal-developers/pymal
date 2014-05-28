@@ -3,6 +3,7 @@ __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
 __contact__   = "Name Of Current Guardian of this file <email@address>"
 
+import hashlib
 from urllib import request
 import time
 
@@ -14,7 +15,7 @@ from pymal.global_functions import get_content_wrapper_div
 __all__ = ['MyManga']
 
 
-class MyManga(Manga):
+class MyManga(object):
     """
     Saves an account data about manga.
     
@@ -56,9 +57,10 @@ class MyManga(Manga):
     def __init__(self, mal_id: int or Manga, my_mal_id, account, my_mal_xml: None=None):
         """
         """
-        if type(mal_id) == Manga:
-            mal_id = mal_id.id
-        Manga.__init__(self, mal_id, mal_xml=my_mal_xml)
+        if type(mal_id) == Anime:
+            self.obj = mal_id
+        else:
+            self.obj = Manga(mal_id, mal_xml=my_mal_xml)
 
         self.__my_mal_url = self.__MY_MAL_URL.format(self.id)
 
@@ -404,3 +406,24 @@ class MyManga(Manga):
         self.ret_data = self._account.auth_connect(self.__MY_MAL_UPDATE_URL, data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'
+
+    def __getattr__(self, name):
+        return getattr(self.obj, name)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return hash(other) == hash(self)
+        if isinstance(other, self.obj.__class__):
+            return hash(other) == hash(self.obj)
+        return False
+
+    def __hash__(self):
+        hash_md5 = hashlib.md5()
+        hash_md5.update(str(self.id).encode())
+        hash_md5.update(hash(self.account).encode())
+        hash_md5.update(b'MyAnime')
+        return int(hash_md5.hexdigest(), 16)
+
+    def __repr__(self):
+        title = '' if self._title is None else " '{0:s}'".format(self._title)
+        return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(self.__class__.__name__, title, self._account._username, self._id)
