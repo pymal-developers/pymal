@@ -8,6 +8,7 @@ def load(function):
     """
     This decorator checking of the class was loaded and load it if needed.
     For lazy.
+    Needs attribute _is_loaded and a function reload().
     """
     def _load_wrapper(self, *args):
         if not self._is_loaded:
@@ -20,7 +21,7 @@ def my_load(function):
     """
     This decorator checking of the class was loaded and load it if needed.
     For lazy.
-    Same as load but loading different function and checking different value.
+    Needs attribute _is_my_loaded and a function my_reload().
     """
     def _my_load_wrapper(self, *args):
         if not self._is_my_loaded:
@@ -31,7 +32,10 @@ def my_load(function):
 
 class Singleton(type):
     """
-    Singleton
+    Singleton.
+    
+    Returns:
+        An existsing instance.
     """
     _instances = {}
     def __call__(cls, *args, **kwargs):

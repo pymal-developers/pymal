@@ -1,5 +1,3 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
@@ -15,6 +13,13 @@ __all__ = ['Season']
 
 class Season(object):
     """
+    Lazy load of season data.
+    
+    Attributes:
+        animes - a set of animes.
+        year - the season year.
+        season_name - The season name.
+          Can be 'Winter', 'Spring', 'Summer' or 'Fall'.
     """
     __all__ = ['animes', 'reload']
 

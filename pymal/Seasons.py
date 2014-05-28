@@ -1,5 +1,3 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
@@ -20,6 +18,10 @@ __all__ = ['Seasons']
 
 class Seasons(object, metaclass=Singleton):
     """
+    Lazy making of Season from online db.
+    
+    Attributes:
+        seasons: set of Season.
     """
     __all__ = ['seasons', 'reload']
 

@@ -1,5 +1,3 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
@@ -18,6 +16,26 @@ __all__ = ['MyAnime']
 
 class MyAnime(Anime):
     """
+    Saves an account data about anime.
+    
+    Attributes:
+        my_enable_discussion - boolean
+        my_id - int
+        my_status - int.  #TODO: put the dictanary here.
+        my_score - int.
+        my_start_date - string as mmddyyyy.
+        my_end_date - string as mmddyyyy.
+        my_priority - int.
+        my_storage_type - int.  #TODO: put the dictanary here.
+        my_storage_value - float.
+        my_is_rereading - boolean.
+        my_completed_episodes - int.
+        my_download_episodes - int.
+        my_times_reread - int.
+        my_reread_value - int.
+        my_tags - string.
+        my_comments - string
+        my_fan_sub_groups - string.
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status','my_score',
                'my_start_date', 'my_end_date', 'my_priority',
