@@ -1,10 +1,7 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
 __contact__   = "Name Of Current Guardian of this file <email@address>"
-
 
 import hashlib
 from urllib import request
@@ -505,5 +502,5 @@ class Manga(object):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        title = '' if self._title is None else ' ' + self._title
+        title = '' if self._title is None else " '{0:s}'".format(self._title)
         return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title, self._id)

@@ -1,5 +1,3 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
@@ -362,8 +360,14 @@ class Anime(object):
         aired_span, aired = aired_div.contents
         start_time, end_time = aired.split('to')
         start_time, end_time = start_time.strip(), end_time.strip()
-        self._start_time = time.mktime(time.strptime(start_time, SITE_FORMAT_TIME))
-        self._end_time = time.mktime(time.strptime(end_time, SITE_FORMAT_TIME))
+        if '?' == start_time:
+            self._start_time = float('inf')
+        else:
+            self._start_time = time.mktime(time.strptime(start_time, SITE_FORMAT_TIME))
+        if '?' == end_time:
+            self._end_time = float('inf')
+        else:
+            self._end_time = time.mktime(time.strptime(end_time, SITE_FORMAT_TIME))
         side_contents_divs_index += 1
 
         # producers <div>
@@ -492,5 +496,5 @@ class Anime(object):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        title = '' if self._title is None else ' ' + self._title
+        title = '' if self._title is None else " '{0:s}'".format(self._title)
         return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title, self._id)
