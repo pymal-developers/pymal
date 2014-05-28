@@ -3,6 +3,7 @@ __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
 __contact__   = "Name Of Current Guardian of this file <email@address>"
 
+import hashlib
 from xml.etree import ElementTree
 from threading import Thread
 from urllib import request
@@ -200,3 +201,9 @@ class AccountMangas(object, metaclass=SingletonFactory):
 
     def __repr__(self):
         return "<User mangas' number is {0:d}>".format(len(self))
+
+    def __hash__(self):
+        hash_md5 = hashlib.md5()
+        hash_md5.update(self.__connection._username.encode())
+        hash_md5.update(self.__class__.__name__.encode())
+        return int(hash_md5.hexdigest(), 16)

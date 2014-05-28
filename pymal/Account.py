@@ -1,10 +1,9 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
 __contact__   = "Name Of Current Guardian of this file <email@address>"
 
+import hashlib
 from xml.etree import ElementTree
 from urllib import parse
 
@@ -22,7 +21,7 @@ __all__ = ['Account']
 class Account(object, metaclass=SingletonFactory):
     """
     """
-    __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
+    __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect', 'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
     
     __AUTH_CHECKER_URL = r'http://myanimelist.net/api/account/verify_credentials.xml'
     __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
@@ -100,6 +99,7 @@ class Account(object, metaclass=SingletonFactory):
         data = self.auth_connect(self.__AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
             self.__auth_object = None
+            self._password = None
             return False
         xml_user = ElementTree.fromstring(data)
 
@@ -145,3 +145,8 @@ class Account(object, metaclass=SingletonFactory):
 
     def __repr__(self):
         return "<Account username: {0:s}>".format(self._username)
+
+    def __hash__(self):
+        hash_md5 = hashlib.md5()
+        hash_md5.update(self._username.encode())
+        return int(hash_md5.hexdigest(), 16)
