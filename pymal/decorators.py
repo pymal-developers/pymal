@@ -46,16 +46,17 @@ class Singleton(type):
 
 class SingletonFactory(type):
     """
-    Singleton.
+    Singleton Factory - keeps one object with the same hash
+        of the same cls.
     
     Returns:
         An existsing instance.
     """
-    _instances = dict()
+    __instances = dict()
     def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = dict()
+        if cls not in cls.__instances:
+            cls.__instances[cls] = dict()
         new_obj = super(SingletonFactory, cls).__call__(*args, **kwargs)
-        if hash(new_obj) not in cls._instances[cls]:
-            cls._instances[cls][hash(new_obj)] = new_obj
-        return cls._instances[cls][hash(new_obj)]
+        if hash(new_obj) not in cls.__instances[cls]:
+            cls.__instances[cls][hash(new_obj)] = new_obj
+        return cls.__instances[cls][hash(new_obj)]
