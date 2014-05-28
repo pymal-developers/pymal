@@ -8,14 +8,14 @@ from urllib import request
 import time
 
 from pymal.consts import HOST_NAME, MALAPPINFO_FORMAT_TIME, MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
-from pymal.decorators import my_load
+from pymal.decorators import my_load, SingletonFactory
 from pymal.Manga import Manga
 from pymal.global_functions import get_content_wrapper_div
 
 __all__ = ['MyManga']
 
 
-class MyManga(object):
+class MyManga(object, metaclass=SingletonFactory):
     """
     Saves an account data about manga.
     
@@ -420,7 +420,7 @@ class MyManga(object):
     def __hash__(self):
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
-        hash_md5.update(hash(self.account).encode())
+        hash_md5.update(str(hash(self._account)).encode())
         hash_md5.update(b'MyAnime')
         return int(hash_md5.hexdigest(), 16)
 

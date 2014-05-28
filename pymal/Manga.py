@@ -10,14 +10,14 @@ import time
 
 from bs4.element import NavigableString
 
-from pymal.decorators import load
+from pymal.decorators import load, SingletonFactory
 from pymal.consts import HOST_NAME, DEBUG, SITE_PUBLISHED_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
 from pymal.global_functions import connect, make_list, get_next_index, check_side_content_div, get_content_wrapper_div
 
 __all__ = ['Manga']
 
 
-class Manga(object):
+class Manga(object, metaclass=SingletonFactory):
     """
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',

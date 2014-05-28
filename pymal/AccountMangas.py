@@ -8,13 +8,13 @@ from threading import Thread
 from urllib import request
 
 from pymal.consts import HOST_NAME, DEBUG
-from pymal.decorators import load
+from pymal.decorators import load, SingletonFactory
 from pymal.MyManga import MyManga
 
 __all__ = ['AccountMangas']
 
 
-class AccountMangas(object):
+class AccountMangas(object, metaclass=SingletonFactory):
     """
     """
     __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',

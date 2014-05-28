@@ -37,8 +37,25 @@ class Singleton(type):
     Returns:
         An existsing instance.
     """
-    _instances = {}
+    _instances = dict()
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
+
+class SingletonFactory(type):
+    """
+    Singleton.
+    
+    Returns:
+        An existsing instance.
+    """
+    _instances = dict()
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = dict()
+        new_obj = super(SingletonFactory, cls).__call__(*args, **kwargs)
+        if hash(new_obj) not in cls._instances[cls]:
+            cls._instances[cls][hash(new_obj)] = new_obj
+        return cls._instances[cls][hash(new_obj)]

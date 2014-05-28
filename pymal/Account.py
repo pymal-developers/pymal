@@ -12,14 +12,14 @@ import bs4
 from requests.auth import HTTPBasicAuth
 
 from pymal.global_functions import _connect, connect
-from pymal.decorators import load
+from pymal.decorators import load, SingletonFactory
 from pymal.AccountAnimes import AccountAnimes
 from pymal.AccountMangas import AccountMangas
 
 __all__ = ['Account']
 
 
-class Account(object):
+class Account(object, metaclass=SingletonFactory):
     """
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']

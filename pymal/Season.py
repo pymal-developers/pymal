@@ -5,13 +5,13 @@ __contact__   = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
 
-from pymal.decorators import load
+from pymal.decorators import load, SingletonFactory
 from pymal.Anime import Anime
 
 __all__ = ['Season']
 
 
-class Season(object):
+class Season(object, metaclass=SingletonFactory):
     """
     Lazy load of season data.
     
