@@ -1,5 +1,3 @@
-"""
-"""
 __authors__   = ""
 __copyright__ = "(c) 2014, pymal"
 __license__   = "BSD License"
@@ -105,7 +103,7 @@ class AccountMangas(object):
         return AccountMangasIterator(self.reading + self.completed + self.on_hold + self.dropped + self.plan_to_read)
 
     def __getitem__(self, key: str or int) -> list:
-        if type(key) == int:
+        if isinstance(key, int):
             if key < len(self.reading):
                 return self.reading[key]
             key -= len(self.reading)

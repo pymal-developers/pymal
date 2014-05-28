@@ -56,7 +56,7 @@ class MyAnime(object):
     def __init__(self, mal_id: int or Anime, my_mal_id, account, my_mal_xml: None=None):
         """
         """
-        if type(mal_id) == Anime:
+        if isinstance(mal_id, Anime):
             self.obj = mal_id
         else:
             self.obj = Anime(mal_id, mal_xml=my_mal_xml)

@@ -442,7 +442,7 @@ class Manga(object):
         self._synopsis = os.linesep.join([
             synopsis_cell_content.strip()
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
-            if type(synopsis_cell_content) == NavigableString
+            if isinstance(synopsis_cell_content, NavigableString)
         ])
 
         # Getting other data
