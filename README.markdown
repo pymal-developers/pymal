@@ -11,9 +11,11 @@ Dependencies
 ===========
 * python 3.4.*
     - Wasn't tried on oth pythons, but i believe it will work on all python 3.
-    - Becuase of python 3 new and python 2.7.*.
-* BeautifulSoup
+    - Because of python 3 new and python 2.7.*.
+* BeautifulSoup4
+    - html5lib for BeautifulSoup4 to read html pages better.
 * requests
+    - httpcache for requests to have cache (might be removed because no cache can be created with mal right now).
 
 Installation
 ============
@@ -30,21 +32,21 @@ To run the tests that come with MAL Client:
 
 Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
 
-    ----------- coverage: platform win32, python 3.4.0-final-0 -----------
+    ----------- coverage: platform win32, python 3.4.1-final-0 -----------
     Name                     Stmts   Miss Branch BrMiss     Cover
     -------------------------------------------------------------
-    pymal\Account               46     10      4      2    76.00%
-    pymal\AccountAnimes        112     38     24     15    61.03%
-    pymal\AccountMangas        112     38     24     15    61.03%
-    pymal\Anime                232     34     48     16    82.14%
-    pymal\Manga                242     48     56     22    76.51%
-    pymal\MyAnime              216     33     36     14    81.35%
-    pymal\MyManga              218    149     36     18    34.25%
-    pymal\Season                34     10      2      1    69.44%
-    pymal\Seasons               52     23     10      4    56.45%
-    pymal\global_functions      55     14     20      5    74.67%
+    pymal\Account               81     18     10      7    72.53%
+    pymal\AccountAnimes        123     10     24      8    87.76%
+    pymal\AccountMangas        123     10     24      8    87.76%
+    pymal\Anime                232      8     49     14    92.17%
+    pymal\Manga                235     11     51     14    91.26%
+    pymal\MyAnime              231     21     40     14    87.08%
+    pymal\MyManga              233     26     44     17    84.48%
+    pymal\Season                39     12      2      1    68.29%
+    pymal\Seasons               57     22     10      4    61.19%
+    pymal\global_functions      80     11     28      7    83.33%
     -------------------------------------------------------------
-    TOTAL                     1319    397    260    112    67.76%
+    TOTAL                     1434    149    282     94    85.84%
 
 Usage
 =====
