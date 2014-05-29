@@ -9,7 +9,9 @@ Objects in pymal are lazy-loading: they won't go out and fetch MAL info until yo
 
 Dependencies
 ===========
-* python 3.4.* (wasn't tried on oth pythons, but i believe it will work on all python 3 and python 2.7.*).
+* python 3.4.*
+    - Wasn't tried on oth pythons, but i believe it will work on all python 3.
+    - Becuase of python 3 new and python 2.7.*.
 * BeautifulSoup
 * requests
 
