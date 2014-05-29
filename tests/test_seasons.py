@@ -1,10 +1,12 @@
 import unittest
+
 from pymal.Anime import Anime
 from pymal.Seasons import Seasons
 from pymal.Season import Season
 
 
 class TestCase(unittest.TestCase):
+
     def setUp(self):
         self.seasons = Seasons()
 

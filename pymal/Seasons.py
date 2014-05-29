@@ -1,15 +1,33 @@
+__authors__   = ""
+__copyright__ = "(c) 2014, pymal"
+__license__   = "BSD License"
+__contact__   = "Name Of Current Guardian of this file <email@address>"
+
 import os
-from pymal.decorators import load
-from pymal.Season import Season
 from urllib import request
 from xml.etree import ElementTree
+
 import requests
 import bs4
 
+from pymal.decorators import load, Singleton
+from pymal.Season import Season
 
-class Seasons(object):
+__all__ = ['Seasons']
+
+
+class Seasons(object, metaclass=Singleton):
+    """
+    Lazy making of Season from online db.
+    
+    Attributes:
+        seasons: set of Season.
+    """
+    __all__ = ['seasons', 'reload']
+
     __HOSTNAME = 'http://github.com'
-    __SEASONS_URL = request.urljoin(__HOSTNAME, 'erengy/taiga/tree/master/data/db/season')
+    __SEASONS_URL = request.urljoin(
+        __HOSTNAME, 'erengy/taiga/tree/master/data/db/season')
 
     def __init__(self):
         self.__seasons = set()
@@ -22,7 +40,8 @@ class Seasons(object):
 
     def reload(self):
         sock = requests.get(self.__SEASONS_URL)
-        table = bs4.BeautifulSoup(sock.text).find(name="table", attrs={'class': 'files'})
+        table = bs4.BeautifulSoup(sock.text).find(
+            name="table", attrs={'class': 'files'})
         assert table is not None
 
         contents = table.findAll(name='td', attrs={'class': 'content'})
@@ -32,7 +51,8 @@ class Seasons(object):
             sock = requests.get(xml_url)
             xml_html = sock.text
 
-            xml_body = bs4.BeautifulSoup(xml_html).find(name="div", attrs={"class": "code-body"}).text
+            xml_body = bs4.BeautifulSoup(xml_html).find(
+                name="div", attrs={"class": "code-body"}).text
             xml_element = ElementTree.fromstring(xml_body)
 
             anime_elements = list(xml_element)
@@ -58,10 +78,12 @@ class Seasons(object):
         return any(map(lambda x: item in x, self.seasons))
 
     def __repr__(self):
-        return (os.linesep + '\t').join(map(str, ['<Seasons>'] + list(self.seasons)))
+        return (os.linesep + '\t').join(map(str, ['<Seasons>'] +
+                                            list(self.seasons)))
 
     def __iter__(self):
         class SeasonsIterator(object):
+
             def __init__(self, values):
                 self.values = list(values)
                 self.location = 0

@@ -1,13 +1,17 @@
 import unittest
-from pymal.Account import Account
-from pymal.Manga import Manga
-from pymal.consts import MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
-from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 import time
 from xml.etree import ElementTree
 
+from pymal.Account import Account
+from pymal.Manga import Manga
+from pymal.consts import MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
+
+from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+
+
 
 class ReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
@@ -61,11 +65,8 @@ class ReloadTestCase(unittest.TestCase):
     def test_my_storage_type(self):
         self.assertIsInstance(self.manga.my_storage_type, int)
 
-    def test_my_storage_value(self):
-        self.assertIsInstance(self.manga.my_storage_value, int)
-
-    def test_my_download_episodes(self):
-        self.assertIsInstance(self.manga.my_download_episodes, int)
+    def test_my_download_chapters(self):
+        self.assertIsInstance(self.manga.my_downloaded_chapters, int)
 
     def test_my_times_reread(self):
         self.assertIsInstance(self.manga.my_times_reread, int)
@@ -83,6 +84,7 @@ class ReloadTestCase(unittest.TestCase):
 
 
 class NoReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

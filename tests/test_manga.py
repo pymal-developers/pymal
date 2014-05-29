@@ -1,11 +1,13 @@
 import unittest
+
 from pymal.Account import Account
 from pymal.Anime import Anime
-from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 from pymal.Manga import Manga
 
+from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 class ReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.manga = Manga(MANGA_ID)
@@ -122,6 +124,7 @@ class ReloadTestCase(unittest.TestCase):
 
 
 class NoReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

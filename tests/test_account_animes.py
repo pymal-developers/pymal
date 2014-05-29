@@ -1,10 +1,13 @@
 import unittest
+
 from pymal.Account import Account
 from pymal.Anime import Anime
+
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
 class AccountAnimeListTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
