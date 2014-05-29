@@ -28,8 +28,7 @@ class MyManga(object, metaclass=SingletonFactory):
         my_start_date - string as mmddyyyy.
         my_end_date - string as mmddyyyy.
         my_priority - int.
-        my_storage_type - int.  #TODO: put the dictanary here.
-        my_storage_value - float.
+        my_storage_type - int.  #TODO: put the dictnary here.
         my_is_rereading - boolean.
         my_completed_chapters - int.
         my_completed_volumes - int.
@@ -42,7 +41,7 @@ class MyManga(object, metaclass=SingletonFactory):
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
                'my_start_date', 'my_end_date', 'my_priority',
-               'my_storage_type', 'my_storage_value', 'my_is_rereading',
+               'my_storage_type', 'my_is_rereading',
                'my_completed_chapters', 'my_completed_volumes',
                'my_downloaded_chapters', 'my_times_reread', 'my_reread_value',
                'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
@@ -67,7 +66,7 @@ class MyManga(object, metaclass=SingletonFactory):
         else:
             self.obj = Manga(mal_id, mal_xml=my_mal_xml)
 
-        self.__my_mal_url = self.__MY_MAL_URL.format(self.obj.id)
+        self.__my_mal_url = self.__MY_MAL_URL.format(my_mal_id)
 
         self._is_my_loaded = False
         self._account = account
@@ -82,10 +81,10 @@ class MyManga(object, metaclass=SingletonFactory):
         self.__my_end_date = None
         self.__my_priority = 0
         self.__my_storage_type = 0
-        self.__my_storage_value = 0.0
         self.__my_comments = ''
         self.__my_fan_sub_groups = ''
         self.__my_tags = None
+        self.__my_retail_volumes = 0
 
         self.__my_is_rereading = None
         self.__my_completed_chapters = None
@@ -226,6 +225,11 @@ class MyManga(object, metaclass=SingletonFactory):
     def my_fan_sub_groups(self):
         return self.__my_fan_sub_groups
 
+    @property
+    @my_load
+    def my_retail_volumes(self):
+        return self.__my_retail_volumes
+
     def my_reload(self):
         # Getting content wrapper <div>
         content_wrapper_div = get_content_wrapper_div(
@@ -248,19 +252,13 @@ class MyManga(object, metaclass=SingletonFactory):
         content_td = content_div.table.tr.td
         assert content_td is not None
 
-        # Getting content <div>
-        content_td_divs = content_td.findAll(name="div", recursive=False)
-        assert 2 == len(content_td_divs), len(content_td_divs)
-
-        content_div = content_td_divs[1]
-
         # Getting content rows <tr>
-        content_form = content_div.form
-        assert 'myMangaForm' == content_form['id'], content_form['id']
+        content_form = content_td.find(name="form", attrs={'id': "mangaForm"})
+        assert 'mangaForm' == content_form['id'], content_form['id']
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
 
-        contents_divs_index = 3
+        contents_divs_index = 2
 
         # Getting my_status
         status_select = content_rows[contents_divs_index].find(
@@ -280,12 +278,20 @@ class MyManga(object, metaclass=SingletonFactory):
         self.__my_is_rereading = bool(is_reread_node['value'])
         contents_divs_index += 1
 
+        # Getting read volumes
+        read_input = content_rows[contents_divs_index].\
+            find(name="input", attrs={"id": "vol_read",
+                                      "name": "vol_read"})
+        assert read_input is not None
+        self.__my_completed_volumes = int(read_input['value'])
+        contents_divs_index += 1
+
         # Getting read chapters
         read_input = content_rows[contents_divs_index].\
-            find(name="input", attrs={"id": "completedEpsID",
-                                      "name": "completed_eps"})
+            find(name="input", attrs={"id": "chap_read",
+                                      "name": "chap_read"})
         assert read_input is not None
-        self.__my_completed_episodes = int(read_input['value'])
+        self.__my_completed_chapters = int(read_input['value'])
         contents_divs_index += 1
 
         # Getting my_score
@@ -356,13 +362,6 @@ class MyManga(object, metaclass=SingletonFactory):
         self.__my_end_date = end_month_date + end_day_date + end_year_date
         contents_divs_index += 1
 
-        # Getting fansub group
-        fansub_group_content = content_rows[contents_divs_index]
-        fansub_group_input = fansub_group_content.find(
-            name="input", attrs={"name": "fansub_group"})
-        self.__my_fan_sub_groups = fansub_group_input.text
-        contents_divs_index += 1
-
         # Getting priority
         priority_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "priority"})
@@ -375,54 +374,53 @@ class MyManga(object, metaclass=SingletonFactory):
 
         # Getting storage
         storage_type_node = content_rows[contents_divs_index].find(
-            name="select", attrs={"id": "storage"})
+            name="select", attrs={"id": "storageSel"})
         assert storage_type_node is not None
         selected_storage_type_node = storage_type_node.find(
             name="option", attrs={"selected": ""})
-        assert selected_storage_type_node is not None
-        self.__my_storage_type = int(selected_storage_type_node['value'])
-
-        storage_value_node = content_rows[contents_divs_index].find(
-            name="input", attrs={"id": "storageValue"})
-        assert storage_value_node is not None
-        self.__my_storage_value = float(storage_value_node['value'])
+        if selected_storage_type_node is None:
+            self.__my_storage_type = 0
+        else:
+            self.__my_storage_type = int(selected_storage_type_node['value'])
         contents_divs_index += 1
 
         # Getting downloaded episodes
         downloaded_chapters_node = content_rows[contents_divs_index].\
-            find(name="input", attrs={'id': "epDownloaded",
-                                      'name': 'list_downloaded_eps'})
+            find(name="input", attrs={'id': "dChap",
+                                      'name': 'downloaded_chapters'})
         assert downloaded_chapters_node is not None
         self.__my_downloaded_chapters == int(downloaded_chapters_node['value'])
         contents_divs_index += 1
 
         # Getting time reread
         times_reread_node = content_rows[contents_divs_index].find(
-            name="input", attrs={'name': 'list_times_readed'})
+            name="input", attrs={'name': 'times_read'})
         self.__my_times_reread == int(times_reread_node['value'])
         assert times_reread_node is not None
         contents_divs_index += 1
 
         # Getting reread value
         reread_value_node = content_rows[contents_divs_index].find(
-            name="select", attrs={'name': 'list_reread_value'})
+            name="select", attrs={'name': 'reread_value'})
         assert reread_value_node is not None
         reread_value_option = reread_value_node.find(
             name='option', attrs={'selected': ''})
-        assert reread_value_option is not None
-        self.__my_reread_value == int(reread_value_option['value'])
+        if reread_value_option is None:
+            self.__my_reread_value = 0
+        else:
+            self.__my_reread_value = int(reread_value_option['value'])
         contents_divs_index += 1
 
         # Getting comments
         comment_content = content_rows[contents_divs_index]
         comment_textarea = comment_content.find(
-            name="textarea", attrs={"name": "list_comments"})
+            name="textarea", attrs={"name": "comments"})
         self.__my_comments = comment_textarea.text
         contents_divs_index += 1
 
         # Getting discuss flag
         discuss_node = content_rows[contents_divs_index].find(
-            name='select', attrs={"name": "discuss"})
+            name='input', attrs={"name": "discuss"})
         assert discuss_node is not None
         self._is_my_loaded = True
 

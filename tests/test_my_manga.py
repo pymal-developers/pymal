@@ -65,11 +65,8 @@ class ReloadTestCase(unittest.TestCase):
     def test_my_storage_type(self):
         self.assertIsInstance(self.manga.my_storage_type, int)
 
-    def test_my_storage_value(self):
-        self.assertIsInstance(self.manga.my_storage_value, int)
-
-    def test_my_download_episodes(self):
-        self.assertIsInstance(self.manga.my_download_episodes, int)
+    def test_my_download_chapters(self):
+        self.assertIsInstance(self.manga.my_downloaded_chapters, int)
 
     def test_my_times_reread(self):
         self.assertIsInstance(self.manga.my_times_reread, int)
