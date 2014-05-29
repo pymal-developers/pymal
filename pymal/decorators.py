@@ -60,3 +60,6 @@ class SingletonFactory(type):
         if hash(new_obj) not in cls.__instances[cls]:
             cls.__instances[cls][hash(new_obj)] = new_obj
         return cls.__instances[cls][hash(new_obj)]
+
+    def _unregiter(cls, obj):
+        cls.__instances[cls].pop(hash(obj))

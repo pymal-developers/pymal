@@ -407,6 +407,9 @@ class MyAnime(object, metaclass=SingletonFactory):
     def __getattr__(self, name):
         return getattr(self.obj, name)
 
+    def __dir__(self):
+        return list(set(dir(type(self)) + list(self.__dict__.keys()) + dir(self.obj)))
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return hash(other) == hash(self)

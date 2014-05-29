@@ -11,14 +11,17 @@ class InitTestCase(unittest.TestCase):
     def test_init_not_auth(self):
         account = Account(ACCOUNT_TEST_USERNAME)
         self.assertFalse(account.is_auth)
+        Account._unregiter(account)
 
     def test_account_init_auth(self):
         account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         self.assertTrue(account.is_auth)
+        Account._unregiter(account)
 
     def test_init_auth_bad_password(self):
         account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD * 2)
         self.assertFalse(account.is_auth)
+        Account._unregiter(account)
 
     def test_init_later_auth(self):
         account = Account(ACCOUNT_TEST_USERNAME)
@@ -26,6 +29,7 @@ class InitTestCase(unittest.TestCase):
 
         account.change_password(ACCOUNT_TEST_PASSWORD)
         self.assertTrue(account.is_auth)
+        Account._unregiter(account)
 
     def test_init_later_auth_bad_password(self):
         account = Account(ACCOUNT_TEST_USERNAME)
@@ -33,6 +37,7 @@ class InitTestCase(unittest.TestCase):
 
         self.assertFalse(account.change_password(ACCOUNT_TEST_PASSWORD * 2))
         self.assertFalse(account.is_auth)
+        Account._unregiter(account)
 
 
 class FunctionsTestCase(unittest.TestCase):
@@ -40,8 +45,8 @@ class FunctionsTestCase(unittest.TestCase):
         self.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
     def test_reload(self):
-        assert type(self.account.animes) == AccountAnimes, type(self.account.animes)
-        assert type(self.account.mangas) == AccountMangas, type(self.account.mangas)
+        self.assertIsInstance(self.account.animes, AccountAnimes)
+        self.assertIsInstance(self.account.mangas, AccountMangas)
 
 
 def main():

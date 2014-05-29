@@ -57,7 +57,7 @@ class MyManga(object, metaclass=SingletonFactory):
     def __init__(self, mal_id: int or Manga, my_mal_id, account, my_mal_xml: None=None):
         """
         """
-        if isinstance(mal_id, Anime):
+        if isinstance(mal_id, Manga):
             self.obj = mal_id
         else:
             self.obj = Manga(mal_id, mal_xml=my_mal_xml)
@@ -410,6 +410,9 @@ class MyManga(object, metaclass=SingletonFactory):
     def __getattr__(self, name):
         return getattr(self.obj, name)
 
+    def __dir__(self):
+        return list(set(dir(type(self)) + list(self.__dict__.keys()) + dir(self.obj)))
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return hash(other) == hash(self)
@@ -421,7 +424,7 @@ class MyManga(object, metaclass=SingletonFactory):
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(str(hash(self._account)).encode())
-        hash_md5.update(b'MyAnime')
+        hash_md5.update(b'MyManga')
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):

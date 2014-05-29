@@ -493,6 +493,8 @@ class Manga(object, metaclass=SingletonFactory):
             return self.id == other
         elif isinstance(other, str) and other.isdigit():
             return self.id == int(other)
+        elif hasattr(other, 'id'):
+            return self.id == other.id
         return False
 
     def __hash__(self):
