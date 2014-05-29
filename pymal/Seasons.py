@@ -1,13 +1,30 @@
+__authors__   = ""
+__copyright__ = "(c) 2014, pymal"
+__license__   = "BSD License"
+__contact__   = "Name Of Current Guardian of this file <email@address>"
+
 import os
-from pymal.decorators import load
-from pymal.Season import Season
 from urllib import request
 from xml.etree import ElementTree
+
 import requests
 import bs4
 
+from pymal.decorators import load, Singleton
+from pymal.Season import Season
 
-class Seasons(object):
+__all__ = ['Seasons']
+
+
+class Seasons(object, metaclass=Singleton):
+    """
+    Lazy making of Season from online db.
+    
+    Attributes:
+        seasons: set of Season.
+    """
+    __all__ = ['seasons', 'reload']
+
     __HOSTNAME = 'http://github.com'
     __SEASONS_URL = request.urljoin(
         __HOSTNAME, 'erengy/taiga/tree/master/data/db/season')

@@ -1,15 +1,31 @@
+__authors__ = ""
+__copyright__ = "(c) 2014, pymal"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
+
+import hashlib
 from xml.etree import ElementTree
 from threading import Thread
-from pymal.consts import HOST_NAME, DEBUG
-from pymal.decorators import load
-from pymal.MyManga import MyManga
 from urllib import request
 
+from pymal.consts import HOST_NAME, DEBUG
+from pymal.decorators import load, SingletonFactory
+from pymal.MyManga import MyManga
 
-class AccountMangas(object):
+__all__ = ['AccountMangas']
+
+
+class AccountMangas(object, metaclass=SingletonFactory):
+    """
+    """
+    __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
+               'reload']
+
     __URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=manga")
 
     def __init__(self, username: str, connection):
+        """
+        """
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
@@ -91,7 +107,7 @@ class AccountMangas(object):
                                      self.plan_to_read)
 
     def __getitem__(self, key: str or int) -> list:
-        if type(key) == int:
+        if isinstance(key, int):
             if key < len(self.reading):
                 return self.reading[key]
             key -= len(self.reading)
@@ -191,3 +207,9 @@ class AccountMangas(object):
 
     def __repr__(self):
         return "<User mangas' number is {0:d}>".format(len(self))
+
+    def __hash__(self):
+        hash_md5 = hashlib.md5()
+        hash_md5.update(self.__connection._username.encode())
+        hash_md5.update(self.__class__.__name__.encode())
+        return int(hash_md5.hexdigest(), 16)

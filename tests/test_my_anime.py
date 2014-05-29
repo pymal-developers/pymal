@@ -1,10 +1,12 @@
 import unittest
+import time
+from xml.etree import ElementTree
+
 from pymal.Account import Account
 from pymal.Anime import Anime
 from pymal.consts import MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
+
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
-import time
-from xml.etree import ElementTree
 
 
 class ReloadTestCase(unittest.TestCase):

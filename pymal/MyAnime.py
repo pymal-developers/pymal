@@ -1,13 +1,52 @@
+__authors__ = ""
+__copyright__ = "(c) 2014, pymal"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
+
+import hashlib
 from urllib import request
-from pymal.consts import HOST_NAME, MALAPI_NONE_TIME, MALAPPINFO_FORMAT_TIME,\
-    MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME
-from pymal.decorators import my_load
-from pymal.Anime import Anime
-from pymal.global_functions import get_content_wrapper_div
 import time
 
+from pymal.consts import HOST_NAME, MALAPI_NONE_TIME, MALAPPINFO_FORMAT_TIME,\
+    MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME
+from pymal.decorators import my_load, SingletonFactory
+from pymal.Anime import Anime
+from pymal.global_functions import get_content_wrapper_div
 
-class MyAnime(Anime):
+__all__ = ['MyAnime']
+
+
+class MyAnime(object, metaclass=SingletonFactory):
+    """
+    Saves an account data about anime.
+    
+    Attributes:
+        my_enable_discussion - boolean
+        my_id - int
+        my_status - int.  #TODO: put the dictanary here.
+        my_score - int.
+        my_start_date - string as mmddyyyy.
+        my_end_date - string as mmddyyyy.
+        my_priority - int.
+        my_storage_type - int.  #TODO: put the dictanary here.
+        my_storage_value - float.
+        my_is_rereading - boolean.
+        my_completed_episodes - int.
+        my_download_episodes - int.
+        my_times_reread - int.
+        my_reread_value - int.
+        my_tags - string.
+        my_comments - string
+        my_fan_sub_groups - string.
+    """
+    __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
+               'my_start_date', 'my_end_date', 'my_priority',
+               'my_storage_type', 'my_storage_value', 'my_is_rewatching',
+               'my_completed_episodes', 'my_score', 'my_download_episodes',
+               'my_times_rewatched', 'my_rewatch_value',
+               'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
+               'update', 'delete']
+
     __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(
@@ -20,11 +59,14 @@ class MyAnime(Anime):
 
     def __init__(self, mal_id: int or Anime, my_mal_id, account,
                  my_mal_xml: None=None):
-        if type(mal_id) == Anime:
-            mal_id = mal_id.id
-        Anime.__init__(self, mal_id, mal_xml=my_mal_xml)
+        """
+        """
+        if isinstance(mal_id, Anime):
+            self.obj = mal_id
+        else:
+            self.obj = Anime(mal_id, mal_xml=my_mal_xml)
 
-        self.__my_mal_url = self.__MY_MAL_URL.format(self.id)
+        self.__my_mal_url = self.__MY_MAL_URL.format(self.obj.id)
 
         self._is_my_loaded = False
         self._account = account
@@ -405,13 +447,38 @@ class MyAnime(Anime):
         return self
 
     def update(self):
+        """
+        """
         self.ret_data = self._account.auth_connect(
             self.__MY_MAL_UPDATE_URL, data=self.to_xml())
         print(self.ret_data)
         assert self.ret_data == 'Updated'
 
     def delete(self):
+        """
+        """
         self.ret_data = self._account.auth_connect(
             self.__MY_MAL_UPDATE_URL, data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'
+
+    def __getattr__(self, name):
+        return getattr(self.obj, name)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return hash(other) == hash(self)
+        if isinstance(other, self.obj.__class__):
+            return hash(other) == hash(self.obj)
+        return False
+
+    def __hash__(self):
+        hash_md5 = hashlib.md5()
+        hash_md5.update(str(self.id).encode())
+        hash_md5.update(str(hash(self._account)).encode())
+        hash_md5.update(b'MyAnime')
+        return int(hash_md5.hexdigest(), 16)
+
+    def __repr__(self):
+        title = '' if self._title is None else " '{0:s}'".format(self._title)
+        return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(self.__class__.__name__, title, self._account._username, self._id)

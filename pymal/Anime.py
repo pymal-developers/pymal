@@ -1,16 +1,35 @@
+__authors__ = ""
+__copyright__ = "(c) 2014, pymal"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
+
 import hashlib
 from urllib import request
-from pymal.decorators import load
-from pymal.consts import HOST_NAME, DEBUG, MALAPPINFO_FORMAT_TIME, XMLS_DIRECTORY,\
+import os
+import time
+
+from bs4.element import NavigableString
+
+from pymal.decorators import load, SingletonFactory
+from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME,\
     SITE_FORMAT_TIME
 from pymal.global_functions import connect, make_list, get_next_index,\
     check_side_content_div, get_content_wrapper_div
-import os
-from bs4.element import NavigableString
-import time
+
+__all__ = ['Anime']
 
 
-class Anime(object):
+class Anime(object, metaclass=SingletonFactory):
+    """
+    """
+    __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
+               'type', 'status', 'start_time', 'end_time', 'creators',
+               'genres', 'score', 'rank', 'popularity', 'synopsis',
+               'adaptations', 'characters', 'sequals', 'prequel', 'spin_offs',
+               'alternative_versions', 'side_stories', 'summaries', 'others',
+               'parent_stories', 'alternative_settings', 'rating', 'episodes',
+               'reload', 'add']
+    
     __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
     __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
         os.path.dirname(__file__), XMLS_DIRECTORY,
@@ -19,6 +38,8 @@ class Anime(object):
         HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
     def __init__(self, mal_id: int, mal_xml=None):
+        """
+        """
         self._id = mal_id
         self._is_loaded = False
 
@@ -348,9 +369,14 @@ class Anime(object):
         aired_span, aired = aired_div.contents
         start_time, end_time = aired.split('to')
         start_time, end_time = start_time.strip(), end_time.strip()
-        self._start_time = time.mktime(
-            time.strptime(start_time, SITE_FORMAT_TIME))
-        self._end_time = time.mktime(time.strptime(end_time, SITE_FORMAT_TIME))
+        if '?' == start_time:
+            self._start_time = float('inf')
+        else:
+            self._start_time = time.mktime(time.strptime(start_time, SITE_FORMAT_TIME))
+        if '?' == end_time:
+            self._end_time = float('inf')
+        else:
+            self._end_time = time.mktime(time.strptime(end_time, SITE_FORMAT_TIME))
         side_contents_divs_index += 1
 
         # producers <div>
@@ -423,7 +449,7 @@ class Anime(object):
         self._synopsis = os.linesep.join([
             synopsis_cell_content.strip()
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
-            if type(synopsis_cell_content) == NavigableString
+            if isinstance(synopsis_cell_content, NavigableString)
         ])
 
         # Getting other data
@@ -465,9 +491,11 @@ class Anime(object):
         return data
 
     def add(self, account):
+        """
+        """
         data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0,
                                                '00000000', '00000000', 0,
-                                               False, False, '', '', '')
+                                               False, False, '', '','')
         self.ret_data = account.auth_connect(
             self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
