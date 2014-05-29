@@ -41,7 +41,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: User Interfaces',
     ],
-    requires=[
+    install_requires=[
         'requests>=2.3.0',
         'beautifulsoup4>=4.3.2',
         'httpcache>=0.1.3',
