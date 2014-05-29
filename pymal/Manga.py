@@ -6,15 +6,13 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 import hashlib
 from urllib import request
 import os
-import time
 
 from bs4.element import NavigableString
 
 from pymal.decorators import load, SingletonFactory
-from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME,\
-    SITE_PUBLISHED_FORMAT_TIME
+from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPI_NONE_TIME
 from pymal.global_functions import connect, make_list, get_next_index,\
-    check_side_content_div, get_content_wrapper_div
+    check_side_content_div, get_content_wrapper_div, make_time, make_counter
 
 __all__ = ['Manga']
 
@@ -109,21 +107,8 @@ class Manga(object, metaclass=SingletonFactory):
             else:
                 self._status = self_status
                 print('self._status=', self._status)
-            start_time = mal_xml.find('series_start').text.strip()
-            if start_time == '0000-00-00':
-                self._start_time = float('inf')
-            else:
-                start_time = start_time[:4] + \
-                    start_time[4:].replace('00', '01')
-                self._start_time = time.mktime(
-                    time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
-            end_time = mal_xml.find('series_end').text.strip()
-            if end_time == '0000-00-00':
-                self._end_time = float('inf')
-            else:
-                end_time = end_time[:4] + end_time[4:].replace('00', '01')
-                self._end_time = time.mktime(
-                    time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
+            self._start_time = make_time(mal_xml.find('series_start').text.strip())
+            self._end_time = make_time(mal_xml.find('series_end').text.strip())
             self._image_url = mal_xml.find('series_image').text.strip()
 
             self._chapters = int(mal_xml.find('series_chapters').text.strip())
@@ -350,23 +335,14 @@ class Manga(object, metaclass=SingletonFactory):
         volumes_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Volumes', volumes_div)
         volumes_span, self_volumes = volumes_div.contents
-        self_volumes = self_volumes.strip()
-        if 'Unknown' == self_volumes:
-            self._volumes = float('inf')
-        else:
-            self._volumes = int(self_volumes)
-
+        self._volumes = make_counter(self_volumes.strip())
         side_contents_divs_index += 1
 
         # chapters <div>
         chapters_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Chapters', chapters_div)
         chapters_span, self_chapters = chapters_div.contents
-        self_chapters = self_chapters .strip()
-        if 'Unknown' == self_chapters:
-            self._chapters = float('inf')
-        else:
-            self._chapters = int(self_chapters)
+        self._chapters = make_counter(self_chapters .strip())
         side_contents_divs_index += 1
 
         # status <div>
@@ -382,16 +358,8 @@ class Manga(object, metaclass=SingletonFactory):
         published_span, published = published_div.contents
         start_time, end_time = published.split('to')
         start_time, end_time = start_time.strip(), end_time.strip()
-        if '?' == start_time:
-            self._start_time = float('inf')
-        else:
-            self._start_time = time.mktime(
-                time.strptime(start_time, SITE_PUBLISHED_FORMAT_TIME))
-        if '?' == end_time:
-            self._end_time = float('inf')
-        else:
-            self._end_time = time.mktime(
-                time.strptime(end_time, SITE_PUBLISHED_FORMAT_TIME))
+        self._start_time = make_time(start_time)
+        self._end_time = make_time(end_time)
         side_contents_divs_index += 1
 
         # genres <div>
@@ -502,8 +470,9 @@ class Manga(object, metaclass=SingletonFactory):
         """
         """
         data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0,
-                                               '00000000', '00000000', 0,
-                                               False, False, '', '', '',0)
+                                               MALAPI_NONE_TIME,
+                                               MALAPI_NONE_TIME, 0, False,
+                                               False, '', '', '', 0)
         self.ret_data = account.auth_connect(
             self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
