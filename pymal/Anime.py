@@ -6,12 +6,11 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 import hashlib
 from urllib import request
 import os
-import time
 
 from bs4.element import NavigableString
 
 from pymal.decorators import load, SingletonFactory
-from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
+from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPI_NONE_TIME
 from pymal.global_functions import connect, make_list, get_next_index,\
     check_side_content_div, get_content_wrapper_div, make_time
 
@@ -108,21 +107,8 @@ class Anime(object, metaclass=SingletonFactory):
             else:
                 self._status = self_status
                 print('self._status=', self._status)
-            start_time = mal_xml.find('series_start').text.strip()
-            if start_time == '0000-00-00':
-                self._start_time = float('inf')
-            else:
-                start_time = start_time[:4] + \
-                    start_time[4:].replace('00', '01')
-                self._start_time = time.mktime(
-                    time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
-            end_time = mal_xml.find('series_end').text.strip()
-            if end_time == '0000-00-00':
-                self._end_time = float('inf')
-            else:
-                end_time = end_time[:4] + end_time[4:].replace('00', '01')
-                self._end_time = time.mktime(
-                    time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
+            self._start_time = make_time(mal_xml.find('series_start').text.strip())
+            self._end_time = make_time(mal_xml.find('series_end').text.strip())
             self._image_url = mal_xml.find('series_image').text.strip()
 
             self._episodes = int(mal_xml.find('series_episodes').text.strip())
@@ -487,8 +473,8 @@ class Anime(object, metaclass=SingletonFactory):
         """
         """
         data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0,
-                                               '00000000', '00000000', 0,
-                                               False, False, '', '','')
+                                               MALAPI_NONE_TIME, MALAPI_NONE_TIME, 0,
+                                               False, False, '', '', '')
         self.ret_data = account.auth_connect(
             self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)

@@ -11,7 +11,8 @@ import httpcache
 import bs4
 
 from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP,\
-    SHORT_SITE_FORMAT_TIME, LONG_SITE_FORMAT_TIME
+    SHORT_SITE_FORMAT_TIME, LONG_SITE_FORMAT_TIME, MALAPPINFO_NONE_TIME, \
+    MALAPPINFO_FORMAT_TIME
 
 __all__ = ['connect', 'get_next_index', 'make_list', 'check_side_content_div', 'get_content_wrapper_div']
 
@@ -147,12 +148,16 @@ def make_time(time_string: str):
     """
     getting mal site time string format and return it as int
     """
-    if '?' == time_string:
+    if '?' == time_string or MALAPPINFO_NONE_TIME == time_string:
         return float('inf')
     if time_string.isdigit():
         return int(time_string)
     try:
         start_time = time.strptime(time_string, SHORT_SITE_FORMAT_TIME)
     except ValueError:
-        start_time = time.strptime(time_string, LONG_SITE_FORMAT_TIME)
+        try:
+            start_time = time.strptime(time_string, LONG_SITE_FORMAT_TIME)
+        except ValueError:
+            time_string = time_string[:4] + time_string[4:].replace('00', '01')
+            start_time = time.strptime(time_string, MALAPPINFO_FORMAT_TIME)
     return time.mktime(start_time)
