@@ -11,10 +11,9 @@ import time
 from bs4.element import NavigableString
 
 from pymal.decorators import load, SingletonFactory
-from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME,\
-    LONG_SITE_FORMAT_TIME
+from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
 from pymal.global_functions import connect, make_list, get_next_index,\
-    check_side_content_div, get_content_wrapper_div
+    check_side_content_div, get_content_wrapper_div, make_time
 
 __all__ = ['Anime']
 
@@ -369,14 +368,8 @@ class Anime(object, metaclass=SingletonFactory):
         aired_span, aired = aired_div.contents
         start_time, end_time = aired.split('to')
         start_time, end_time = start_time.strip(), end_time.strip()
-        if '?' == start_time:
-            self._start_time = float('inf')
-        else:
-            self._start_time = time.mktime(time.strptime(start_time, LONG_SITE_FORMAT_TIME))
-        if '?' == end_time:
-            self._end_time = float('inf')
-        else:
-            self._end_time = time.mktime(time.strptime(end_time, LONG_SITE_FORMAT_TIME))
+        self._start_time = make_time(start_time)
+        self._end_time = make_time(end_time)
         side_contents_divs_index += 1
 
         # producers <div>
