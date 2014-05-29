@@ -35,6 +35,8 @@ class AccountMangas(object, metaclass=SingletonFactory):
         self.__dropped = []
         self.__plan_to_read = []
 
+        self.user_days_spent_watching = None
+
         self.map_of_lists = {
             1: self.__reading,
             2: self.__completed,
@@ -142,8 +144,7 @@ class AccountMangas(object, metaclass=SingletonFactory):
             xml_general_data.tag)
         l = list(xml_general_data)
         xml_user_id = l[0]
-        assert 'user_id' == xml_user_id.tag, 'user_id == {0:s}'.format(
-            xml_user_id.tag)
+        assert 'user_id' == xml_user_id.tag, xml_user_id.tag
         assert self.__connection.is_user_by_id(
             int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
         xml_user_name = l[1]
@@ -160,13 +161,13 @@ class AccountMangas(object, metaclass=SingletonFactory):
         xml_user_dropped = l[5]
         assert 'user_dropped' == xml_user_dropped.tag, xml_user_dropped.tag
         xml_user_plantoread = l[6]
-        assert 'user_plantowatch' == xml_user_plantoread.tag,\
+        assert 'user_plantoread' == xml_user_plantoread.tag,\
             xml_user_plantoread.tag
-        xml_user_days_spent_reading = l[7]
-        assert 'spent_watching' == xml_user_days_spent_reading.tag,\
-            xml_user_days_spent_reading.tag
+        user_days_spent_watching = l[7]
+        assert 'user_days_spent_watching' == user_days_spent_watching.tag,\
+            user_days_spent_watching.tag
         self.user_days_spent_watching = float(
-            xml_user_days_spent_reading.text.strip())
+            user_days_spent_watching.text.strip())
 
         xml_mal_objects = xml_mal_objects[1:]
 

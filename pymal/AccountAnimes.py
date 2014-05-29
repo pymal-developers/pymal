@@ -35,6 +35,8 @@ class AccountAnimes(object, metaclass=SingletonFactory):
         self.__dropped = []
         self.__plan_to_watch = []
 
+        self.user_days_spent_watching = None
+
         self.map_of_lists = {
             1: self.__watching,
             2: self.__completed,
@@ -142,8 +144,7 @@ class AccountAnimes(object, metaclass=SingletonFactory):
             xml_general_data.tag)
         l = list(xml_general_data)
         xml_user_id = l[0]
-        assert 'user_id' == xml_user_id.tag, 'user_id == {0:s}'.format(
-            xml_user_id.tag)
+        assert 'user_id' == xml_user_id.tag, xml_user_id.tag
         assert self.__connection.is_user_by_id(
             int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
         xml_user_name = l[1]
@@ -163,7 +164,7 @@ class AccountAnimes(object, metaclass=SingletonFactory):
         assert 'user_plantowatch' == xml_user_plantowatch.tag,\
             xml_user_plantowatch.tag
         xml_user_days_spent_watching = l[7]
-        assert 'spent_watching' == xml_user_days_spent_watching.tag,\
+        assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag,\
             xml_user_days_spent_watching.tag
         self.user_days_spent_watching = float(
             xml_user_days_spent_watching.text.strip())
