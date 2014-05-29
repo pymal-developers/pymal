@@ -264,6 +264,7 @@ class MyManga(object, metaclass=SingletonFactory):
         status_select = content_rows[contents_divs_index].find(
             name="select", attrs={"id": "status", "name": "status"})
         assert status_select is not None
+        # TODO: make this look better
         status_selected_options = [
             x
             for x in status_select.findAll(name="option")

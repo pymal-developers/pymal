@@ -12,7 +12,7 @@ from bs4.element import NavigableString
 from pymal.decorators import load, SingletonFactory
 from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPI_NONE_TIME
 from pymal.global_functions import connect, make_list, get_next_index,\
-    check_side_content_div, get_content_wrapper_div, make_time
+    check_side_content_div, get_content_wrapper_div, make_time, make_counter
 
 __all__ = ['Manga']
 
@@ -335,23 +335,14 @@ class Manga(object, metaclass=SingletonFactory):
         volumes_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Volumes', volumes_div)
         volumes_span, self_volumes = volumes_div.contents
-        self_volumes = self_volumes.strip()
-        if 'Unknown' == self_volumes:
-            self._volumes = float('inf')
-        else:
-            self._volumes = int(self_volumes)
-
+        self._volumes = make_counter(self_volumes.strip())
         side_contents_divs_index += 1
 
         # chapters <div>
         chapters_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Chapters', chapters_div)
         chapters_span, self_chapters = chapters_div.contents
-        self_chapters = self_chapters .strip()
-        if 'Unknown' == self_chapters:
-            self._chapters = float('inf')
-        else:
-            self._chapters = int(self_chapters)
+        self._chapters = make_counter(self_chapters .strip())
         side_contents_divs_index += 1
 
         # status <div>

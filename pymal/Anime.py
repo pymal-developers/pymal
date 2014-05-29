@@ -12,7 +12,7 @@ from bs4.element import NavigableString
 from pymal.decorators import load, SingletonFactory
 from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPI_NONE_TIME
 from pymal.global_functions import connect, make_list, get_next_index,\
-    check_side_content_div, get_content_wrapper_div, make_time
+    check_side_content_div, get_content_wrapper_div, make_time, make_counter
 
 __all__ = ['Anime']
 
@@ -333,11 +333,7 @@ class Anime(object, metaclass=SingletonFactory):
         episodes_div = side_contents_divs[side_contents_divs_index]
         assert check_side_content_div('Episodes', episodes_div)
         episodes_span, self_episodes = episodes_div.contents
-        self_episodes = self_episodes.strip()
-        if 'Unknown' == self_episodes:
-            self._episodes = float('inf')
-        else:
-            self._episodes = int(self_episodes.strip())
+        self._episodes = make_counter(self_episodes.strip())
 
         side_contents_divs_index += 1
 

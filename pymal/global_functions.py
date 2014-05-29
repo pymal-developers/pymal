@@ -161,3 +161,12 @@ def make_time(time_string: str):
             time_string = time_string[:4] + time_string[4:].replace('00', '01')
             start_time = time.strptime(time_string, MALAPPINFO_FORMAT_TIME)
     return time.mktime(start_time)
+
+
+def make_counter(counter_string: str):
+    """
+    getting mal site counter string format and return it as int
+    """
+    if 'Unknown' == counter_string:
+        return float('inf')
+    return int(counter_string)
