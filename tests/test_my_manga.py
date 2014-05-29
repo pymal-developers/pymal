@@ -11,6 +11,7 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 
 
 class ReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
@@ -86,6 +87,7 @@ class ReloadTestCase(unittest.TestCase):
 
 
 class NoReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

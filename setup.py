@@ -11,7 +11,7 @@ setup(
     version=version,
     description='A pythonapi for the website MyAnimeList (or MAL).',
     author='pymal-developers',
-    license = "BSD",
+    license="BSD",
     url='https://bitbucket.org/pymal-developers/pymal/',
     keywords=["MyAnimeList", "MAL", "pymal"],
     classifiers=[
@@ -24,6 +24,11 @@ setup(
         'Natural Language :: Japanese',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.0',
+        'Programming Language :: Python :: 3.1',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Topic :: Database',
         'Topic :: Database :: Front-Ends',
@@ -36,5 +41,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: User Interfaces',
     ],
+    requires=['requests', 'BeautifulSoup4', 'httpcache'],
 
 )

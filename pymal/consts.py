@@ -1,7 +1,7 @@
-__authors__   = ""
+__authors__ = ""
 __copyright__ = "(c) 2014, pymal"
-__license__   = "BSD License"
-__contact__   = "Name Of Current Guardian of this file <email@address>"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
 
 __all__ = ['USER_AGENT', 'XMLS_DIRECTORY', 'HOST_NAME', 'DEBUG',
            'RETRY_NUMBER', 'RETRY_SLEEP', 'SITE_FORMAT_TIME',

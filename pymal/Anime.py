@@ -1,7 +1,7 @@
-__authors__   = ""
+__authors__ = ""
 __copyright__ = "(c) 2014, pymal"
-__license__   = "BSD License"
-__contact__   = "Name Of Current Guardian of this file <email@address>"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
 from urllib import request
@@ -11,8 +11,10 @@ import time
 from bs4.element import NavigableString
 
 from pymal.decorators import load, SingletonFactory
-from pymal.consts import HOST_NAME, DEBUG, SITE_FORMAT_TIME, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME
-from pymal.global_functions import connect, make_list, get_next_index, check_side_content_div, get_content_wrapper_div
+from pymal.consts import HOST_NAME, DEBUG, XMLS_DIRECTORY, MALAPPINFO_FORMAT_TIME,\
+    SITE_FORMAT_TIME
+from pymal.global_functions import connect, make_list, get_next_index,\
+    check_side_content_div, get_content_wrapper_div
 
 __all__ = ['Anime']
 
@@ -29,8 +31,11 @@ class Anime(object, metaclass=SingletonFactory):
                'reload', 'add']
     
     __GLOBAL_MAL_URL = request.urljoin(HOST_NAME, "anime/{0:d}")
-    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), XMLS_DIRECTORY, 'myanimelist_official_api_anime.xml')
-    __MY_MAL_ADD_URL = request.urljoin(HOST_NAME, 'api/animelist/add/{0:d}.xml')
+    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
+        os.path.dirname(__file__), XMLS_DIRECTORY,
+        'myanimelist_official_api_anime.xml')
+    __MY_MAL_ADD_URL = request.urljoin(
+        HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
     def __init__(self, mal_id: int, mal_xml=None):
         """
@@ -40,8 +45,8 @@ class Anime(object, metaclass=SingletonFactory):
 
         self._mal_url = self.__GLOBAL_MAL_URL.format(self._id)
 
-        ### Getting staff from html
-        ## staff from side content
+        # Getting staff from html
+        # staff from side content
         self._title = None
         self._image_url = None
         self._english = ''
@@ -60,11 +65,11 @@ class Anime(object, metaclass=SingletonFactory):
         self._rating = ''
         self._episodes = None
 
-        ## staff from main content
-        #staff from row 1
+        # staff from main content
+        # staff from row 1
         self._synopsis = ''
 
-        #staff from row 2
+        # staff from row 2
         self._adaptations = list()
         self._characters = list()
         self._sequals = list()
@@ -108,14 +113,17 @@ class Anime(object, metaclass=SingletonFactory):
             if start_time == '0000-00-00':
                 self._start_time = float('inf')
             else:
-                start_time = start_time[:4] + start_time[4:].replace('00', '01')
-                self._start_time = time.mktime(time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
+                start_time = start_time[:4] + \
+                    start_time[4:].replace('00', '01')
+                self._start_time = time.mktime(
+                    time.strptime(start_time, MALAPPINFO_FORMAT_TIME))
             end_time = mal_xml.find('series_end').text.strip()
             if end_time == '0000-00-00':
                 self._end_time = float('inf')
             else:
                 end_time = end_time[:4] + end_time[4:].replace('00', '01')
-                self._end_time = time.mktime(time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
+                self._end_time = time.mktime(
+                    time.strptime(end_time, MALAPPINFO_FORMAT_TIME))
             self._image_url = mal_xml.find('series_image').text.strip()
 
             self._episodes = int(mal_xml.find('series_episodes').text.strip())
@@ -280,8 +288,9 @@ class Anime(object, metaclass=SingletonFactory):
         # Getting title <div>
         self._title = content_wrapper_div.h1.contents[1].strip()
 
-        #Getting content <div>
-        content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
+        # Getting content <div>
+        content_div = content_wrapper_div.find(
+            name="div", attrs={"id": "content"}, recursive=False)
         if DEBUG:
             assert content_div is not None
 
@@ -419,11 +428,14 @@ class Anime(object, metaclass=SingletonFactory):
 
         # Data from main content
         main_content = contents[1]
-        main_content_inner_divs = main_content.findAll(name='div', recursive=False)
+        main_content_inner_divs = main_content.findAll(
+            name='div', recursive=False)
         if DEBUG:
             assert 2 == len(main_content_inner_divs), \
-                "Got len(main_content_inner_divs) == {0:d}".format(len(main_content_inner_divs))
-        main_content_datas = main_content_inner_divs[1].table.tbody.findAll(name="tr", recursive=False)
+                "Got len(main_content_inner_divs) == {0:d}".format(
+                    len(main_content_inner_divs))
+        main_content_datas = main_content_inner_divs[
+            1].table.tbody.findAll(name="tr", recursive=False)
 
         synopsis_cell = main_content_datas[0]
         main_content_other_data = main_content_datas[1]
@@ -432,7 +444,8 @@ class Anime(object, metaclass=SingletonFactory):
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
         if DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text.strip(), synopsis_cell.h2.text.strip()
+            assert 'Synopsis' == synopsis_cell.h2.text.strip(
+            ), synopsis_cell.h2.text.strip()
         self._synopsis = os.linesep.join([
             synopsis_cell_content.strip()
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
@@ -446,22 +459,28 @@ class Anime(object, metaclass=SingletonFactory):
         # Getting all the data under 'Related Anime'
         index = 0
         index = get_next_index(index, other_data_kids)
-        if 'h2' == other_data_kids[index].name and 'Related Anime' == other_data_kids[index].text.strip():
+        if 'h2' == other_data_kids[index].name and\
+           'Related Anime' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = make_list(self.related_str_to_list_dict[other_data_kids[index].strip()], index, other_data_kids)
+                index = make_list(
+                    self.related_str_to_list_dict[
+                        other_data_kids[index].strip()],
+                    index, other_data_kids)
         else:
             index -= 2
         next_index = get_next_index(index, other_data_kids)
 
         if DEBUG:
-            assert next_index - index == 2, "{0:d} - {1:d}".format(next_index, index)
+            assert next_index - \
+                index == 2, "{0:d} - {1:d}".format(next_index, index)
             index = next_index + 1
 
             # Getting all the data under 'Characters & Voice Actors'
-            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(other_data_kids[index].name)
+            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(
+                other_data_kids[index].name)
             assert 'Characters & Voice Actors' == other_data_kids[index].contents[-1],\
-                'Characters & Voice Actors == {0:s}'.format(other_data_kids[index].contents[-1])
+                other_data_kids[index].contents[-1]
 
         self._is_loaded = True
 
@@ -474,9 +493,11 @@ class Anime(object, metaclass=SingletonFactory):
     def add(self, account):
         """
         """
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0, '00000000', '00000000', 0, False, False, '', '',
-                                               '')
-        self.ret_data = account.auth_connect(self.__MY_MAL_ADD_URL.format(self.id), data=data)
+        data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0,
+                                               '00000000', '00000000', 0,
+                                               False, False, '', '','')
+        self.ret_data = account.auth_connect(
+            self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
         assert self.ret_data.isdigit()
 
@@ -498,5 +519,6 @@ class Anime(object, metaclass=SingletonFactory):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        title = '' if self._title is None else " '{0:s}'".format(self._title)
-        return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title, self._id)
+        title = '' if self._title is None else ' ' + self._title
+        return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title,
+                                              self._id)

@@ -6,6 +6,7 @@ from pymal.Season import Season
 
 
 class TestCase(unittest.TestCase):
+
     def setUp(self):
         self.seasons = Seasons()
 

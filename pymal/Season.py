@@ -1,7 +1,7 @@
-__authors__   = ""
+__authors__ = ""
 __copyright__ = "(c) 2014, pymal"
-__license__   = "BSD License"
-__contact__   = "Name Of Current Guardian of this file <email@address>"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
 
@@ -44,6 +44,7 @@ class Season(object, metaclass=SingletonFactory):
 
     def __iter__(self):
         class SeasonIterator(object):
+
             def __init__(self, values):
                 self. values = list(values)
                 self.location = 0
@@ -70,4 +71,5 @@ class Season(object, metaclass=SingletonFactory):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        return "<{0:s} {1:s} {2:d}>".format(self.__class__.__name__, self.season_name, self.year)
+        return "<{0:s} {1:s} {2:d}>".format(self.__class__.__name__,
+                                            self.season_name, self.year)

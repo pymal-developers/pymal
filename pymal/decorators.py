@@ -1,7 +1,7 @@
-__authors__   = ""
+__authors__ = ""
 __copyright__ = "(c) 2014, pymal"
-__license__   = "BSD License"
-__contact__   = "Name Of Current Guardian of this file <email@address>"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
 
 
 def load(function):
@@ -38,6 +38,7 @@ class Singleton(type):
         An existsing instance.
     """
     _instances = dict()
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
@@ -50,9 +51,10 @@ class SingletonFactory(type):
         of the same cls.
     
     Returns:
-        An existsing instance.
+        An existing instance.
     """
     __instances = dict()
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls.__instances:
             cls.__instances[cls] = dict()
