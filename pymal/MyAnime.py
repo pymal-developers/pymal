@@ -244,14 +244,8 @@ class MyAnime(object, metaclass=SingletonFactory):
         content_td = content_div.table.tr.td
         assert content_td is not None
 
-        # Getting content <div>
-        content_td_divs = content_td.findAll(name="div", recursive=False)
-        assert 2 == len(content_td_divs), len(content_td_divs)
-
-        content_div = content_td_divs[1]
-
         # Getting content rows <tr>
-        content_form = content_div.form
+        content_form = content_td.find(name="form", attrs={'id': "myAnimeForm"})
         assert 'myAnimeForm' == content_form['id'], content_form['id']
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
@@ -406,7 +400,7 @@ class MyAnime(object, metaclass=SingletonFactory):
         rewatch_value_option = rewatch_value_node.find(
             name='option', attrs={'selected': ''})
         assert rewatch_value_option is not None
-        self.__my_rewatch_value == int(rewatch_value_option['value'])
+        self.__my_rewatch_value = int(rewatch_value_option['value'])
         contents_divs_index += 1
 
         # Getting comments
