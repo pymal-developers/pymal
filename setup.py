@@ -9,7 +9,7 @@ setup(
     name='pymal',
     packages=['pymal'],
     version=version,
-    description='A pythonapi for the website MyAnimeList (or MAL).',
+    description='A python api for the website MyAnimeList (or MAL).',
     author='pymal-developers',
     license="BSD",
     url='https://bitbucket.org/pymal-developers/pymal/',
