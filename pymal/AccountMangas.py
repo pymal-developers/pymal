@@ -8,20 +8,20 @@ from xml.etree import ElementTree
 from threading import Thread
 from urllib import request
 
-from pymal.consts import HOST_NAME, DEBUG
-from pymal.decorators import load, SingletonFactory
-from pymal.MyManga import MyManga
+from pymal import consts
+from pymal import decorators
+from pymal import MyManga
 
 __all__ = ['AccountMangas']
 
 
-class AccountMangas(object, metaclass=SingletonFactory):
+class AccountMangas(object, metaclass=decorators.SingletonFactory):
     """
     """
     __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
                'reload']
 
-    __URL = request.urljoin(HOST_NAME, "malappinfo.php?u={0:s}&type=manga")
+    __URL = request.urljoin(consts.HOST_NAME, "malappinfo.php?u={0:s}&type=manga")
 
     def __init__(self, username: str, connection):
         """
@@ -60,31 +60,31 @@ class AccountMangas(object, metaclass=SingletonFactory):
         self._is_loaded = False
 
     @property
-    @load
+    @decorators.load
     def reading(self) -> list:
         return self.__reading
 
     @property
-    @load
+    @decorators.load
     def completed(self) -> list:
         return self.__completed
 
     @property
-    @load
+    @decorators.load
     def on_hold(self) -> list:
         return self.__on_hold
 
     @property
-    @load
+    @decorators.load
     def dropped(self) -> list:
         return self.__dropped
 
     @property
-    @load
+    @decorators.load
     def plan_to_read(self) -> list:
         return self.__plan_to_read
 
-    def __contains__(self, item: MyManga) -> bool:
+    def __contains__(self, item: MyManga.MyManga) -> bool:
         return any(map(lambda x: item == x, self))
 
     def __iter__(self):
@@ -179,7 +179,7 @@ class AccountMangas(object, metaclass=SingletonFactory):
 
         threads = []
         for xml_mal_object in xml_mal_objects:
-            if DEBUG:
+            if consts.DEBUG:
                 self.__get_my_mal_object(xml_mal_object)
             else:
                 thread = Thread(
@@ -199,8 +199,9 @@ class AccountMangas(object, metaclass=SingletonFactory):
         my_mal_object_id_xml = xml_mal_object.find('my_id')
         assert my_mal_object_id_xml is not None
         my_mal_object_id = int(my_mal_object_id_xml.text.strip())
-        mal_object = MyManga(mal_object_id, my_mal_object_id,
-                             self.__connection, my_mal_xml=xml_mal_object)
+        mal_object = MyManga.MyManga(mal_object_id, my_mal_object_id,
+                                     self.__connection,
+                                     my_mal_xml=xml_mal_object)
         self.map_of_lists[mal_object.my_status].append(mal_object)
 
     def __len__(self):
