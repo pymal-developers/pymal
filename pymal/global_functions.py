@@ -144,7 +144,7 @@ def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
     return content_wrapper_div
 
 
-def make_start_and_end_time(start_and_end_string:str):
+def make_start_and_end_time(start_and_end_string: str) -> tuple:
     """
     getting mal site airing / publishing format and return it as tuple(int, int)
     """
@@ -158,7 +158,7 @@ def make_start_and_end_time(start_and_end_string:str):
     return make_time(start_time), make_time(end_time)
 
 
-def make_time(time_string: str):
+def make_time(time_string: str) -> int:
     """
     getting mal site time string format and return it as int
     """
@@ -177,7 +177,7 @@ def make_time(time_string: str):
     return time.mktime(start_time)
 
 
-def make_counter(counter_string: str):
+def make_counter(counter_string: str) -> int or float:
     """
     getting mal site counter string format and return it as int
     """
