@@ -84,8 +84,8 @@ class ReloadTestCase(unittest.TestCase):
             self.assertIsInstance(character, Manga.Manga)
 
     def test_manga_sequals(self):
-        self.assertIsInstance(self.manga.sequals, list)
-        for sequal in self.manga.sequals:
+        self.assertIsInstance(self.manga.sequels, list)
+        for sequal in self.manga.sequels:
             self.assertIsInstance(sequal, Manga.Manga)
 
     def test_manga_prequel(self):

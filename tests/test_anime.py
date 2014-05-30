@@ -80,8 +80,8 @@ class ReloadTestCase(unittest.TestCase):
             self.assertIsInstance(character, Anime.Anime)
 
     def test_sequals(self):
-        self.assertIsInstance(self.anime.sequals, list)
-        for sequal in self.anime.sequals:
+        self.assertIsInstance(self.anime.sequels, list)
+        for sequal in self.anime.sequels:
             self.assertIsInstance(sequal, Anime.Anime)
 
     def test_prequels(self):

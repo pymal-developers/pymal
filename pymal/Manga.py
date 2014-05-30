@@ -7,7 +7,7 @@ import hashlib
 from urllib import request
 import os
 
-from bs4.element import NavigableString
+import bs4
 
 from pymal import decorators
 from pymal import consts
@@ -114,155 +114,155 @@ class Manga(object, metaclass=decorators.SingletonFactory):
             self.__volumes = int(mal_xml.find('series_volumes').text.strip())
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self.__id
 
     @property
-    def title(self):
+    def title(self) -> str:
         if self.__title is None:
             self.reload()
         return self.__title
 
     @property
-    def image_url(self):
+    def image_url(self) -> str:
         if self.__image_url is None:
             self.reload()
         return self.__image_url
 
     @property
     @decorators.load
-    def english(self):
+    def english(self) -> str:
         return self.__english
 
     @property
-    def synonyms(self):
+    def synonyms(self) -> str:
         if self.__synonyms is None:
             self.reload()
         return self.__synonyms
 
     @property
     @decorators.load
-    def japanese(self):
+    def japanese(self) -> str:
         return self.__japanese
 
     @property
-    def type(self):
+    def type(self) -> str:
         if self.__type is None:
             self.reload()
         return self.__type
 
     @property
-    def status(self):
+    def status(self) -> int:
         if self.__status is None:
             self.reload()
         return self.__status
 
     @property
-    def start_time(self):
+    def start_time(self) -> int:
         if self.__start_time is None:
             self.reload()
         return self.__start_time
 
     @property
-    def end_time(self):
+    def end_time(self) -> int:
         if self.__end_time is None:
             self.reload()
         return self.__end_time
 
     @property
     @decorators.load
-    def creators(self):
+    def creators(self) -> dict:
         return self.__creators
 
     @property
     @decorators.load
-    def genres(self):
+    def genres(self) ->dict:
         return self.__genres
 
     @property
     @decorators.load
-    def score(self):
+    def score(self) -> float:
         return self.__score
 
     @property
     @decorators.load
-    def rank(self):
+    def rank(self) -> int:
         return self.__rank
 
     @property
     @decorators.load
-    def popularity(self):
+    def popularity(self) -> int:
         return self.__popularity
 
     @property
     @decorators.load
-    def synopsis(self):
+    def synopsis(self) -> str:
         return self.__synopsis
 
     # staff from main content
     @property
     @decorators.load
-    def adaptations(self):
+    def adaptations(self) -> list:
         return self.__adaptations
 
     @property
     @decorators.load
-    def characters(self):
+    def characters(self) -> list:
         return self.__characters
 
     @property
     @decorators.load
-    def sequals(self):
+    def sequels(self) -> list:
         return self.__sequels
 
     @property
     @decorators.load
-    def prequels(self):
+    def prequels(self) -> list:
         return self.__prequels
 
     @property
     @decorators.load
-    def spin_offs(self):
+    def spin_offs(self) -> list:
         return self.__spin_offs
 
     @property
     @decorators.load
-    def alternative_versions(self):
+    def alternative_versions(self) -> list:
         return self.__alternative_versions
 
     @property
     @decorators.load
-    def side_stories(self):
+    def side_stories(self) -> list:
         return self.__side_stories
 
     @property
     @decorators.load
-    def summaries(self):
+    def summaries(self) -> list:
         return self.__summaries
 
     @property
     @decorators.load
-    def others(self):
+    def others(self) -> list:
         return self.__others
 
     @property
     @decorators.load
-    def parent_stories(self):
+    def parent_stories(self) -> list:
         return self.__parent_stories
 
     @property
     @decorators.load
-    def alternative_settings(self):
+    def alternative_settings(self) -> list:
         return self.__alternative_settings
 
     @property
-    def volumes(self):
+    def volumes(self) -> int:
         if self._volumes is None:
             self.reload()
         return self.__volumes
 
     @property
-    def chapters(self):
+    def chapters(self) -> int:
         if self.__chapters is None:
             self.reload()
         return self.__chapters
@@ -421,7 +421,7 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         self.__synopsis = os.linesep.join([
             synopsis_cell_content.strip()
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
-            if isinstance(synopsis_cell_content, NavigableString)
+            if isinstance(synopsis_cell_content, bs4.element.NavigableString)
         ])
 
         # Getting other data
