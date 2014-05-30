@@ -108,8 +108,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             else:
                 self.__status = self_status
                 print('self.__status=', self.__status)
-            self.__start_time = global_functions .make_time(mal_xml.find('series_start').text.strip())
-            self.__end_time = global_functions .make_time(mal_xml.find('series_end').text.strip())
+            self.__start_time = global_functions.make_time(mal_xml.find('series_start').text.strip())
+            self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
             self.__image_url = mal_xml.find('series_image').text.strip()
 
             self.__episodes = int(mal_xml.find('series_episodes').text.strip())
