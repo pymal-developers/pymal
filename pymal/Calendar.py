@@ -1,18 +1,21 @@
 from urllib import request
 import datetime
+
 import bs4
 import dateutils
 import icalendar
 import requests
-from pymal.decorators import load
+
+from pymal import decorators
 
 
-class Calendar(object):
+class Calendar(object, metaclass=decorators.Singleton):
     HOST_NAME = 'http://animecalendar.net'
     QUERY_CALENDAR = "%Y/%m"
     DATE_FORMAT = '/%Y/%m/%d'
     TIME_FORMAT = '(%H:%M)'
     EPISODE_TIME = dateutils.relativedelta(minutes=30)
+    MONTH_JUMP = dateutils.relativedelta(months=1)
 
     def __init__(self):
         self.__ical = icalendar.Calendar()
@@ -20,8 +23,8 @@ class Calendar(object):
         self._is_loaded = False
 
     @property
-    @load
-    def ical(self):
+    @decorators.load
+    def ical(self) -> icalendar.Calendar:
         return self.__ical
 
     def __parse_episode_cell(self, date_string: str, episode: bs4.element.Tag):
@@ -63,6 +66,24 @@ class Calendar(object):
 
     def __parse_calendar_html(self, calendar_url: str) -> bool:
         html = bs4.BeautifulSoup(requests.get(calendar_url).text)
+
+        #menu_div = html.find(name="div", attrs={'id': "menu"})
+        #menu_list = menu_div.findAll(name="li")
+        #timezone_list = list(filter(lambda x: "timezone" in x.text.lower(), menu_list))
+        #assert 1 != len(timezone_list), len(timezone_list)
+        #timezone_string = timezone_list[0].text.split()[1]
+        #over_sign = timezone_string[0]
+        #timezone_string = timezone_string[1:]
+
+        #fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+        #now = datetime.datetime.now()
+        #now_string_with_utc = now.replace(tzinfo=pytz.utc).strftime(fmt)
+        #if over_sign == '-':
+        #    now_string_with_utc = now_string_with_utc.replace('+', '-')
+        #new_string_with_utc = now_string_with_utc
+        #bla = datetime.datetime.strptime(new_string_with_utc, fmt)
+        #print(bla.isoformat())
+
         calendar_div = html.find(name="div", attrs={"id": "calendarContent"})
         assert calendar_div is not None
         calendar_table = calendar_div.find(name='table', recursive=False)
@@ -75,7 +96,11 @@ class Calendar(object):
         return any([self.__parse_week_html(row) for row in calendar_table.tbody.findAll(name="tr", recursive=False)])
 
     def reload(self):
+        self.__ical.clear()
         now_datetime = datetime.datetime.now()
-        month_jumps = dateutils.relativedelta(months=1)
         while self.__parse_calendar_html(request.urljoin(self.HOST_NAME, now_datetime.strftime(self.QUERY_CALENDAR))):
-            now_datetime += month_jumps
+            now_datetime += self.MONTH_JUMP
+
+        now_datetime = datetime.datetime.now() - self.MONTH_JUMP
+        while self.__parse_calendar_html(request.urljoin(self.HOST_NAME, now_datetime.strftime(self.QUERY_CALENDAR))):
+            now_datetime -= self.MONTH_JUMP
