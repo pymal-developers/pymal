@@ -445,8 +445,10 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         )
         return data
 
-    def add(self, account):
-        return self
+    def add(self, account) -> MyManga:
+        if account == self._account:
+            return self
+        return self.obj.add(account)
 
     def update(self):
         """
@@ -463,6 +465,42 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
             self.__MY_MAL_UPDATE_URL, data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'
+
+    def increase(self) -> bool:
+        if self.is_completed:
+            return False
+        self.__my_completed_chapters += 1
+        return True
+
+    def increase_volume(self) -> bool:
+        if self.__my_downloaded_volumes >= self.obj.volumes:
+            return False
+        self.__my_completed_volumes += 1
+        return True
+
+    def increase_downloaded(self) -> bool:
+        if self.is_completed:
+            return False
+        self.__my_downloaded_chapters += 1
+        return True
+
+    @property
+    def is_completed(self) -> bool:
+        return self.__my_completed_chapters >= self.obj.chapters
+
+    def set_completed(self) -> bool:
+        if self.obj.chapters == float('inf'):
+            return False
+        self.__my_completed_chapters = self.obj.chapters
+        if self.obj.volumes != float('inf'):
+            self.__my_completed_volumes = self.obj.volumes
+        return True
+
+    def set_completed_download(self) -> bool:
+        if self.obj.chapters == float('inf'):
+            return False
+        self.__my_downloaded_chapters = self.obj.chapters
+        return True
 
     def __getattr__(self, name):
         return getattr(self.obj, name)

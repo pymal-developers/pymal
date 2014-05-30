@@ -437,8 +437,10 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         )
         return data
 
-    def add(self, account):
-        return self
+    def add(self, account) -> MyAnime:
+        if account == self._account:
+            return self
+        return self.obj.add(account)
 
     def update(self):
         """
@@ -455,6 +457,31 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
             self.__MY_MAL_UPDATE_URL, data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'
+
+    def increase(self) -> bool:
+        if self.is_completed:
+            return False
+        self.__my_completed_episodes += 1
+        return True
+
+    def increase_downloaded(self) -> bool:
+        if self.is_completed:
+            return False
+        self.__my_download_episodes += 1
+        return True
+
+    @property
+    def is_completed(self) -> bool:
+        return self.__my_completed_episodes >= self.obj.episodes
+
+    def set_completed(self):
+        self.__my_completed_episodes = self.obj.episodes
+
+    def set_completed_download(self) -> bool:
+        if self.obj.episodes == float('inf'):
+            return False
+        self.__my_download_episodes = self.obj.episodes
+        return True
 
     def __getattr__(self, name):
         return getattr(self.obj, name)
