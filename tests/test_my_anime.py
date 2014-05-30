@@ -2,9 +2,9 @@ import unittest
 import time
 from xml.etree import ElementTree
 
-from pymal.Account import Account
-from pymal.Anime import Anime
-from pymal.consts import MALAPI_FORMAT_TIME, MALAPI_NONE_TIME
+from pymal import Account
+from pymal import Anime
+from pymal import consts
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -13,7 +13,7 @@ class ReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.anime = cls.account.animes[0]
         cls.anime.my_reload()
 
@@ -44,16 +44,16 @@ class ReloadTestCase(unittest.TestCase):
     def test_my_start_date(self):
         self.assertIsInstance(self.anime.my_start_date, str)
         try:
-            self.assertEqual(self.anime.my_start_date, MALAPI_NONE_TIME)
+            self.assertEqual(self.anime.my_start_date, consts.MALAPI_NONE_TIME)
         except AssertionError:
-            time.strptime(self.anime.my_start_date, MALAPI_FORMAT_TIME)
+            time.strptime(self.anime.my_start_date, consts.MALAPI_FORMAT_TIME)
 
     def test_my_end_date(self):
         self.assertIsInstance(self.anime.my_end_date, str)
         try:
-            self.assertEqual(self.anime.my_end_date, MALAPI_NONE_TIME)
+            self.assertEqual(self.anime.my_end_date, consts.MALAPI_NONE_TIME)
         except AssertionError:
-            time.strptime(self.anime.my_end_date, MALAPI_FORMAT_TIME)
+            time.strptime(self.anime.my_end_date, consts.MALAPI_FORMAT_TIME)
 
     def test_my_priority(self):
         self.assertIsInstance(self.anime.my_priority, int)
@@ -86,7 +86,7 @@ class NoReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.anime = cls.account.animes[0]
 
     def test_my_id(self):
@@ -107,16 +107,16 @@ class NoReloadTestCase(unittest.TestCase):
     def test_my_start_date(self):
         self.assertIsInstance(self.anime.my_start_date, str)
         try:
-            self.assertEqual(self.anime.my_start_date, MALAPI_NONE_TIME)
+            self.assertEqual(self.anime.my_start_date, consts.MALAPI_NONE_TIME)
         except AssertionError:
-            time.strptime(self.anime.my_start_date, MALAPI_FORMAT_TIME)
+            time.strptime(self.anime.my_start_date, consts.MALAPI_FORMAT_TIME)
 
     def test_my_end_date(self):
         self.assertIsInstance(self.anime.my_end_date, str)
         try:
-            self.assertEqual(self.anime.my_end_date, MALAPI_NONE_TIME)
+            self.assertEqual(self.anime.my_end_date, consts.MALAPI_NONE_TIME)
         except AssertionError:
-            time.strptime(self.anime.my_end_date, MALAPI_FORMAT_TIME)
+            time.strptime(self.anime.my_end_date, consts.MALAPI_FORMAT_TIME)
 
     def test_my_times_rewatched(self):
         self.assertIsInstance(self.anime.my_times_rewatched, int)
@@ -125,7 +125,7 @@ class NoReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.my_rewatch_value, int)
 
     def test_equal(self):
-        anime = Anime(self.anime.id)
+        anime = Anime.Anime(self.anime.id)
         self.assertEqual(anime, self.anime)
 
 

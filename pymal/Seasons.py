@@ -1,7 +1,7 @@
-__authors__   = ""
+__authors__ = ""
 __copyright__ = "(c) 2014, pymal"
-__license__   = "BSD License"
-__contact__   = "Name Of Current Guardian of this file <email@address>"
+__license__ = "BSD License"
+__contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import os
 from urllib import request
@@ -10,13 +10,13 @@ from xml.etree import ElementTree
 import requests
 import bs4
 
-from pymal.decorators import load, Singleton
-from pymal.Season import Season
+from pymal import decorators
+from pymal import Season
 
 __all__ = ['Seasons']
 
 
-class Seasons(object, metaclass=Singleton):
+class Seasons(object, metaclass=decorators.Singleton):
     """
     Lazy making of Season from online db.
     
@@ -34,7 +34,7 @@ class Seasons(object, metaclass=Singleton):
         self._is_loaded = False
 
     @property
-    @load
+    @decorators.load
     def seasons(self):
         return self.__seasons
 
@@ -68,7 +68,7 @@ class Seasons(object, metaclass=Singleton):
                 assert int(series_animedb_id_element.text) not in animes_ids
                 animes_ids.add(int(series_animedb_id_element.text))
 
-            season = Season(season_name, year, animes_ids)
+            season = Season.Season(season_name, year, animes_ids)
             assert season not in self.__seasons
             self.__seasons.add(season)
 

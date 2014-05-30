@@ -6,13 +6,13 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 import hashlib
 import time
 
-from pymal.decorators import load, SingletonFactory
-from pymal.Anime import Anime
+from pymal import decorators
+from pymal import Anime
 
 __all__ = ['Season']
 
 
-class Season(object, metaclass=SingletonFactory):
+class Season(object, metaclass=decorators.SingletonFactory):
     """
     Lazy load of season data.
     
@@ -45,12 +45,12 @@ class Season(object, metaclass=SingletonFactory):
         self.start_time = time.strptime(start_time_string, '%Y %m')
 
     @property
-    @load
+    @decorators.load
     def animes(self):
         return self.__animes
 
     def reload(self):
-        self.__animes = set(map(Anime, self.__animes_ids))
+        self.__animes = set(map(Anime.Anime, self.__animes_ids))
         self._is_loaded = True
         assert len(self.__animes) == len(self.__animes_ids)
 

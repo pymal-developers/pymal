@@ -7,16 +7,15 @@ import hashlib
 from urllib import request
 import time
 
-from pymal.consts import HOST_NAME, MALAPI_NONE_TIME, MALAPPINFO_FORMAT_TIME,\
-    MALAPPINFO_NONE_TIME, MALAPI_FORMAT_TIME
-from pymal.decorators import my_load, SingletonFactory
-from pymal.Manga import Manga
-from pymal.global_functions import get_content_wrapper_div
+from pymal import consts
+from pymal import decorators
+from pymal import Manga
+from pymal import global_functions
 
 __all__ = ['MyManga']
 
 
-class MyManga(object, metaclass=SingletonFactory):
+class MyManga(object, metaclass=decorators.SingletonFactory):
     """
     Saves an account data about manga.
     
@@ -47,24 +46,24 @@ class MyManga(object, metaclass=SingletonFactory):
                'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
                'update', 'delete']
 
-    __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
+    __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(
-        HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
+        consts.HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
     __MY_MAL_DELETE_URL = request.urljoin(
-        HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
+        consts.HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
     __MY_MAL_UPDATE_URL = request.urljoin(
-        HOST_NAME, 'api/mangalist/update/{0:d}.xml')
+        consts.HOST_NAME, 'api/mangalist/update/{0:d}.xml')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
-    def __init__(self, mal_id: int or Manga, my_mal_id, account,
+    def __init__(self, mal_id: int or Manga.Manga, my_mal_id, account,
                  my_mal_xml: None=None):
         """
         """
-        if isinstance(mal_id, Manga):
+        if isinstance(mal_id, Manga.Manga):
             self.obj = mal_id
         else:
-            self.obj = Manga(mal_id, mal_xml=my_mal_xml)
+            self.obj = Manga.Manga(mal_id, mal_xml=my_mal_xml)
 
         self.__my_mal_url = self.__MY_MAL_URL.format(my_mal_id)
 
@@ -107,21 +106,21 @@ class MyManga(object, metaclass=SingletonFactory):
                 my_mal_xml.find('my_read_volumes').text.strip())
             self.__my_score = int(my_mal_xml.find('my_score').text.strip())
             my_start_date = my_mal_xml.find('my_start_date').text.strip()
-            if my_start_date == MALAPPINFO_NONE_TIME:
-                self.__my_start_date = MALAPI_NONE_TIME
+            if my_start_date == consts.MALAPPINFO_NONE_TIME:
+                self.__my_start_date = consts.MALAPI_NONE_TIME
             else:
                 my_start_date = time.strptime(
-                    my_start_date, MALAPPINFO_FORMAT_TIME)
+                    my_start_date, consts.MALAPPINFO_FORMAT_TIME)
                 self.__my_start_date = time.strftime(
-                    MALAPI_FORMAT_TIME, my_start_date)
+                    consts.MALAPI_FORMAT_TIME, my_start_date)
             my_end_date = my_mal_xml.find('my_finish_date').text.strip()
-            if my_end_date == MALAPPINFO_NONE_TIME:
-                self.__my_end_date = MALAPI_NONE_TIME
+            if my_end_date == consts.MALAPPINFO_NONE_TIME:
+                self.__my_end_date = consts.MALAPI_NONE_TIME
             else:
                 my_end_date = time.strptime(
-                    my_end_date, MALAPPINFO_FORMAT_TIME)
+                    my_end_date, consts.MALAPPINFO_FORMAT_TIME)
                 self.__my_end_date = time.strftime(
-                    MALAPI_FORMAT_TIME, my_end_date)
+                    consts.MALAPI_FORMAT_TIME, my_end_date)
             self.__my_reread_value = int(
                 my_mal_xml.find('my_rereading_chap').text.strip())
             my_tags_xml = my_mal_xml.find('my_tags')
@@ -160,17 +159,17 @@ class MyManga(object, metaclass=SingletonFactory):
         return self.__my_end_date
 
     @property
-    @my_load
+    @decorators.my_load
     def my_priority(self):
         return self.__my_priority
 
     @property
-    @my_load
+    @decorators.my_load
     def my_storage_type(self):
         return self.__my_storage_type
 
     @property
-    @my_load
+    @decorators.my_load
     def my_storage_value(self):
         return self.__my_storage_value
 
@@ -193,7 +192,7 @@ class MyManga(object, metaclass=SingletonFactory):
         return self.__my_completed_volumes
 
     @property
-    @my_load
+    @decorators.my_load
     def my_downloaded_chapters(self):
         return self.__my_downloaded_chapters
 
@@ -216,23 +215,23 @@ class MyManga(object, metaclass=SingletonFactory):
         return self.__my_tags
 
     @property
-    @my_load
+    @decorators.my_load
     def my_comments(self):
         return self.__my_comments
 
     @property
-    @my_load
+    @decorators.my_load
     def my_fan_sub_groups(self):
         return self.__my_fan_sub_groups
 
     @property
-    @my_load
+    @decorators.my_load
     def my_retail_volumes(self):
         return self.__my_retail_volumes
 
     def my_reload(self):
         # Getting content wrapper <div>
-        content_wrapper_div = get_content_wrapper_div(
+        content_wrapper_div = global_functions.get_content_wrapper_div(
             self.__my_mal_url, self._account.auth_connect)
 
         bas_result = content_wrapper_div.find(name='div',
@@ -241,7 +240,7 @@ class MyManga(object, metaclass=SingletonFactory):
             self._account.connect(self.__MY_LOGIN_URL, data=self.__data_form)
 
             # Getting content wrapper <div>
-            content_wrapper_div = get_content_wrapper_div(
+            content_wrapper_div = global_functions.get_content_wrapper_div(
                 self.__my_mal_url, self._account.auth_connect)
 
         # Getting content <td>
@@ -487,4 +486,5 @@ class MyManga(object, metaclass=SingletonFactory):
 
     def __repr__(self):
         title = '' if self._title is None else " '{0:s}'".format(self._title)
-        return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(self.__class__.__name__, title, self._account._username, self._id)
+        return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(
+            self.__class__.__name__, title, self._account._username, self._id)
