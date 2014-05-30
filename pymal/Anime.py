@@ -471,14 +471,18 @@ class Anime(object, metaclass=decorators.SingletonFactory):
     def add(self, account) -> bool:
         """
         """
+        print(self.MY_MAL_XML_TEMPLATE)
         data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0,
                                                consts.MALAPI_NONE_TIME,
                                                consts.MALAPI_NONE_TIME, 0,
                                                False, False, '', '', '')
+        print(data)
+        print(self.__MY_MAL_ADD_URL.format(self.id))
         self.ret_data = account.auth_connect(
             self.__MY_MAL_ADD_URL.format(self.id), data=data)
         print(self.ret_data)
-        assert self.ret_data.isdigit()
+        if not self.ret_data.isdigit():
+            raise RuntimeError(self.ret_data)
 
     def __eq__(self, other):
         if isinstance(other, Anime):

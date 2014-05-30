@@ -137,11 +137,23 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
             self.my_reload()
         return self.__my_status
 
+    @my_status.setter
+    def my_status(self, value: int):
+        if not (1 <= value <= 6):
+            raise RuntimeError("value of my_statue can be 1 to 6")
+        self.__my_status = value
+
     @property
     def my_score(self):
         if self.__my_score is None:
             self.my_reload()
         return self.__my_score
+
+    @my_score.setter
+    def my_score(self, value: int):
+        if not (0 <= value <= 10):
+            raise RuntimeError("value of my_score can be 0 to 10")
+        self.__my_score = value
 
     @property
     def my_start_date(self):
@@ -149,26 +161,53 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
             self.my_reload()
         return self.__my_start_date
 
+    @my_start_date.setter
+    def my_start_date(self, value: str):
+        time.strptime(value, consts.MALAPI_FORMAT_TIME)
+        self.__my_start_date = value
+
     @property
     def my_end_date(self):
         if self.__my_end_date is None:
             self.my_reload()
         return self.__my_end_date
 
+    @my_end_date.setter
+    def my_end_date(self, value: str):
+        time.strptime(value, consts.MALAPI_FORMAT_TIME)
+        self.__my_end_date = value
+
     @property
     @decorators.my_load
     def my_priority(self):
         return self.__my_priority
+
+    @my_priority.setter
+    def my_priority(self, value: int):
+        if not (0 <= value <= 3):
+            raise RuntimeError("value of my_priority can be 0 to 3")
+        self.__my_priority = value
 
     @property
     @decorators.my_load
     def my_storage_type(self):
         return self.__my_storage_type
 
+    @my_storage_type.setter
+    def my_storage_type(self, value: int):
+        if not (0 <= value <= 7):
+            raise RuntimeError("value of my_storage_type can be 0 to 7")
+        self.__my_storage_type = value
+
     @property
     @decorators.my_load
     def my_storage_value(self):
         return self.__my_storage_value
+
+    @my_storage_type.setter
+    def my_storage_value(self, value: float):
+        int(value)
+        self.__my_storage_value = value
 
     @property
     def my_is_rewatching(self):
@@ -176,22 +215,32 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
             self.my_reload()
         return self.__my_is_rewatching
 
+    @my_is_rewatching.setter
+    def my_is_rewatching(self, value: bool):
+        self.__my_is_rewatching = value
+
     @property
     def my_completed_episodes(self):
         if self.__my_completed_episodes is None:
             self.my_reload()
         return self.__my_completed_episodes
 
-    @property
-    def my_score(self):
-        if self.__my_score is None:
-            self.my_reload()
-        return self.__my_score
+    @my_completed_episodes.setter
+    def my_completed_episodes(self, value: int):
+        if not (0 <= value <= self.episodes):
+            raise RuntimeError("value of my_completed_episodes can be 0 to self.episodes")
+        self.__my_completed_episodes = value
 
     @property
     @decorators.my_load
     def my_download_episodes(self):
         return self.__my_download_episodes
+
+    @my_download_episodes.setter
+    def my_download_episodes(self, value: int):
+        if not (0 <= value <= self.episodes):
+            raise RuntimeError("value of my_download_episodes can be 0 to self.episodes")
+        self.__my_download_episodes = value
 
     @property
     def my_times_rewatched(self):
@@ -199,11 +248,23 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
             self.my_reload()
         return self.__my_times_rewatched
 
+    @my_times_rewatched.setter
+    def my_times_rewatched(self, value: int):
+        if not (0 <= value):
+            raise RuntimeError("value of my_times_rewatched can be 0 or more")
+        self.__my_times_rewatched = value
+
     @property
     def my_rewatch_value(self):
         if self.__my_rewatch_value is None:
             self.my_reload()
         return self.__my_rewatch_value
+
+    @my_rewatch_value.setter
+    def my_rewatch_value(self, value: int):
+        if not (0 <= value <= 5):
+            raise RuntimeError("value of my_rewatch_value can be 0 to 5")
+        self.__my_rewatch_value = value
 
     @property
     def my_tags(self):
@@ -437,7 +498,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         )
         return data
 
-    def add(self, account) -> MyAnime:
+    def add(self, account):
         if account == self._account:
             return self
         return self.obj.add(account)
@@ -454,33 +515,36 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         """
         """
         self.ret_data = self._account.auth_connect(
-            self.__MY_MAL_UPDATE_URL, data='')
+            self.__MY_MAL_DELETE_URL.format(self.id), data='')
         print(self.ret_data)
         assert self.ret_data == 'Deleted'
 
     def increase(self) -> bool:
         if self.is_completed:
             return False
-        self.__my_completed_episodes += 1
+        self.my_completed_episodes += 1
         return True
 
     def increase_downloaded(self) -> bool:
         if self.is_completed:
             return False
-        self.__my_download_episodes += 1
+        self.my_download_episodes += 1
         return True
 
     @property
     def is_completed(self) -> bool:
-        return self.__my_completed_episodes >= self.obj.episodes
+        return self.my_completed_episodes >= self.obj.episodes
 
-    def set_completed(self):
-        self.__my_completed_episodes = self.obj.episodes
+    def set_completed(self) -> bool:
+        if self.obj.episodes == float('inf'):
+            return False
+        self.my_completed_episodes = self.obj.episodes
+        return True
 
     def set_completed_download(self) -> bool:
         if self.obj.episodes == float('inf'):
             return False
-        self.__my_download_episodes = self.obj.episodes
+        self.my_download_episodes = self.obj.episodes
         return True
 
     def __getattr__(self, name):
@@ -504,6 +568,6 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        title = '' if self._title is None else " '{0:s}'".format(self._title)
+        title = " '{0:s}'".format(self.title) if self.obj._is_loaded else ''
         return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(
-            self.__class__.__name__, title, self._account._username, self._id)
+            self.__class__.__name__, title, self._account._username, self.id)
