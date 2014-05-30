@@ -144,6 +144,20 @@ def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
     return content_wrapper_div
 
 
+def make_start_and_end_time(start_and_end_string:str):
+    """
+    getting mal site airing / publishing format and return it as tuple(int, int)
+    """
+    splited = start_and_end_string.split('to')
+    if len(splited) == 1:
+        start_time = splited[0].strip()
+        end_time = start_time
+    else:
+        start_time, end_time = splited
+    start_time, end_time = start_time.strip(), end_time.strip()
+    return make_time(start_time), make_time(end_time)
+
+
 def make_time(time_string: str):
     """
     getting mal site time string format and return it as int
