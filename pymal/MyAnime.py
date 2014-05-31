@@ -507,7 +507,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         """
         """
         self.ret_data = self._account.auth_connect(
-            self.__MY_MAL_UPDATE_URL, data=self.to_xml())
+            self.__MY_MAL_UPDATE_URL.format(self.id), data=self.to_xml())
         print(self.ret_data)
         assert self.ret_data == 'Updated'
 
