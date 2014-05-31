@@ -1,16 +1,17 @@
 import unittest
 
-from pymal.Account import Account
-from pymal.Anime import Anime
-from pymal.Manga import Manga
+from pymal import Account
+from pymal import Anime
+from pymal import Manga
 
 from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+
 
 class ReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.manga = Manga(MANGA_ID)
+        cls.manga = Manga.Manga(MANGA_ID)
         cls.manga.reload()
 
     def test_manga_id(self):
@@ -70,64 +71,64 @@ class ReloadTestCase(unittest.TestCase):
     def test_manga_spinoff(self):
         self.assertIsInstance(self.manga.spin_offs, list)
         for spin_off in self.manga.spin_offs:
-            self.assertIsInstance(spin_off, Manga)
+            self.assertIsInstance(spin_off, Manga.Manga)
 
     def test_manga_adaptations(self):
         self.assertIsInstance(self.manga.adaptations, list)
         for adaptation in self.manga.adaptations:
-            self.assertIsInstance(adaptation, Anime)
+            self.assertIsInstance(adaptation, Anime.Anime)
 
     def test_manga_characters(self):
         self.assertIsInstance(self.manga.characters, list)
         for character in self.manga.characters:
-            self.assertIsInstance(character, Manga)
+            self.assertIsInstance(character, Manga.Manga)
 
     def test_manga_sequals(self):
-        self.assertIsInstance(self.manga.sequals, list)
-        for sequal in self.manga.sequals:
-            self.assertIsInstance(sequal, Manga)
+        self.assertIsInstance(self.manga.sequels, list)
+        for sequal in self.manga.sequels:
+            self.assertIsInstance(sequal, Manga.Manga)
 
     def test_manga_prequel(self):
-        self.assertIsInstance(self.manga.prequel, list)
-        for preque in self.manga.prequel:
-            self.assertIsInstance(preque, Manga)
+        self.assertIsInstance(self.manga.prequels, list)
+        for prequel in self.manga.prequels:
+            self.assertIsInstance(prequel, Manga.Manga)
 
     def test_manga_alternative_versions(self):
         self.assertIsInstance(self.manga.alternative_versions, list)
         for alternative_version in self.manga.alternative_versions:
-            self.assertIsInstance(alternative_version, Manga)
+            self.assertIsInstance(alternative_version, Manga.Manga)
 
     def test_manga_side_story(self):
         self.assertIsInstance(self.manga.side_stories, list)
         for side_story in self.manga.side_stories:
-            self.assertIsInstance(side_story, Manga)
+            self.assertIsInstance(side_story, Manga.Manga)
 
     def test_manga_summaries(self):
         self.assertIsInstance(self.manga.summaries, list)
         for summary in self.manga.summaries:
-            self.assertIsInstance(summary, Manga)
+            self.assertIsInstance(summary, Manga.Manga)
 
     def test_manga_other(self):
         self.assertIsInstance(self.manga.others, list)
         for other in self.manga.others:
-            self.assertIsInstance(other, Manga)
+            self.assertIsInstance(other, Manga.Manga)
 
     def test_manga_parent_stories(self):
         self.assertIsInstance(self.manga.parent_stories, list)
         for parent_story in self.manga.parent_stories:
-            self.assertIsInstance(parent_story, Manga)
+            self.assertIsInstance(parent_story, Manga.Manga)
 
     def test_manga_alternative_settings(self):
         self.assertIsInstance(self.manga.alternative_settings, list)
         for alternative_setting in self.manga.alternative_settings:
-            self.assertIsInstance(alternative_setting, Manga)
+            self.assertIsInstance(alternative_setting, Manga.Manga)
 
 
 class NoReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.manga = cls.account.mangas[0]
 
     def test_id(self):

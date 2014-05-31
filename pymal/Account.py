@@ -10,15 +10,15 @@ from urllib import parse
 import bs4
 from requests.auth import HTTPBasicAuth
 
-from pymal.global_functions import _connect, connect
-from pymal.decorators import load, SingletonFactory
-from pymal.AccountAnimes import AccountAnimes
-from pymal.AccountMangas import AccountMangas
+from pymal import global_functions
+from pymal import decorators
+from pymal import AccountAnimes
+from pymal import AccountMangas
 
 __all__ = ['Account']
 
 
-class Account(object, metaclass=SingletonFactory):
+class Account(object, metaclass=decorators.SingletonFactory):
     """
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',
@@ -35,12 +35,11 @@ class Account(object, metaclass=SingletonFactory):
         """
         self._username = username
         self._password = password
-        self.connect = connect
+        self.connect = global_functions.connect
         self.__user_id = 0
         self.__auth_object = None
         self.__cookies = dict()
 
-        self._is_loaded = False
         self.__animes = None
         self.__mangas = None
 
@@ -48,19 +47,16 @@ class Account(object, metaclass=SingletonFactory):
             self.change_password(password)
 
     @property
-    @load
-    def animes(self):
+    def animes(self) -> AccountAnimes.AccountAnimes:
+        if self.__animes is None:
+            self.__animes = AccountAnimes.AccountAnimes(self._username, self)
         return self.__animes
 
     @property
-    @load
-    def mangas(self):
+    def mangas(self) -> AccountMangas.AccountMangas:
+        if self.__mangas is None:
+            self.__mangas = AccountMangas.AccountMangas(self._username, self)
         return self.__mangas
-
-    def reload(self):
-        self.__animes = AccountAnimes(self._username, self)
-        self.__mangas = AccountMangas(self._username, self)
-        self._is_loaded = True
 
     def search(self, search_line: str, is_anime: bool=True) -> set:
         """
@@ -130,7 +126,7 @@ class Account(object, metaclass=SingletonFactory):
         """
         """
         assert self.is_auth, "Not auth yet!"
-        return _connect(url, data=data, headers=headers,
+        return global_functions._connect(url, data=data, headers=headers,
                         auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
@@ -144,7 +140,7 @@ class Account(object, metaclass=SingletonFactory):
         return user_id == self.__user_id
 
     @property
-    def __cookies_string(self):
+    def __cookies_string(self) -> str:
         return ";".join(["=".join(item)for item in self.__cookies.items()])
 
     @property
