@@ -46,9 +46,18 @@ class FunctionsTestCase(unittest.TestCase):
     def setUp(self):
         self.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
+    def tearDown(self):
+        Account._unregiter(self.account)
+
     def test_reload(self):
         self.assertIsInstance(self.account.animes, AccountAnimes.AccountAnimes)
         self.assertIsInstance(self.account.mangas, AccountMangas.AccountMangas)
+
+    def test_friends(self):
+        self.assertIsInstance(self.account.friends, list)
+        for friend in self.account.friends:
+            self.assertIsInstance(friend, Account.Account)
+            self.assertIn(self.account, friend.friends)
 
 
 def main():
