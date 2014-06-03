@@ -29,10 +29,11 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
-.coverage
+.coverage*
 .cache
 nosetests.xml
 coverage.xml
+nose2-junit.xml
 
 # Translations
 *.mo
