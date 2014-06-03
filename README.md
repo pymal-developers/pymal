@@ -12,8 +12,8 @@ Objects in pymal are lazy-loading: they won't go out and fetch MAL info until yo
 Dependencies
 ===========
 * python 3.4.*
-    - Wasn't tried on oth pythons, but i believe it will work on all python 3.
-    - Because of python 3 new and python 2.7.*.
+    - Wasn't tried on other python 3, but i believe it will work on all python 3.
+    - Won't work on python 2 (known problem is the headers of functions). I don't believe it should be even discussed. (python 2 was announced as deprecated).
 * BeautifulSoup4
     - html5lib for BeautifulSoup4 to read html pages better.
 * requests
@@ -50,9 +50,13 @@ Make sure you don't spam the tests too quickly! You're likely to be IP-banned if
     -------------------------------------------------------------
     TOTAL                     1434    149    282     94    85.84%
 
+[More about tests for developers for pymal.](/tests/readme.md "pymal tests readme")
+
 Usage
 =====
 Most objects data can be required by not authentication mal, but all list manipulations on MAL requires authentication.
+
+[More about pymal for application developers.](/pymal/readme.md "pymal objects readme")
 
 Account
 ------
