@@ -5,13 +5,14 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
 from xml.etree import ElementTree
-from urllib import parse
+from urllib import parse, request
 
 import bs4
 from requests.auth import HTTPBasicAuth
 
 from pymal import global_functions
 from pymal import decorators
+from pymal import consts
 from pymal import AccountAnimes
 from pymal import AccountMangas
 
@@ -25,10 +26,13 @@ class Account(object, metaclass=decorators.SingletonFactory):
                'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
     
     __AUTH_CHECKER_URL =\
-        r'http://myanimelist.net/api/account/verify_credentials.xml'
-    __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
+        request.urljoin(consts.HOST_NAME, r'api/account/verify_credentials.xml')
+    __SEARCH_URL = request.urljoin(consts.HOST_NAME, 'api/{0:s}/search.xml')
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
+
+    __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
+    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, username: str, password: str or None=None):
         """
@@ -119,6 +123,9 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         self._password = password
 
+        data_form = self.__DATA_FORM.format(self._username, password).encode('utf-8')
+        self.connect(self.__MY_LOGIN_URL, data=data_form)
+
         return True
 
     def auth_connect(self, url: str, data: str or None=None,
@@ -127,7 +134,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
         """
         assert self.is_auth, "Not auth yet!"
         return global_functions._connect(url, data=data, headers=headers,
-                        auth=self.__auth_object).text.strip()
+                                         auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
         """
