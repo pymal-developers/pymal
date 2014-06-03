@@ -13,9 +13,7 @@ except ImportError:
     httpcache = None
 import bs4
 
-from pymal.consts import USER_AGENT, HOST_NAME, RETRY_NUMBER, RETRY_SLEEP,\
-    SHORT_SITE_FORMAT_TIME, LONG_SITE_FORMAT_TIME, MALAPPINFO_NONE_TIME, \
-    MALAPPINFO_FORMAT_TIME
+from pymal import consts
 
 __all__ = ['connect', 'get_next_index', 'make_list', 'check_side_content_div', 'get_content_wrapper_div']
 
@@ -44,7 +42,7 @@ def _connect(url: str, data: str=None, headers: dict or None=None,
 
     url = url_fixer(url)
 
-    headers['User-Agent'] = USER_AGENT
+    headers['User-Agent'] = consts.USER_AGENT
     if data is not None:
         sock = __SESSION.post(url, data=data, headers=headers, auth=auth)
     else:
@@ -109,7 +107,7 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
                 )))
         else:
             self_list.append(
-                request.urljoin(HOST_NAME, list_of_tags[i]['href']))
+                request.urljoin(consts.HOST_NAME, list_of_tags[i]['href']))
     return n_i
 
 
@@ -124,8 +122,8 @@ def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
 
 def __get_myanimelist_div(url: str, connection_function) -> bs4.element.Tag:
     got_robot = False
-    for try_number in range(RETRY_NUMBER):
-        time.sleep(RETRY_SLEEP)
+    for try_number in range(consts.RETRY_NUMBER):
+        time.sleep(consts.RETRY_SLEEP)
         data = connection_function(url)
         html = bs4.BeautifulSoup(data, "html5lib").html
         if html.head.find(name="meta", attrs={"name": "robots"}) is not None:
@@ -166,18 +164,18 @@ def make_time(time_string: str) -> int:
     """
     getting mal site time string format and return it as int
     """
-    if '?' == time_string or MALAPPINFO_NONE_TIME == time_string:
+    if '?' == time_string or consts.MALAPPINFO_NONE_TIME == time_string:
         return float('inf')
     if time_string.isdigit():
         return int(time_string)
     try:
-        start_time = time.strptime(time_string, SHORT_SITE_FORMAT_TIME)
+        start_time = time.strptime(time_string, consts.SHORT_SITE_FORMAT_TIME)
     except ValueError:
         try:
-            start_time = time.strptime(time_string, LONG_SITE_FORMAT_TIME)
+            start_time = time.strptime(time_string, consts.LONG_SITE_FORMAT_TIME)
         except ValueError:
             time_string = time_string[:4] + time_string[4:].replace('00', '01')
-            start_time = time.strptime(time_string, MALAPPINFO_FORMAT_TIME)
+            start_time = time.strptime(time_string, consts.MALAPPINFO_FORMAT_TIME)
     return time.mktime(start_time)
 
 
