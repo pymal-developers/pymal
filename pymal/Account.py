@@ -5,13 +5,14 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
 from xml.etree import ElementTree
-from urllib import parse
+from urllib import parse, request
 
 import bs4
 from requests.auth import HTTPBasicAuth
 
 from pymal import global_functions
 from pymal import decorators
+from pymal import consts
 from pymal import AccountAnimes
 from pymal import AccountMangas
 
@@ -25,10 +26,15 @@ class Account(object, metaclass=decorators.SingletonFactory):
                'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
     
     __AUTH_CHECKER_URL =\
-        r'http://myanimelist.net/api/account/verify_credentials.xml'
-    __SEARCH_URL = 'http://myanimelist.net/api/{0:s}/search.xml'
+        request.urljoin(consts.HOST_NAME, r'api/account/verify_credentials.xml')
+    __SEARCH_URL = request.urljoin(consts.HOST_NAME, 'api/{0:s}/search.xml')
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
+
+    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'myfriends.php?o=2')
+
+    __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
+    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, username: str, password: str or None=None):
         """
@@ -42,6 +48,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         self.__animes = None
         self.__mangas = None
+        self.__friends = None
 
         if password is not None:
             self.change_password(password)
@@ -57,6 +64,37 @@ class Account(object, metaclass=decorators.SingletonFactory):
         if self.__mangas is None:
             self.__mangas = AccountMangas.AccountMangas(self._username, self)
         return self.__mangas
+
+    @property
+    def friends(self) -> list:
+        if self.__friends is not None:
+            return self.__friends
+        friends = list()
+
+        div_wrapper = global_functions.get_content_wrapper_div(self.__FRIENDS_URL, self.auth_connect)
+        assert div_wrapper is not None
+
+        div_content = div_wrapper.find(name="div", recursive=False, attrs={"id": "content"})
+        assert div_content is not None
+
+        table_content = div_content.find(name="table")
+        assert table_content is not None
+
+        friends_rows = table_content.tbody.findAll(name="tr", recursive=False)
+        assert len(friends_rows) > 1
+        friends_rows = friends_rows[1:]
+
+        for friend_row in friends_rows:
+            div_pic = friend_row.find(name="div", attrs={'class': 'picSurround'})
+            assert div_pic is not None
+
+            splited_friend_url = div_pic.a['href'].split('/profile/', 1)
+            assert len(splited_friend_url) == 2
+
+            friends.append(Account(splited_friend_url[1]))
+
+        self.__friends = friends
+        return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> set:
         """
@@ -119,6 +157,9 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         self._password = password
 
+        data_form = self.__DATA_FORM.format(self._username, password).encode('utf-8')
+        self.connect(self.__MY_LOGIN_URL, data=data_form)
+
         return True
 
     def auth_connect(self, url: str, data: str or None=None,
@@ -127,7 +168,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
         """
         assert self.is_auth, "Not auth yet!"
         return global_functions._connect(url, data=data, headers=headers,
-                        auth=self.__auth_object).text.strip()
+                                         auth=self.__auth_object).text.strip()
 
     def is_user_by_name(self, username: str) -> bool:
         """

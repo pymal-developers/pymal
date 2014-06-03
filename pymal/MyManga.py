@@ -46,7 +46,6 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
                'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
                'update', 'delete']
 
-    __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(
         consts.HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
@@ -54,7 +53,6 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         consts.HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
     __MY_MAL_UPDATE_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/update/{0:d}.xml')
-    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, mal_id: int or Manga.Manga, my_mal_id, account,
                  my_mal_xml: None=None):
@@ -69,8 +67,6 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
 
         self._is_my_loaded = False
         self._account = account
-        self.__data_form = self.__DATA_FORM.format(
-            self._account._username, self._account._password).encode('utf-8')
 
         self.__my_mal_id = my_mal_id
         self.__my_status = None
@@ -309,12 +305,7 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
 
         bas_result = content_wrapper_div.find(name='div',
                                               attrs={'class': 'badresult'})
-        if bas_result is not None:
-            self._account.connect(self.__MY_LOGIN_URL, data=self.__data_form)
-
-            # Getting content wrapper <div>
-            content_wrapper_div = global_functions.get_content_wrapper_div(
-                self.__my_mal_url, self._account.auth_connect)
+        assert bas_result is not None
 
         # Getting content <td>
         content_div = content_wrapper_div.find(
