@@ -31,7 +31,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
-    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'profile/tomeriko/friends')
+    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'profile/{0:s}/friends')
 
     __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
@@ -48,16 +48,11 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         self.__animes = None
         self.__mangas = None
+        self.__friends_url = self.__FRIENDS_URL.format(self._username)
         self.__friends = None
 
         if password is not None:
             self.change_password(password)
-
-    @property
-    def animes(self) -> AccountAnimes.AccountAnimes:
-        if self.__animes is None:
-            self.__animes = AccountAnimes.AccountAnimes(self._username, self)
-        return self.__animes
 
     @property
     def mangas(self) -> AccountMangas.AccountMangas:
@@ -66,25 +61,36 @@ class Account(object, metaclass=decorators.SingletonFactory):
         return self.__mangas
 
     @property
-    def friends(self) -> list:
-        if self.__friends is not None:
-            return self.__friends
-        friends = list()
+    def animes(self) -> AccountAnimes.AccountAnimes:
+        if self.__animes is None:
+            self.__animes = AccountAnimes.AccountAnimes(self._username, self)
+        return self.__animes
 
-        div_wrapper = global_functions.get_content_wrapper_div(self.__FRIENDS_URL, self.auth_connect)
-        assert div_wrapper is not None
+    @property
+    def friends(self) -> set:
+        class FriendsFrozenSet(set):
+            def __init__(self, account: Account):
+                super().__init__()
 
-        list_div_friend = div_wrapper.findAll(name="div", attrs={"class": "friendBlock"})
-        for div_friend in list_div_friend:
-            div_pic = div_friend.find(name="div", attrs={'class': 'picSurround'})
-            assert div_pic is not None
+                self.account = account
+                self.reload()
 
-            splited_friend_url = div_pic.a['href'].split('/profile/', 1)
-            assert len(splited_friend_url) == 2
+            def reload(self):
+                self.clear()
+                div_wrapper = global_functions.get_content_wrapper_div(self.account._Account__friends_url, self.account.connect)
+                assert div_wrapper is not None
 
-            friends.append(Account(splited_friend_url[1]))
+                list_div_friend = div_wrapper.findAll(name="div", attrs={"class": "friendBlock"})
+                for div_friend in list_div_friend:
+                    div_pic = div_friend.find(name="div", attrs={'class': 'picSurround'})
+                    assert div_pic is not None
 
-        self.__friends = friends
+                    splited_friend_url = div_pic.a['href'].split('/profile/', 1)
+                    assert len(splited_friend_url) == 2
+
+                    self.add(Account(splited_friend_url[1]))
+
+        self.__friends = FriendsFrozenSet(account=self)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> set:
