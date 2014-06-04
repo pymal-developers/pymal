@@ -67,7 +67,7 @@ class FunctionsTestCase(unittest.TestCase):
         self.assertIsInstance(self.account.friends, list)
         for friend in self.account.friends:
             self.assertIsInstance(friend, Account.Account)
-            #We really need to know how to get this - self.assertIn(self.account, friend.friends)
+            self.assertIn(self.account, friend.friends)
 
 
 def main():

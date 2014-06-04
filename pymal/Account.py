@@ -31,7 +31,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
-    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'myfriends.php?o=2')
+    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'profile/tomeriko/friends')
 
     __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
@@ -74,18 +74,9 @@ class Account(object, metaclass=decorators.SingletonFactory):
         div_wrapper = global_functions.get_content_wrapper_div(self.__FRIENDS_URL, self.auth_connect)
         assert div_wrapper is not None
 
-        div_content = div_wrapper.find(name="div", recursive=False, attrs={"id": "content"})
-        assert div_content is not None
-
-        table_content = div_content.find(name="table")
-        assert table_content is not None
-
-        friends_rows = table_content.tbody.findAll(name="tr", recursive=False)
-        assert len(friends_rows) > 1
-        friends_rows = friends_rows[1:]
-
-        for friend_row in friends_rows:
-            div_pic = friend_row.find(name="div", attrs={'class': 'picSurround'})
+        list_div_friend = div_wrapper.findAll(name="div", attrs={"class": "friendBlock"})
+        for div_friend in list_div_friend:
+            div_pic = div_friend.find(name="div", attrs={'class': 'picSurround'})
             assert div_pic is not None
 
             splited_friend_url = div_pic.a['href'].split('/profile/', 1)

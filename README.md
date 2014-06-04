@@ -37,18 +37,18 @@ Make sure you don't spam the tests too quickly! You're likely to be IP-banned if
     ----------- coverage: platform win32, python 3.4.1-final-0 -----------
     Name                          Stmts       Miss     Branch    BrMiss            Cover
     ------------------------------------------------------------------------------------
-    pymal\Account               110/81       29/18      18/10      8/7     71.09%/72.53%
-    pymal\AccountAnimes         125/123      42/10      28/24     16/8     62.09%/87.76%
-    pymal\AccountMangas         125/123      42/10      28/24     16/8     62.09%/87.76%
-    pymal\Anime                 273/232      59/8       57/49     23/14    75.15%/92.17%
-    pymal\Manga                 272/235      53/11      59/51     24/14    76.74%/91.26%
-    pymal\MyAnime               226/231      28/21      38/40     17/14    82.95%/87.08%
-    pymal\MyManga               228/223      27/26      42/44     15/17    84.44%/84.48%
-    pymal\Season                 43/39       12/12       2/2       0/1     73.33%/68.29%
-    pymal\Seasons                57/57       28/22      10/10      4/4     52.24%/61.19%
-    pymal\global_functions       92/80       20/11      32/28      9/7     76.61%/83.33%
+    pymal\Account              101/110      24/29      18/18       7/8     73.95%/71.09%
+    pymal\AccountAnimes        122/125      38/42      28/28      16/16    64.00%/62.09%
+    pymal\AccountMangas        122/125      38/42      28/28      16/16    64.00%/62.09%
+    pymal\Anime                271/273      54/59      57/57      23/23    76.52%/75.15%
+    pymal\Manga                270/272      48/53      59/59      24/24    78.12%/76.74%
+    pymal\MyAnime              224/226      24/28      38/38      17/17    84.35%/82.95%
+    pymal\MyManga              226/228      23/27      42/42      15/15    85.82%/84.44%
+    pymal\Season                40/43        8/12       2/2        0/1     80.95%/73.33%
+    pymal\Seasons               54/57       24/28      10/10       4/4     56.25%/52.24%
+    pymal\global_functions      88/92       16/20      32/22       9/9     79.17%/76.61%
     ------------------------------------------------------------------------------------
-    TOTAL                     1551/1434    340/149    314/282    132/94    74.69%/85.84%
+    TOTAL                     1518/1551    297/340    314/282    132/94    76.64%/74.69%
     Name                     Stmts   Miss Branch BrMiss     Cover
 
     (new/old)
