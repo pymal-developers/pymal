@@ -81,6 +81,9 @@ class ReloadTestCase(unittest.TestCase):
             print(err)
             self.assertTrue(False)
 
+    def test_str(self):
+        repr(self.manga)
+
 
 class NoReloadTestCase(unittest.TestCase):
 
@@ -130,6 +133,9 @@ class NoReloadTestCase(unittest.TestCase):
     def test_equal(self):
         anime = Manga.Manga(self.manga.id)
         self.assertEqual(anime, self.manga)
+
+    def test_str(self):
+        repr(self.manga)
 
 
 def main():

@@ -21,6 +21,9 @@ class AccountMangaListTestCase(unittest.TestCase):
         manga = Manga.Manga(my_manga.id)
         self.assertIn(manga, self.mangas)
 
+    def test_str(self):
+        repr(self.mangas)
+
 
 def main():
     unittest.main()

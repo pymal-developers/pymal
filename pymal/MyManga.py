@@ -232,7 +232,7 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
 
         bas_result = content_wrapper_div.find(name='div',
                                               attrs={'class': 'badresult'})
-        assert bas_result is not None
+        assert bas_result is None
 
         # Getting content <td>
         content_div = content_wrapper_div.find(
@@ -476,6 +476,6 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
-        title = '' if self._title is None else " '{0:s}'".format(self._title)
+        title = '' if self._Manga__title is None else " '{0:s}'".format(self._Manga__title)
         return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(
-            self.__class__.__name__, title, self._account._username, self._id)
+            self.__class__.__name__, title, self._account._username, self.id)

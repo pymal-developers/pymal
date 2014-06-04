@@ -35,20 +35,23 @@ To run the tests that come with MAL Client:
 Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
 
     ----------- coverage: platform win32, python 3.4.1-final-0 -----------
+    Name                          Stmts       Miss     Branch    BrMiss            Cover
+    ------------------------------------------------------------------------------------
+    pymal\Account               110/81       29/18      18/10      8/7     71.09%/72.53%
+    pymal\AccountAnimes         125/123      42/10      28/24     16/8     62.09%/87.76%
+    pymal\AccountMangas         125/123      42/10      28/24     16/8     62.09%/87.76%
+    pymal\Anime                 273/232      59/8       57/49     23/14    75.15%/92.17%
+    pymal\Manga                 272/235      53/11      59/51     24/14    76.74%/91.26%
+    pymal\MyAnime               226/231      28/21      38/40     17/14    82.95%/87.08%
+    pymal\MyManga               228/223      27/26      42/44     15/17    84.44%/84.48%
+    pymal\Season                 43/39       12/12       2/2       0/1     73.33%/68.29%
+    pymal\Seasons                57/57       28/22      10/10      4/4     52.24%/61.19%
+    pymal\global_functions       92/80       20/11      32/28      9/7     76.61%/83.33%
+    ------------------------------------------------------------------------------------
+    TOTAL                     1551/1434    340/149    314/282    132/94    74.69%/85.84%
     Name                     Stmts   Miss Branch BrMiss     Cover
-    -------------------------------------------------------------
-    pymal\Account               81     18     10      7    72.53%
-    pymal\AccountAnimes        123     10     24      8    87.76%
-    pymal\AccountMangas        123     10     24      8    87.76%
-    pymal\Anime                232      8     49     14    92.17%
-    pymal\Manga                235     11     51     14    91.26%
-    pymal\MyAnime              231     21     40     14    87.08%
-    pymal\MyManga              233     26     44     17    84.48%
-    pymal\Season                39     12      2      1    68.29%
-    pymal\Seasons               57     22     10      4    61.19%
-    pymal\global_functions      80     11     28      7    83.33%
-    -------------------------------------------------------------
-    TOTAL                     1434    149    282     94    85.84%
+
+    (new/old)
 
 [More about tests for developers for pymal.](/tests/readme.md "pymal tests readme")
 

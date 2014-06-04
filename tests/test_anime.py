@@ -124,6 +124,9 @@ class ReloadTestCase(unittest.TestCase):
         for full_story in self.anime.full_stories:
             self.assertIsInstance(full_story, Anime.Anime)
 
+    def test_str(self):
+        repr(self.anime)
+
 
 class NoReloadTestCase(unittest.TestCase):
 
@@ -158,6 +161,9 @@ class NoReloadTestCase(unittest.TestCase):
 
     def test_end_time(self):
         self.assertIsInstance(self.anime.end_time, float)
+
+    def test_str(self):
+        repr(self.anime)
 
 
 def main():
