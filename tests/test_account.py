@@ -50,14 +50,21 @@ class InitTestCase(unittest.TestCase):
         repr(account)
         Account.Account._unregiter(account)
 
+    def test_user_id(self):
+        account = Account.Account(ACCOUNT_TEST_USERNAME)
+        from pymal import exceptions
+        self.assertRaises(exceptions.UnauthenticatedAccountError, lambda x: x.user_id, account)
+        Account.Account._unregiter(account)
+
 
 class FunctionsTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
-    def setUp(self):
-        self.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-
-    def tearDown(self):
-        Account.Account._unregiter(self.account)
+    @classmethod
+    def tearDownClass(cls):
+        Account.Account._unregiter(cls.account)
 
     def test_reload(self):
         self.assertIsInstance(self.account.animes, AccountAnimes.AccountAnimes)

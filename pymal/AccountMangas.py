@@ -145,12 +145,12 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
         l = list(xml_general_data)
         xml_user_id = l[0]
         assert 'user_id' == xml_user_id.tag, xml_user_id.tag
-        assert self.__connection.is_user_by_id(
-            int(xml_user_id.text)), int(xml_user_id.text)
+        assert self.__connection.user_id == int(xml_user_id.text),\
+            int(xml_user_id.text)
         xml_user_name = l[1]
         assert 'user_name' == xml_user_name.tag, xml_user_name.tag
-        assert self.__connection.is_user_by_name(
-            xml_user_name.text.strip()), xml_user_name.text.strip()
+        assert self.__connection.username == xml_user_name.text.strip(),\
+            xml_user_name.text.strip()
         xml_user_reading = l[2]
         assert 'user_reading' == xml_user_reading.tag, xml_user_reading.tag
         xml_user_completed = l[3]
