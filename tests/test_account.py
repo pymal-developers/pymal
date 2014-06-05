@@ -63,6 +63,12 @@ class FunctionsTestCase(unittest.TestCase):
         self.assertIsInstance(self.account.animes, AccountAnimes.AccountAnimes)
         self.assertIsInstance(self.account.mangas, AccountMangas.AccountMangas)
 
+    def test_username(self):
+        self.assertIsInstance(self.account.username, str)
+
+    def test_user_id(self):
+        self.assertIsInstance(self.account.user_id, int)
+
     def test_friends(self):
         self.assertIsInstance(self.account.friends, set)
         for friend in self.account.friends:
