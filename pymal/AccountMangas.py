@@ -212,6 +212,6 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
 
     def __hash__(self):
         hash_md5 = hashlib.md5()
-        hash_md5.update(self.__connection._username.encode())
+        hash_md5.update(self.__connection.username.encode())
         hash_md5.update(self.__class__.__name__.encode())
         return int(hash_md5.hexdigest(), 16)

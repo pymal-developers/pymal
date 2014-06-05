@@ -561,4 +561,4 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     def __repr__(self):
         title = " '{0:s}'".format(self.title) if self.obj._is_loaded else ''
         return "<{0:s}{1:s} of account '{2:s}' id={3:d}>".format(
-            self.__class__.__name__, title, self._account._username, self.id)
+            self.__class__.__name__, title, self._account.username, self.id)
