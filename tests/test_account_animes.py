@@ -21,6 +21,9 @@ class AccountAnimeListTestCase(unittest.TestCase):
         anime = Anime.Anime(my_anime.id)
         self.assertIn(anime, self.animes)
 
+    def test_str(self):
+        repr(self.animes)
+
 
 def main():
     unittest.main()

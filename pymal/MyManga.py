@@ -305,7 +305,7 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
 
         bas_result = content_wrapper_div.find(name='div',
                                               attrs={'class': 'badresult'})
-        assert bas_result is not None
+        assert bas_result is None
 
         # Getting content <td>
         content_div = content_wrapper_div.find(

@@ -123,6 +123,9 @@ class ReloadTestCase(unittest.TestCase):
         for alternative_setting in self.manga.alternative_settings:
             self.assertIsInstance(alternative_setting, Manga.Manga)
 
+    def test_str(self):
+        repr(self.manga)
+
 
 class NoReloadTestCase(unittest.TestCase):
 
@@ -164,6 +167,9 @@ class NoReloadTestCase(unittest.TestCase):
 
     def test_end_time(self):
         self.assertIsInstance(self.manga.end_time, float)
+
+    def test_str(self):
+        repr(self.manga)
 
 
 def main():
