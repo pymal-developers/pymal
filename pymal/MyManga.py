@@ -89,18 +89,18 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_reread_value = None
 
         if my_mal_xml is not None:
-            self.__my_id = int(my_mal_xml.find('my_id').text.strip())
-            self.__my_status = int(my_mal_xml.find('my_status').text.strip())
+            self.__my_id = int(my_mal_xml.find('my_id').text)
+            self.__my_status = int(my_mal_xml.find('my_status').text)
             if my_mal_xml.find('my_rereadingg').text is not None:
                 self.__my_is_rereading = bool(
-                    int(my_mal_xml.find('my_rereadingg').text.strip()))
+                    int(my_mal_xml.find('my_rereadingg').text))
             else:
                 self.__my_is_rereading = False
             self.__my_completed_episodes = int(
                 my_mal_xml.find('my_read_chapters').text.strip())
             self.__my_completed_volumes = int(
                 my_mal_xml.find('my_read_volumes').text.strip())
-            self.__my_score = int(my_mal_xml.find('my_score').text.strip())
+            self.__my_score = int(my_mal_xml.find('my_score').text)
             my_start_date = my_mal_xml.find('my_start_date').text.strip()
             if my_start_date == consts.MALAPPINFO_NONE_TIME:
                 self.__my_start_date = consts.MALAPI_NONE_TIME

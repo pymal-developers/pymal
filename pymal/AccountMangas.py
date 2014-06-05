@@ -146,7 +146,7 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
         xml_user_id = l[0]
         assert 'user_id' == xml_user_id.tag, xml_user_id.tag
         assert self.__connection.is_user_by_id(
-            int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
+            int(xml_user_id.text)), int(xml_user_id.text)
         xml_user_name = l[1]
         assert 'user_name' == xml_user_name.tag, xml_user_name.tag
         assert self.__connection.is_user_by_name(
@@ -195,10 +195,10 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
     def __get_my_mal_object(self, xml_mal_object: ElementTree.Element):
         mal_object_id_xml = xml_mal_object.find('series_mangadb_id')
         assert mal_object_id_xml is not None
-        mal_object_id = int(mal_object_id_xml.text.strip())
+        mal_object_id = int(mal_object_id_xml.text)
         my_mal_object_id_xml = xml_mal_object.find('my_id')
         assert my_mal_object_id_xml is not None
-        my_mal_object_id = int(my_mal_object_id_xml.text.strip())
+        my_mal_object_id = int(my_mal_object_id_xml.text)
         mal_object = MyManga.MyManga(mal_object_id, my_mal_object_id,
                                      self.__connection,
                                      my_mal_xml=xml_mal_object)

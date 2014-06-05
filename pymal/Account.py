@@ -12,6 +12,7 @@ from requests.auth import HTTPBasicAuth
 
 from pymal import global_functions
 from pymal import decorators
+from pymal import exceptions
 from pymal import consts
 from pymal import AccountAnimes
 from pymal import AccountMangas
@@ -39,8 +40,8 @@ class Account(object, metaclass=decorators.SingletonFactory):
     def __init__(self, username: str, password: str or None=None):
         """
         """
-        self._username = username
-        self._password = password
+        self.__username = username
+        self.__password = password
         self.connect = global_functions.connect
         self.__user_id = 0
         self.__auth_object = None
@@ -48,22 +49,32 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         self.__animes = None
         self.__mangas = None
-        self.__friends_url = self.__FRIENDS_URL.format(self._username)
+        self.__friends_url = self.__FRIENDS_URL.format(self.username)
         self.__friends = None
 
         if password is not None:
             self.change_password(password)
 
     @property
+    def username(self) -> str:
+        return self.__username
+
+    @property
+    def user_id(self) -> int:
+        if not self.is_auth:
+            raise exceptions.UnauthenticatedAccountError(self.username)
+        return self.__user_id
+
+    @property
     def mangas(self) -> AccountMangas.AccountMangas:
         if self.__mangas is None:
-            self.__mangas = AccountMangas.AccountMangas(self._username, self)
+            self.__mangas = AccountMangas.AccountMangas(self.username, self)
         return self.__mangas
 
     @property
     def animes(self) -> AccountAnimes.AccountAnimes:
         if self.__animes is None:
-            self.__animes = AccountAnimes.AccountAnimes(self._username, self)
+            self.__animes = AccountAnimes.AccountAnimes(self.username, self)
         return self.__animes
 
     @property
@@ -99,13 +110,13 @@ class Account(object, metaclass=decorators.SingletonFactory):
         params = {'q': search_line}
         if is_anime:
             base_url = self.__ANIME_SEARCH_URL
-            from pymal.Anime import Anime
-            searched_object = Anime
+            from pymal import Anime
+            searched_object = Anime.Anime
             account_object_list = self.animes
         else:
             base_url = self.__MANGA_SEARCH_URL
-            from pymal.Anime import Manga
-            searched_object = Manga
+            from pymal import Manga
+            searched_object = Manga.Manga
             account_object_list = self.mangas
 
         url_parts = list(parse.urlparse(base_url))
@@ -132,11 +143,11 @@ class Account(object, metaclass=decorators.SingletonFactory):
         """
         Checking if the new password is valid
         """
-        self.__auth_object = HTTPBasicAuth(self._username, password)
+        self.__auth_object = HTTPBasicAuth(self.username, password)
         data = self.auth_connect(self.__AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
             self.__auth_object = None
-            self._password = None
+            self.__password = None
             return False
         xml_user = ElementTree.fromstring(data)
 
@@ -145,16 +156,16 @@ class Account(object, metaclass=decorators.SingletonFactory):
         xml_username = l[1]
         assert 'username' == xml_username.tag,\
             'username == {0:s}'.format(xml_username.tag)
-        assert self.is_user_by_name(xml_username.text.strip()),\
+        assert self.username == xml_username.text.strip(),\
             'username = {0:s}'.format(xml_username.text.strip())
 
         xml_id = l[0]
         assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
-        self.__user_id = int(xml_id.text.strip())
+        self.__user_id = int(xml_id.text)
 
-        self._password = password
+        self.__password = password
 
-        data_form = self.__DATA_FORM.format(self._username, password).encode('utf-8')
+        data_form = self.__DATA_FORM.format(self.username, password).encode('utf-8')
         self.connect(self.__MY_LOGIN_URL, data=data_form)
 
         return True
@@ -167,16 +178,6 @@ class Account(object, metaclass=decorators.SingletonFactory):
         return global_functions._connect(url, data=data, headers=headers,
                                          auth=self.__auth_object).text.strip()
 
-    def is_user_by_name(self, username: str) -> bool:
-        """
-        """
-        return username == self._username
-
-    def is_user_by_id(self, user_id: int) -> bool:
-        """
-        """
-        return user_id == self.__user_id
-
     @property
     def __cookies_string(self) -> str:
         return ";".join(["=".join(item)for item in self.__cookies.items()])
@@ -188,9 +189,9 @@ class Account(object, metaclass=decorators.SingletonFactory):
         return self.__auth_object is not None
 
     def __repr__(self):
-        return "<Account username: {0:s}>".format(self._username)
+        return "<Account username: {0:s}>".format(self.username)
 
     def __hash__(self):
         hash_md5 = hashlib.md5()
-        hash_md5.update(self._username.encode())
+        hash_md5.update(self.username.encode())
         return int(hash_md5.hexdigest(), 16)

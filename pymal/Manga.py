@@ -110,8 +110,8 @@ class Manga(object, metaclass=decorators.SingletonFactory):
             self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
             self.__image_url = mal_xml.find('series_image').text.strip()
 
-            self.__chapters = int(mal_xml.find('series_chapters').text.strip())
-            self.__volumes = int(mal_xml.find('series_volumes').text.strip())
+            self.__chapters = int(mal_xml.find('series_chapters').text)
+            self.__volumes = int(mal_xml.find('series_volumes').text)
 
     @property
     def id(self) -> int:
@@ -378,7 +378,7 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         score_div = side_contents_divs[side_contents_divs_index]
         assert global_functions.check_side_content_div('Score', score_div)
         score_span, self_score = score_div.contents[:2]
-        self.__score = float(self_score.strip())
+        self.__score = float(self_score)
         side_contents_divs_index += 1
 
         # rank <div>
