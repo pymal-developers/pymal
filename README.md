@@ -90,14 +90,31 @@ For all data that can be used look in the python.
 To add it its need an account object to related on.
 
 ``` python
-my_anime = anime.add_anime(account)
+my_anime = anime.add(account)
 assert type(my_anime) != type(anime)
-assert issubclass(my_anime.__class__, anime.__class__)
+```
+
+After adding an anime, you will found it in your list!
+
+``` python
+animelist.reload()
+assert my_anime in animelist
 ```
 
 MyAnime
 -------
-A subclass of Anime which has more attribute like the account's number of watched episodes and so on.
+A class which has more attribute like the account's number of watched episodes and so on.
+
+It has his anime under:
+``` python
+assert my_anime.obj == anime
+```
+
+You can update it and delete it:
+``` python
+my_anime.update()
+my_anime.delete()
+```
 
 Manga
 -----
@@ -112,11 +129,28 @@ All the objects under account are subclass of Anime and Manga.
 To add it its need an account object to related on.
 
 ``` python
-my_manga = manga.add_anime(account)
+my_manga = manga.add(account)
 assert type(my_manga) != type(manga)
-assert issubclass(my_manga.__class__, manga.__class__)
+```
+
+After adding an manga, you will found it in your list!
+
+``` python
+mangalist.reload()
+assert my_manga in mangalist
 ```
 
 MyManga
 -------
-A subclass of Manga which has more attribute like the account's number of read chapters and so on.
+A class which has more attribute like the account's number of read chapters and so on.
+
+It has his manga under:
+``` python
+assert my_manga.obj == manga
+```
+
+You can update it and delete it:
+``` python
+my_manga.update()
+my_manga.delete()
+```
