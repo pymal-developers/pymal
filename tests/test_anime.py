@@ -165,6 +165,20 @@ class NoReloadTestCase(unittest.TestCase):
     def test_str(self):
         repr(self.anime)
 
+    def test_add_and_delete(self):
+        from pymal import MyAnime
+        anime = Anime.Anime(20707)
+        my_anime = anime.add(self.account)
+        try:
+            self.assertIsInstance(my_anime, MyAnime.MyAnime)
+            self.account.animes.reload()
+            self.assertIn(my_anime, self.account.animes)
+        finally:
+            my_anime.delete()
+
+        self.account.animes.reload()
+        self.assertNotIn(my_anime, self.account.animes)
+
 
 def main():
     unittest.main()

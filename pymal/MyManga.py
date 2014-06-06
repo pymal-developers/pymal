@@ -11,6 +11,7 @@ from pymal import consts
 from pymal import decorators
 from pymal import Manga
 from pymal import global_functions
+from pymal import exceptions
 
 __all__ = ['MyManga']
 
@@ -517,18 +518,28 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
     def update(self):
         """
         """
-        self.ret_data = self._account.auth_connect(
-            self.__MY_MAL_UPDATE_URL.format(self.my_id), data=self.to_xml())
-        print(self.ret_data)
-        assert self.ret_data == 'Updated'
+        xml = ''.join(map(lambda x: x.strip(), self.to_xml().splitlines()))
+        update_url = self.__MY_MAL_UPDATE_URL.format(self.id)
+        ret = self._account.auth_connect(
+            update_url,
+            data='data=' + xml,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'}
+        )
+        if ret != 'Updated':
+            raise exceptions.MyAnimeListApiUpdateError(ret)
 
     def delete(self):
         """
         """
-        self.ret_data = self._account.auth_connect(
-            self.__MY_MAL_DELETE_URL.format(self.my_id), data='')
-        print(self.ret_data)
-        assert self.ret_data == 'Deleted'
+        xml = ''.join(map(lambda x: x.strip(), self.to_xml().splitlines()))
+        delete_url = self.__MY_MAL_DELETE_URL.format(self.id)
+        ret = self._account.auth_connect(
+            delete_url,
+            data='data=' + xml,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'}
+        )
+        if ret != 'Deleted':
+            raise exceptions.MyAnimeListApiDeleteError(ret)
 
     def increase(self) -> bool:
         if self.is_completed:

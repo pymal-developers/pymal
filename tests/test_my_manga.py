@@ -84,6 +84,9 @@ class ReloadTestCase(unittest.TestCase):
     def test_str(self):
         repr(self.manga)
 
+    def test_update(self):
+        self.manga.update()
+
 
 class NoReloadTestCase(unittest.TestCase):
 

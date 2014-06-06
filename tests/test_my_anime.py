@@ -84,6 +84,9 @@ class ReloadTestCase(unittest.TestCase):
     def test_str(self):
         repr(self.anime)
 
+    def test_update(self):
+        self.anime.update()
+
 
 class NoReloadTestCase(unittest.TestCase):
 

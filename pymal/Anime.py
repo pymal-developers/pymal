@@ -12,6 +12,7 @@ import bs4
 from pymal import decorators
 from pymal import consts
 from pymal import global_functions
+from pymal import exceptions
 
 __all__ = ['Anime']
 
@@ -468,21 +469,41 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             data = f.read()
         return data
 
-    def add(self, account) -> bool:
+    def add(self, account):
         """
         """
-        print(self.MY_MAL_XML_TEMPLATE)
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0,
-                                               consts.MALAPI_NONE_TIME,
-                                               consts.MALAPI_NONE_TIME, 0,
-                                               False, False, '', '', '')
-        print(data)
-        print(self.__MY_MAL_ADD_URL.format(self.id))
-        self.ret_data = account.auth_connect(
-            self.__MY_MAL_ADD_URL.format(self.id), data=data)
-        print(self.ret_data)
-        if not self.ret_data.isdigit():
-            raise RuntimeError(self.ret_data)
+        data = self.MY_MAL_XML_TEMPLATE.format(
+            0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
+            consts.MALAPI_NONE_TIME, 0, False, False, '', '', ''
+        )
+        xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
+        delete_url = self.__MY_MAL_ADD_URL.format(self.id)
+        ret = account.auth_connect(
+            delete_url,
+            data='data=' + xml,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'}
+        )
+        try:
+            html_obj = bs4.BeautifulSoup(ret)
+            assert html_obj is not None
+
+            head_obj = html_obj.head
+            assert head_obj is not None
+
+            title_obj = head_obj.title
+            assert title_obj is not None
+
+            data = title_obj.text
+            assert data is not None
+
+            my_id, string = data.split()
+            assert my_id.isdigit()
+            assert string == 'Created'
+        except Exception:
+            raise exceptions.MyAnimeListApiAddError(ret)
+
+        from pymal import MyAnime
+        return MyAnime.MyAnime(self, my_id, account)
 
     def __eq__(self, other):
         if isinstance(other, Anime):

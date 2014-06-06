@@ -15,7 +15,7 @@ setup(
     url='https://bitbucket.org/pymal-developers/pymal/',
     keywords=["MyAnimeList", "MAL", "pymal"],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
