@@ -29,9 +29,6 @@ class Manga(object, metaclass=decorators.SingletonFactory):
                'reload', 'add']
     
     __GLOBAL_MAL_URL = request.urljoin(consts.HOST_NAME, "manga/{0:d}")
-    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
-        os.path.dirname(__file__), consts.XMLS_DIRECTORY,
-        'myanimelist_official_api_manga.xml')
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
@@ -459,9 +456,25 @@ class Manga(object, metaclass=decorators.SingletonFactory):
 
     @property
     def MY_MAL_XML_TEMPLATE(self):
-        with open(self.__MY_MAL_XML_TEMPLATE_PATH) as f:
-            data = f.read()
-        return data
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<entry>
+	<chapter>{0:d}</chapter>
+	<volume>{1:d}</volume>
+	<status>{2:d}</status>
+	<score>{3:d}</score>
+	<downloaded_chapters>{4:d}</downloaded_chapters>
+	<times_reread>{5:d}</times_reread>
+	<reread_value>{6:d}</reread_value>
+	<date_start>{7:s}</date_start>
+	<date_finish>{8:s}</date_finish>
+	<priority>{9:d}</priority>
+	<enable_discussion>{10:d}</enable_discussion>
+	<enable_rereading>{11:d}</enable_rereading>
+	<comments>{12:s}</comments>
+	<scan_group>{13:s}</scan_group>
+	<tags>{14:s}</tags>
+	<retail_volumes>{15:d}</retail_volumes>
+</entry>"""
 
     def add(self, account):
         """

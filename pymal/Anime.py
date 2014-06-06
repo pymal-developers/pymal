@@ -29,9 +29,6 @@ class Anime(object, metaclass=decorators.SingletonFactory):
                'reload', 'add']
     
     __GLOBAL_MAL_URL = request.urljoin(consts.HOST_NAME, "anime/{0:d}")
-    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
-        os.path.dirname(__file__), consts.XMLS_DIRECTORY,
-        'myanimelist_official_api_anime.xml')
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
@@ -465,9 +462,25 @@ class Anime(object, metaclass=decorators.SingletonFactory):
 
     @property
     def MY_MAL_XML_TEMPLATE(self) -> str:
-        with open(self.__MY_MAL_XML_TEMPLATE_PATH) as f:
-            data = f.read()
-        return data
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<entry>
+    <episode>{0:d}</episode>
+    <status>{1:d}</status>
+    <score>{2:d}</score>
+    <downloaded_episodes>{3:d}</downloaded_episodes>
+    <storage_type>{4:d}</storage_type>
+    <storage_value>{5:f}</storage_value>
+    <times_rewatched>{6:d}</times_rewatched>
+    <rewatch_value>{7:d}</rewatch_value>
+    <date_start>{8:s}</date_start>
+    <date_finish>{9:s}</date_finish>
+    <priority>{10:d}</priority>
+    <enable_discussion>{11:d}</enable_discussion>
+    <enable_rewatching>{12:d}</enable_rewatching>
+    <comments>{13:s}</comments>
+    <fansub_group>{14:s}</fansub_group>
+    <tags>{15:s}</tags>
+</entry>"""
 
     def add(self, account):
         """
