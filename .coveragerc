@@ -7,6 +7,7 @@ include=pymal/*
 omit=*decorators.py
     *__init__.py
     *consts.py
+    *exceptions.py
 
 [report]
 # Regexes for lines to exclude from consideration

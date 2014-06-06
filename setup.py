@@ -46,6 +46,7 @@ setup(
         'beautifulsoup4>=4.3.2',
         'httpcache>=0.1.3',
         'html5lib>=0.999',
+        'six>=1.1,<1.4',
     ],
 
 )
