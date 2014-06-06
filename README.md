@@ -32,23 +32,35 @@ To run the tests that come with MAL Client:
 
 Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
 
+    ======================================================================
+    FAIL: test_my_storage_value (tests.test_my_anime.ReloadTestCase)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "D:\git\pymal\tests\test_my_anime.py", line 65, in test_my_storage_value
+        self.assertIsInstance(self.anime.my_storage_value, float)
+    AssertionError: 0 is not an instance of <class 'float'>
+    
+    ----------------------------------------------------------------------
+    Ran 160 tests in 110.210s
+    
+    FAILED (failures=1)
     ----------- coverage: platform win32, python 3.4.1-final-0 -----------
     Name                          Stmts       Miss     Branch    BrMiss            Cover
     ------------------------------------------------------------------------------------
-    pymal\Account              101/110      24/29      18/18       7/8     73.95%/71.09%
-    pymal\AccountAnimes        122/125      38/42      28/28      16/16    64.00%/62.09%
-    pymal\AccountMangas        122/125      38/42      28/28      16/16    64.00%/62.09%
-    pymal\Anime                271/273      54/59      57/57      23/23    76.52%/75.15%
-    pymal\Manga                270/272      48/53      59/59      24/24    78.12%/76.74%
-    pymal\MyAnime              224/226      24/28      38/38      17/17    84.35%/82.95%
-    pymal\MyManga              226/228      23/27      42/42      15/15    85.82%/84.44%
-    pymal\Season                40/43        8/12       2/2        0/1     80.95%/73.33%
-    pymal\Seasons               54/57       24/28      10/10       4/4     56.25%/52.24%
-    pymal\global_functions      88/92       16/20      32/22       9/9     79.17%/76.61%
+    pymal\Account              180/101      32/24      18/18       7/7     69.05%/73.95%
+    pymal\AccountAnimes        122/122      40/38      28/28      16/16    62.67%/64.00%
+    pymal\AccountMangas        122/122      40/38      28/28      16/16    62.67%/64.00%
+    pymal\Anime                286/271      26/54      59/57      22/23    86.09%/76.52%
+    pymal\Manga                273/270      22/48      61/59      21/24    87.13%/78.12%
+    pymal\MyAnime              292/224      65/24      70/38      37/17    71.82%/84.35%
+    pymal\MyManga              308/226      71/23      82/42      40/15    71.54%/85.82%
+    pymal\Season                40/40       12/8        1/2        0/1     69.05%/80.95%
+    pymal\Seasons               54/54       24/24      10/10       4/4     56.25%/56.25%
+    pymal\exceptions            10/0        10/0        0/0        0/0     00.00%/00.00%
+    pymal\global_functions      88/88       26/16      32/32       9/9     70.83%/79.17%
     ------------------------------------------------------------------------------------
-    TOTAL                     1518/1551    297/340    314/282    132/94    76.64%/74.69%
-    Name                     Stmts   Miss Branch BrMiss     Cover
-
+    TOTAL                     1703/1518    368/297    390/314    173/132   74.15%/76.64%
+    
     (new/old)
 
 [More about tests for developers for pymal.](/tests/readme.md "pymal tests readme")
