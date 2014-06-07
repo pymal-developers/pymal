@@ -13,6 +13,6 @@ class SearchMangas(Search.Search):
     _SEARCH_NAME = 'manga'
     _SEARCHED_URL_SUFFIX = '/manga/'
 
-    def _SEARCHED_OBJECT(self, mal_url: str):
+    def _SEARCHED_OBJECT(self, mal_url: str) -> Manga.Manga:
         mal_id = int(mal_url.split('/')[0])
         return Manga.Manga(int(mal_id))

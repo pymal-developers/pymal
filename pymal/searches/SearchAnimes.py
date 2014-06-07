@@ -13,6 +13,6 @@ class SearchAnimes(Search.Search):
     _SEARCH_NAME = 'anime'
     _SEARCHED_URL_SUFFIX = '/anime/'
 
-    def _SEARCHED_OBJECT(self, mal_url: str):
+    def _SEARCHED_OBJECT(self, mal_url: str) -> Anime.Anime:
         mal_id = int(mal_url.split('/')[0])
         return Anime.Anime(int(mal_id))

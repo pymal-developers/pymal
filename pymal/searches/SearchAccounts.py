@@ -13,5 +13,5 @@ class SearchAccounts(Search.Search):
     _SEARCH_NAME = 'users'
     _SEARCHED_URL_SUFFIX = '/profile/'
 
-    def _SEARCHED_OBJECT(self, mal_url: str):
+    def _SEARCHED_OBJECT(self, mal_url: str) -> Account.Account:
         return Account.Account(mal_url)
