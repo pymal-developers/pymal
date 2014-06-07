@@ -47,30 +47,3 @@ class Search(object, metaclass=decorators.Singleton):
         names = map(lambda x: x.split(self._SEARCHED_URL_SUFFIX)[1], ret)
         objects = map(lambda x: self._SEARCHED_OBJECT(x), names)
         return objects
-
-
-class SearchUsers(Search):
-    _SEARCH_NAME = 'users'
-    _SEARCHED_URL_SUFFIX = '/profile/'
-    from pymal import Account
-    _SEARCHED_OBJECT = Account.Account
-
-
-class SearchAnimes(Search):
-    _SEARCH_NAME = 'anime'
-    _SEARCHED_URL_SUFFIX = '/anime/'
-
-    def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import Anime
-        mal_id = int(mal_url.split('/')[0])
-        return Anime.Anime(int(mal_id))
-
-
-class SearchMangas(Search):
-    _SEARCH_NAME = 'manga'
-    _SEARCHED_URL_SUFFIX = '/manga/'
-
-    def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import Manga
-        mal_id = int(mal_url.split('/')[0])
-        return Manga.Manga(int(mal_id))
