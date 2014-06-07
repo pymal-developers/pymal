@@ -15,7 +15,6 @@ from pymal import exceptions
 from pymal import consts
 from pymal import AccountAnimes
 from pymal import AccountMangas
-from pymal import searches
 
 __all__ = ['Account']
 
@@ -104,6 +103,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
     def search(self, search_line: str, is_anime: bool=True) -> map:
         """
         """
+        from pymal import searches
         if is_anime:
             results = searches.search_animes(search_line)
             account_object_list = self.animes
