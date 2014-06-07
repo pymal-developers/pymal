@@ -23,7 +23,7 @@ class AccountMangaListTestCase(unittest.TestCase):
         self.assertGreater(len(self.mangas), 0)
 
     def test_contains(self):
-        my_manga = self.mangas[0]
+        my_manga = list(self.mangas)[0]
         manga = Manga.Manga(my_manga.id)
         self.assertIn(manga, self.mangas)
 

@@ -23,7 +23,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertGreater(len(self.animes), 0)
 
     def test_contains(self):
-        my_anime = self.animes[0]
+        my_anime = list(self.animes)[0]
         anime = Anime.Anime(my_anime.id)
         self.assertIn(anime, self.animes)
 

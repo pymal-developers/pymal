@@ -29,11 +29,11 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
-        self.__watching = []
-        self.__completed = []
-        self.__on_hold = []
-        self.__dropped = []
-        self.__plan_to_watch = []
+        self.__watching = set()
+        self.__completed = set()
+        self.__on_hold = set()
+        self.__dropped = set()
+        self.__plan_to_watch = set()
 
         self.user_days_spent_watching = None
 
@@ -61,37 +61,37 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.load
-    def watching(self) -> list:
+    def watching(self) -> set:
         return self.__watching
 
     @property
     @decorators.load
-    def completed(self) -> list:
+    def completed(self) -> set:
         return self.__completed
 
     @property
     @decorators.load
-    def on_hold(self) -> list:
+    def on_hold(self) -> set:
         return self.__on_hold
 
     @property
     @decorators.load
-    def dropped(self) -> list:
+    def dropped(self) -> set:
         return self.__dropped
 
     @property
     @decorators.load
-    def plan_to_watch(self) -> list:
+    def plan_to_watch(self) -> set:
         return self.__plan_to_watch
 
     def __contains__(self, item: MyAnime.MyAnime) -> bool:
-        return any(map(lambda x: item == x, self))
+        return any(map(lambda x: x == item, self))
 
     def __iter__(self):
         class AccountAnimesIterator(object):
 
             def __init__(self, values):
-                self. values = values
+                self. values = list(values)
                 self.location = 0
 
             def __iter__(self):
@@ -104,34 +104,9 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
                 value = self.values[self.location]
                 self.location += 1
                 return value
-        return AccountAnimesIterator(self.watching + self.completed +
-                                     self.on_hold + self.dropped +
+        return AccountAnimesIterator(self.watching | self.completed |
+                                     self.on_hold | self.dropped |
                                      self.plan_to_watch)
-
-    def __getitem__(self, key: str or int) -> list:
-        if isinstance(key, int):
-            if key < len(self.watching):
-                return self.watching[key]
-            key -= len(self.watching)
-            if key < len(self.completed):
-                return self.completed[key]
-            key -= len(self.completed)
-            if key < len(self.on_hold):
-                return self.on_hold[key]
-            key -= len(self.on_hold)
-            if key < len(self.dropped):
-                return self.dropped[key]
-            key -= len(self.dropped)
-            if key < len(self.plan_to_watch):
-                return self.plan_to_watch[key]
-            raise IndexError(
-                'list index out of range (the size if {0:d}'.format(len(self)))
-        key = str(key)
-        for mal_object in self:
-            if mal_object.title == key:
-                return mal_object
-        KeyError("{0:s} doesn't have the anime '{1:s}'".format(
-            self.__class__.__name__, key))
 
     def reload(self):
         resp_data = self.__connection.connect(self.__url)
@@ -177,7 +152,7 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
         self.__dropped.clear()
         self.__plan_to_watch.clear()
 
-        threads = []
+        threads = list()
         for xml_mal_object in xml_mal_objects:
             if consts.DEBUG:
                 self.__get_my_mal_object(xml_mal_object)
@@ -202,7 +177,7 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
         mal_object = MyAnime.MyAnime(mal_object_id, my_mal_object_id,
                                      self.__connection,
                                      my_mal_xml=xml_mal_object)
-        self.map_of_lists[mal_object.my_status].append(mal_object)
+        self.map_of_lists[mal_object.my_status].add(mal_object)
 
     def __len__(self):
         return sum([1 for obj in self])

@@ -132,7 +132,7 @@ class NoReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        cls.manga = cls.account.mangas[0]
+        cls.manga = list(cls.account.mangas)[0]
 
     def test_id(self):
         self.assertIsInstance(self.manga.id, int)
