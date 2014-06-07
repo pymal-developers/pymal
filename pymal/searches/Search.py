@@ -21,29 +21,38 @@ class Search(object, metaclass=decorators.Singleton):
     def __SEARCH_URL(self):
         return parse.urljoin(consts.HOST_NAME, self._SEARCH_NAME + '.php')
 
-    def __make_url(self, search_line: str) -> str:
-        params = {'q': search_line}
+    def __make_url(self, search_line: str, show_number: int) -> str:
+        params = {
+            'q': search_line,
+            'show': show_number
+        }
         url_parts = list(parse.urlparse(self.__SEARCH_URL))
         query = dict(parse.parse_qsl(url_parts[4]))
         query.update(params)
         url_parts[4] = parse.urlencode(query)
         return parse.urlunparse(url_parts)
 
-    def __get_list(self, search_line: str) -> map:
-        search_url = self.__make_url(search_line)
+    def __get_list(self, search_line: str, show_number: int) -> set:
+        search_url = self.__make_url(search_line, show_number)
 
         sock = global_functions._connect(search_url)
 
         if sock.url != search_url:
-            return map(lambda x: x, [parse.urlsplit(sock.url).path])
+            return set([parse.urlsplit(sock.url).path])
 
         html = bs4.BeautifulSoup(sock.text)
         div_content = html.find(name='div', attrs={'id': 'content'})
         divs_pic = div_content.findAll(name='div', attrs={'class': 'picSurround'})
-        return map(lambda x: x.a['href'], divs_pic)
+        return set(map(lambda x: x.a['href'], divs_pic))
 
-    def search(self, search_line: str) -> map:
-        ret = list(self.__get_list(search_line))
-        names = map(lambda x: x.split(self._SEARCHED_URL_SUFFIX)[1], ret)
-        objects = map(lambda x: self._SEARCHED_OBJECT(x), names)
-        return objects
+    def search(self, search_line: str) -> set:
+        ret = set()
+        current_index = 0
+        res = self.__get_list(search_line, current_index)
+        while len(res) > 0:
+            ret.update(res)
+            current_index += len(res)
+            res = self.__get_list(search_line, current_index)
+        ret.update(res)
+
+        return set(map(lambda x: self._SEARCHED_OBJECT(x.split(self._SEARCHED_URL_SUFFIX)[1]), ret))
