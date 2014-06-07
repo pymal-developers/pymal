@@ -12,13 +12,13 @@ __SearchAnimes = SearchAnimes.SearchAnimes()
 __SearchMangas = SearchMangas.SearchMangas()
 
 
-def search_accounts(search_string: str):
+def search_accounts(search_string: str) -> map:
     return __SearchAccounts.search(search_string)
 
 
-def search_animes(search_string: str):
+def search_animes(search_string: str) -> map:
     return __SearchAnimes.search(search_string)
 
 
-def search_mangas(search_string: str):
+def search_mangas(search_string: str) -> map:
     return __SearchMangas.search(search_string)
