@@ -5,9 +5,8 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
 from xml.etree import ElementTree
-from urllib import parse, request
+from urllib import request
 
-import bs4
 from requests.auth import HTTPBasicAuth
 
 from pymal import global_functions
@@ -27,9 +26,6 @@ class Account(object, metaclass=decorators.SingletonFactory):
     
     __AUTH_CHECKER_URL =\
         request.urljoin(consts.HOST_NAME, r'api/account/verify_credentials.xml')
-    __SEARCH_URL = request.urljoin(consts.HOST_NAME, 'api/{0:s}/search.xml')
-    __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
-    __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
     @property
     def __MAIN_PROFILE_URL(self):
@@ -112,40 +108,27 @@ class Account(object, metaclass=decorators.SingletonFactory):
         self.__friends = FriendsFrozenSet(account=self, url=self.__FRIENDS_URL)
         return self.__friends
 
-    def search(self, search_line: str, is_anime: bool=True) -> set:
+    def search(self, search_line: str, is_anime: bool=True) -> map:
         """
         """
-        params = {'q': search_line}
+        from pymal import searches
         if is_anime:
-            base_url = self.__ANIME_SEARCH_URL
-            from pymal import Anime
-            searched_object = Anime.Anime
+            results = searches.search_animes(search_line)
             account_object_list = self.animes
         else:
-            base_url = self.__MANGA_SEARCH_URL
-            from pymal import Manga
-            searched_object = Manga.Manga
+            results = searches.search_mangas(search_line)
             account_object_list = self.mangas
 
-        url_parts = list(parse.urlparse(base_url))
-        query = dict(parse.parse_qsl(url_parts[4]))
-        query.update(params)
-        url_parts[4] = parse.urlencode(query)
-        search_url = parse.urlunparse(url_parts)
-
-        data = self.auth_connect(search_url)
-        entries = bs4.BeautifulSoup(data).body.anime.findAll(
-            name='entry', recursive=False)
-
-        def get_object(entry):
-            object_id = int(entry.id.text)
-            if object_id in account_object_list:
-                return list(filter(
-                    lambda x: x == object_id,
-                    account_object_list
-                ))[0]
-            return searched_object(object_id)
-        return set(map(get_object, entries))
+        def get_object(result):
+            if result not in account_object_list:
+                return result
+            # if account_object_list was set:
+            #     return account_object_list.intersection([result]).pop()
+            return list(filter(
+                lambda x: x == result,
+                account_object_list
+            ))[0]
+        return map(get_object, results)
 
     def change_password(self, password: str) -> bool:
         """

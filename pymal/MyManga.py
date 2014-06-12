@@ -329,11 +329,10 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
             name="select", attrs={"id": "status", "name": "status"})
         assert status_select is not None
         # TODO: make this look better
-        status_selected_options = [
-            x
-            for x in status_select.findAll(name="option")
-            if 'selected' in x.attrs
-        ]
+        status_selected_options = list(filter(
+            lambda x: 'selected' in x.attrs,
+            status_select.findAll(name="option")
+        ))
         assert 1 == len(status_selected_options)
         self.__my_status = int(status_selected_options[0]['value'])
 
