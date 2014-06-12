@@ -11,11 +11,12 @@ from urllib import request
 from pymal import consts
 from pymal import decorators
 from pymal import MyAnime
+from pymal import ReloadedSet
 
 __all__ = ['AccountAnimes']
 
 
-class AccountAnimes(object, metaclass=decorators.SingletonFactory):
+class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorators.SingletonFactory):
     """
     """
     __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
@@ -84,29 +85,10 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
     def plan_to_watch(self) -> set:
         return self.__plan_to_watch
 
-    def __contains__(self, item: MyAnime.MyAnime) -> bool:
-        return any(map(lambda x: x == item, self))
-
-    def __iter__(self):
-        class AccountAnimesIterator(object):
-
-            def __init__(self, values):
-                self. values = list(values)
-                self.location = 0
-
-            def __iter__(self):
-                self.location = 0
-                return self
-
-            def __next__(self):
-                if self.location >= len(self.values):
-                    raise StopIteration
-                value = self.values[self.location]
-                self.location += 1
-                return value
-        return AccountAnimesIterator(self.watching | self.completed |
-                                     self.on_hold | self.dropped |
-                                     self.plan_to_watch)
+    @property
+    def _values(self):
+        return self.watching | self.completed | self.on_hold | self.dropped |\
+               self.plan_to_watch
 
     def reload(self):
         resp_data = self.__connection.connect(self.__url)
@@ -178,9 +160,6 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
                                      self.__connection,
                                      my_mal_xml=xml_mal_object)
         self.map_of_lists[mal_object.my_status].add(mal_object)
-
-    def __len__(self):
-        return sum([1 for obj in self])
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))
