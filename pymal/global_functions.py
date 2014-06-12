@@ -88,7 +88,6 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
     :param list_of_tags: list of tags to check the index on
     :rtype: int
     """
-    # TODO: find a way to put it out
     from pymal import Anime
     from pymal import Manga
 
