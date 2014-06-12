@@ -12,7 +12,6 @@ from requests.auth import HTTPBasicAuth
 
 from pymal import global_functions
 from pymal import decorators
-from pymal import exceptions
 from pymal import consts
 from pymal import AccountAnimes
 from pymal import AccountMangas
@@ -32,7 +31,13 @@ class Account(object, metaclass=decorators.SingletonFactory):
     __ANIME_SEARCH_URL = __SEARCH_URL.format('anime')
     __MANGA_SEARCH_URL = __SEARCH_URL.format('manga')
 
-    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'profile/{0:s}/friends')
+    @property
+    def __MAIN_PROFILE_URL(self):
+        return request.urljoin(consts.HOST_NAME, 'profile/{0:s}'.format(self.username))
+
+    @property
+    def __FRIENDS_URL(self):
+        return self.__MAIN_PROFILE_URL + '/friends'
 
     __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
@@ -43,13 +48,12 @@ class Account(object, metaclass=decorators.SingletonFactory):
         self.__username = username
         self.__password = password
         self.connect = global_functions.connect
-        self.__user_id = 0
+        self.__user_id = None
         self.__auth_object = None
         self.__cookies = dict()
 
         self.__animes = None
         self.__mangas = None
-        self.__friends_url = self.__FRIENDS_URL.format(self.username)
         self.__friends = None
 
         if password is not None:
@@ -61,8 +65,11 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
     @property
     def user_id(self) -> int:
-        if not self.is_auth:
-            raise exceptions.UnauthenticatedAccountError(self.username)
+        if self.__user_id is None:
+            ret = self.connect(self.__MAIN_PROFILE_URL)
+            html = bs4.BeautifulSoup(ret)
+            bla = html.find(name='input', attrs={'name': 'profileMemId'})
+            self.__user_id = int(bla['value'])
         return self.__user_id
 
     @property
@@ -80,15 +87,16 @@ class Account(object, metaclass=decorators.SingletonFactory):
     @property
     def friends(self) -> set:
         class FriendsFrozenSet(set):
-            def __init__(self, account: Account):
+            def __init__(self, account: Account, url: str):
                 super().__init__()
 
                 self.account = account
+                self.__url = url
                 self.reload()
 
             def reload(self):
                 self.clear()
-                div_wrapper = global_functions.get_content_wrapper_div(self.account._Account__friends_url, self.account.connect)
+                div_wrapper = global_functions.get_content_wrapper_div(self.__url, self.account.connect)
                 assert div_wrapper is not None
 
                 list_div_friend = div_wrapper.findAll(name="div", attrs={"class": "friendBlock"})
@@ -101,7 +109,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
                     self.add(Account(splited_friend_url[1]))
 
-        self.__friends = FriendsFrozenSet(account=self)
+        self.__friends = FriendsFrozenSet(account=self, url=self.__FRIENDS_URL)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> set:
@@ -161,7 +169,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         xml_id = l[0]
         assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
-        self.__user_id = int(xml_id.text)
+        assert self.user_id == int(xml_id.text)
 
         self.__password = password
 
