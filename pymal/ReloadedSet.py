@@ -37,11 +37,17 @@ class ReloadedSet(collections.Set):
             res |= frozenset(other)
         return res
 
+    def __or__(self, other):
+        return self.union(other)
+
     def intersection(self, *others):
         res = set(self)
         for other in others:
             res &= frozenset(other)
         return res
+
+    def __and__(self, other):
+        return self.intersection(other)
 
     def difference(self, *others):
         res = set(self)
@@ -49,9 +55,14 @@ class ReloadedSet(collections.Set):
             res -= frozenset(other)
         return res
 
+    def __sub__(self, other):
+        return self.difference(other)
+
     def symmetric_difference(self, other):
         return set(self) ^ frozenset(other)
 
+    def __xor__(self, other):
+        return self.symmetric_difference(other)
 
 class ReloadedSetSingletonFactoryType(type(ReloadedSet), decorators.SingletonFactory):
     pass
