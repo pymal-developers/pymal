@@ -29,11 +29,11 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
-        self.__reading = []
-        self.__completed = []
-        self.__on_hold = []
-        self.__dropped = []
-        self.__plan_to_read = []
+        self.__reading = set()
+        self.__completed = set()
+        self.__on_hold = set()
+        self.__dropped = set()
+        self.__plan_to_read = set()
 
         self.user_days_spent_watching = None
 
@@ -61,12 +61,12 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.load
-    def reading(self) -> list:
+    def reading(self) -> set:
         return self.__reading
 
     @property
     @decorators.load
-    def completed(self) -> list:
+    def completed(self) -> set:
         return self.__completed
 
     @property
@@ -76,22 +76,22 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.load
-    def dropped(self) -> list:
+    def dropped(self) -> set:
         return self.__dropped
 
     @property
     @decorators.load
-    def plan_to_read(self) -> list:
+    def plan_to_read(self) -> set:
         return self.__plan_to_read
 
     def __contains__(self, item: MyManga.MyManga) -> bool:
-        return any(map(lambda x: item == x, self))
+        return any(map(lambda x: x == item, self))
 
     def __iter__(self):
         class AccountMangasIterator(object):
 
             def __init__(self, values):
-                self. values = values
+                self. values = list(values)
                 self.location = 0
 
             def __iter__(self):
@@ -104,34 +104,9 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
                 value = self.values[self.location]
                 self.location += 1
                 return value
-        return AccountMangasIterator(self.reading + self.completed +
-                                     self.on_hold + self.dropped +
+        return AccountMangasIterator(self.reading | self.completed |
+                                     self.on_hold | self.dropped |
                                      self.plan_to_read)
-
-    def __getitem__(self, key: str or int) -> list:
-        if isinstance(key, int):
-            if key < len(self.reading):
-                return self.reading[key]
-            key -= len(self.reading)
-            if key < len(self.completed):
-                return self.completed[key]
-            key -= len(self.completed)
-            if key < len(self.on_hold):
-                return self.on_hold[key]
-            key -= len(self.on_hold)
-            if key < len(self.dropped):
-                return self.dropped[key]
-            key -= len(self.dropped)
-            if key < len(self.plan_to_read):
-                return self.plan_to_read[key]
-            raise IndexError(
-                'list index out of range (the size if {0:d}'.format(len(self)))
-        key = str(key)
-        for mal_object in self:
-            if mal_object.title == key:
-                return mal_object
-        KeyError("{0:s} doesn't have the anime '{1:s}'".format(
-            self.__class__.__name__, key))
 
     def reload(self):
         resp_data = self.__connection.connect(self.__url)
@@ -145,12 +120,12 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
         l = list(xml_general_data)
         xml_user_id = l[0]
         assert 'user_id' == xml_user_id.tag, xml_user_id.tag
-        assert self.__connection.is_user_by_id(
-            int(xml_user_id.text.strip())), int(xml_user_id.text.strip())
+        assert self.__connection.user_id == int(xml_user_id.text),\
+            int(xml_user_id.text)
         xml_user_name = l[1]
         assert 'user_name' == xml_user_name.tag, xml_user_name.tag
-        assert self.__connection.is_user_by_name(
-            xml_user_name.text.strip()), xml_user_name.text.strip()
+        assert self.__connection.username == xml_user_name.text.strip(),\
+            xml_user_name.text.strip()
         xml_user_reading = l[2]
         assert 'user_reading' == xml_user_reading.tag, xml_user_reading.tag
         xml_user_completed = l[3]
@@ -177,7 +152,7 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
         self.__dropped.clear()
         self.__plan_to_read.clear()
 
-        threads = []
+        threads = list()
         for xml_mal_object in xml_mal_objects:
             if consts.DEBUG:
                 self.__get_my_mal_object(xml_mal_object)
@@ -195,14 +170,14 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
     def __get_my_mal_object(self, xml_mal_object: ElementTree.Element):
         mal_object_id_xml = xml_mal_object.find('series_mangadb_id')
         assert mal_object_id_xml is not None
-        mal_object_id = int(mal_object_id_xml.text.strip())
+        mal_object_id = int(mal_object_id_xml.text)
         my_mal_object_id_xml = xml_mal_object.find('my_id')
         assert my_mal_object_id_xml is not None
-        my_mal_object_id = int(my_mal_object_id_xml.text.strip())
+        my_mal_object_id = int(my_mal_object_id_xml.text)
         mal_object = MyManga.MyManga(mal_object_id, my_mal_object_id,
                                      self.__connection,
                                      my_mal_xml=xml_mal_object)
-        self.map_of_lists[mal_object.my_status].append(mal_object)
+        self.map_of_lists[mal_object.my_status].add(mal_object)
 
     def __len__(self):
         return sum([1 for obj in self])
@@ -212,6 +187,6 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
 
     def __hash__(self):
         hash_md5 = hashlib.md5()
-        hash_md5.update(self.__connection._username.encode())
+        hash_md5.update(self.__connection.username.encode())
         hash_md5.update(self.__class__.__name__.encode())
         return int(hash_md5.hexdigest(), 16)

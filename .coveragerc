@@ -7,6 +7,7 @@ include=pymal/*
 omit=*decorators.py
     *__init__.py
     *consts.py
+    *exceptions.py
 
 [report]
 # Regexes for lines to exclude from consideration
@@ -16,11 +17,11 @@ exclude_lines =
     from
 
     # Don't complain about missing debug-only code:
-    def __repr__
     if DEBUG
 
     # Don't complain if tests don't hit defensive assertion code:
     # raise AssertionError
+    __.*__ =
     raise NotImplementedError
 
     # Don't complain if non-runnable code isn't run:

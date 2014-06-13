@@ -12,6 +12,7 @@ import bs4
 from pymal import decorators
 from pymal import consts
 from pymal import global_functions
+from pymal import exceptions
 
 __all__ = ['Manga']
 
@@ -28,9 +29,6 @@ class Manga(object, metaclass=decorators.SingletonFactory):
                'reload', 'add']
     
     __GLOBAL_MAL_URL = request.urljoin(consts.HOST_NAME, "manga/{0:d}")
-    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
-        os.path.dirname(__file__), consts.XMLS_DIRECTORY,
-        'myanimelist_official_api_manga.xml')
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
@@ -110,8 +108,8 @@ class Manga(object, metaclass=decorators.SingletonFactory):
             self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
             self.__image_url = mal_xml.find('series_image').text.strip()
 
-            self.__chapters = int(mal_xml.find('series_chapters').text.strip())
-            self.__volumes = int(mal_xml.find('series_volumes').text.strip())
+            self.__chapters = int(mal_xml.find('series_chapters').text)
+            self.__volumes = int(mal_xml.find('series_volumes').text)
 
     @property
     def id(self) -> int:
@@ -378,7 +376,7 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         score_div = side_contents_divs[side_contents_divs_index]
         assert global_functions.check_side_content_div('Score', score_div)
         score_span, self_score = score_div.contents[:2]
-        self.__score = float(self_score.strip())
+        self.__score = float(self_score)
         side_contents_divs_index += 1
 
         # rank <div>
@@ -458,21 +456,45 @@ class Manga(object, metaclass=decorators.SingletonFactory):
 
     @property
     def MY_MAL_XML_TEMPLATE(self):
-        with open(self.__MY_MAL_XML_TEMPLATE_PATH) as f:
-            data = f.read()
-        return data
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<entry>
+	<chapter>{0:d}</chapter>
+	<volume>{1:d}</volume>
+	<status>{2:d}</status>
+	<score>{3:d}</score>
+	<downloaded_chapters>{4:d}</downloaded_chapters>
+	<times_reread>{5:d}</times_reread>
+	<reread_value>{6:d}</reread_value>
+	<date_start>{7:s}</date_start>
+	<date_finish>{8:s}</date_finish>
+	<priority>{9:d}</priority>
+	<enable_discussion>{10:d}</enable_discussion>
+	<enable_rereading>{11:d}</enable_rereading>
+	<comments>{12:s}</comments>
+	<scan_group>{13:s}</scan_group>
+	<tags>{14:s}</tags>
+	<retail_volumes>{15:d}</retail_volumes>
+</entry>"""
 
     def add(self, account):
         """
         """
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 0, 6, 0, 0, 0, 0,
-                                               consts.MALAPI_NONE_TIME,
-                                               consts.MALAPI_NONE_TIME, 0,
-                                               False, False, '', '', '', 0)
-        self.ret_data = account.auth_connect(
-            self.__MY_MAL_ADD_URL.format(self.id), data=data)
-        print(self.ret_data)
-        assert self.ret_data.isdigit()
+        data = self.MY_MAL_XML_TEMPLATE.format(
+            0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
+            consts.MALAPI_NONE_TIME, 0, False, False, '', '', '', 0
+        )
+        xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
+        delete_url = self.__MY_MAL_ADD_URL.format(self.id)
+        ret = account.auth_connect(
+            delete_url,
+            data='data=' + xml,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'}
+        )
+        if not ret.isdigit():
+            raise exceptions.MyAnimeListApiAddError(ret)
+
+        from pymal import MyManga
+        return MyManga.MyManga(self, int(ret), account)
 
     def __eq__(self, other):
         if isinstance(other, Manga):

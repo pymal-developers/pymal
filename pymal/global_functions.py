@@ -88,21 +88,20 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
     :param list_of_tags: list of tags to check the index on
     :rtype: int
     """
-    # TODO: find a way to put it out
-    from pymal.Anime import Anime
-    from pymal.Manga import Manga
+    from pymal import Anime
+    from pymal import Manga
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
         assert 'a' == list_of_tags[i].name, list_of_tags[i].name
         if '/anime/' in list_of_tags[i]['href']:
             self_list.append(
-                Anime(int(
+                Anime.Anime(int(
                     list_of_tags[i]['href'].split('/anime/')[1].split('/')[0]
                 )))
         elif '/manga/' in list_of_tags[i]['href']:
             self_list.append(
-                Manga(int(
+                Manga.Manga(int(
                     list_of_tags[i]['href'].split('/manga/')[1].split('/')[0]
                 )))
         else:

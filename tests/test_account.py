@@ -40,15 +40,47 @@ class InitTestCase(unittest.TestCase):
         self.assertFalse(account.is_auth)
         Account.Account._unregiter(account)
 
+    def test_str_no_password(self):
+        account = Account.Account(ACCOUNT_TEST_USERNAME)
+        repr(account)
+        Account.Account._unregiter(account)
+
+    def test_str_with_password(self):
+        account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        repr(account)
+        Account.Account._unregiter(account)
+
+    def test_user_id(self):
+        account = Account.Account(ACCOUNT_TEST_USERNAME)
+        from pymal import exceptions
+        self.assertRaises(exceptions.UnauthenticatedAccountError, lambda x: x.user_id, account)
+        Account.Account._unregiter(account)
+
 
 class FunctionsTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
-    def setUp(self):
-        self.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+    @classmethod
+    def tearDownClass(cls):
+        Account.Account._unregiter(cls.account)
 
     def test_reload(self):
         self.assertIsInstance(self.account.animes, AccountAnimes.AccountAnimes)
         self.assertIsInstance(self.account.mangas, AccountMangas.AccountMangas)
+
+    def test_username(self):
+        self.assertIsInstance(self.account.username, str)
+
+    def test_user_id(self):
+        self.assertIsInstance(self.account.user_id, int)
+
+    def test_friends(self):
+        self.assertIsInstance(self.account.friends, set)
+        for friend in self.account.friends:
+            self.assertIsInstance(friend, Account.Account)
+            self.assertIn(self.account, friend.friends)
 
 
 def main():

@@ -14,7 +14,7 @@ class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        cls.anime = cls.account.animes[0]
+        cls.anime = list(cls.account.animes)[0]
         cls.anime.my_reload()
 
     def test_my_id(self):
@@ -81,13 +81,19 @@ class ReloadTestCase(unittest.TestCase):
             print(err)
             self.assertTrue(False)
 
+    def test_str(self):
+        repr(self.anime)
+
+    def test_update(self):
+        self.anime.update()
+
 
 class NoReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        cls.anime = cls.account.animes[0]
+        cls.anime = list(cls.account.animes)[0]
 
     def test_my_id(self):
         self.assertIsInstance(self.anime.my_id, int)
@@ -127,6 +133,9 @@ class NoReloadTestCase(unittest.TestCase):
     def test_equal(self):
         anime = Anime.Anime(self.anime.id)
         self.assertEqual(anime, self.anime)
+
+    def test_str(self):
+        repr(self.anime)
 
 
 def main():

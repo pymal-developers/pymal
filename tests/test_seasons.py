@@ -33,6 +33,11 @@ class TestCase(unittest.TestCase):
         anime = list(season.animes)[0]
         self.assertIn(anime, season)
 
+    def test_str(self):
+        repr(self.seasons)
+        for season in self.seasons.seasons:
+            repr(season)
+
 
 def main():
     unittest.main()

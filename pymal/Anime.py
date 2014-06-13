@@ -12,6 +12,7 @@ import bs4
 from pymal import decorators
 from pymal import consts
 from pymal import global_functions
+from pymal import exceptions
 
 __all__ = ['Anime']
 
@@ -28,9 +29,6 @@ class Anime(object, metaclass=decorators.SingletonFactory):
                'reload', 'add']
     
     __GLOBAL_MAL_URL = request.urljoin(consts.HOST_NAME, "anime/{0:d}")
-    __MY_MAL_XML_TEMPLATE_PATH = os.path.join(
-        os.path.dirname(__file__), consts.XMLS_DIRECTORY,
-        'myanimelist_official_api_anime.xml')
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
@@ -112,7 +110,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
             self.__image_url = mal_xml.find('series_image').text.strip()
 
-            self.__episodes = int(mal_xml.find('series_episodes').text.strip())
+            self.__episodes = int(mal_xml.find('series_episodes').text)
 
     @property
     def id(self) -> int:
@@ -384,7 +382,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         score_div = side_contents_divs[side_contents_divs_index]
         assert global_functions.check_side_content_div('Score', score_div)
         score_span, self_score = score_div.contents[:2]
-        self.__score = float(self_score.strip())
+        self.__score = float(self_score)
         side_contents_divs_index += 1
 
         # rank <div>
@@ -464,21 +462,61 @@ class Anime(object, metaclass=decorators.SingletonFactory):
 
     @property
     def MY_MAL_XML_TEMPLATE(self) -> str:
-        with open(self.__MY_MAL_XML_TEMPLATE_PATH) as f:
-            data = f.read()
-        return data
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<entry>
+    <episode>{0:d}</episode>
+    <status>{1:d}</status>
+    <score>{2:d}</score>
+    <downloaded_episodes>{3:d}</downloaded_episodes>
+    <storage_type>{4:d}</storage_type>
+    <storage_value>{5:f}</storage_value>
+    <times_rewatched>{6:d}</times_rewatched>
+    <rewatch_value>{7:d}</rewatch_value>
+    <date_start>{8:s}</date_start>
+    <date_finish>{9:s}</date_finish>
+    <priority>{10:d}</priority>
+    <enable_discussion>{11:d}</enable_discussion>
+    <enable_rewatching>{12:d}</enable_rewatching>
+    <comments>{13:s}</comments>
+    <fansub_group>{14:s}</fansub_group>
+    <tags>{15:s}</tags>
+</entry>"""
 
-    def add(self, account) -> bool:
+    def add(self, account):
         """
         """
-        data = self.MY_MAL_XML_TEMPLATE.format(0, 6, 0, 0, 0, 0, 0, 0,
-                                               consts.MALAPI_NONE_TIME,
-                                               consts.MALAPI_NONE_TIME, 0,
-                                               False, False, '', '', '')
-        self.ret_data = account.auth_connect(
-            self.__MY_MAL_ADD_URL.format(self.id), data=data)
-        print(self.ret_data)
-        assert self.ret_data.isdigit()
+        data = self.MY_MAL_XML_TEMPLATE.format(
+            0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
+            consts.MALAPI_NONE_TIME, 0, False, False, '', '', ''
+        )
+        xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
+        delete_url = self.__MY_MAL_ADD_URL.format(self.id)
+        ret = account.auth_connect(
+            delete_url,
+            data='data=' + xml,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'}
+        )
+        try:
+            html_obj = bs4.BeautifulSoup(ret)
+            assert html_obj is not None
+
+            head_obj = html_obj.head
+            assert head_obj is not None
+
+            title_obj = head_obj.title
+            assert title_obj is not None
+
+            data = title_obj.text
+            assert data is not None
+
+            my_id, string = data.split()
+            assert my_id.isdigit()
+            assert string == 'Created'
+        except Exception:
+            raise exceptions.MyAnimeListApiAddError(ret)
+
+        from pymal import MyAnime
+        return MyAnime.MyAnime(self, my_id, account)
 
     def __eq__(self, other):
         if isinstance(other, Anime):

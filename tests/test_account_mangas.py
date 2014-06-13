@@ -1,6 +1,7 @@
 import unittest
 
 from pymal import Account
+from pymal import AccountMangas
 from pymal import Manga
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
@@ -13,13 +14,21 @@ class AccountMangaListTestCase(unittest.TestCase):
         cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.mangas = cls.account.mangas
 
+    @classmethod
+    def tearDownClass(cls):
+        AccountMangas.AccountMangas._unregiter(cls.mangas)
+        Account.Account._unregiter(cls.account)
+
     def test_len(self):
         self.assertGreater(len(self.mangas), 0)
 
     def test_contains(self):
-        my_manga = self.mangas[0]
+        my_manga = list(self.mangas)[0]
         manga = Manga.Manga(my_manga.id)
         self.assertIn(manga, self.mangas)
+
+    def test_str(self):
+        repr(self.mangas)
 
 
 def main():

@@ -15,7 +15,7 @@ setup(
     url='https://bitbucket.org/pymal-developers/pymal/',
     keywords=["MyAnimeList", "MAL", "pymal"],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
@@ -46,6 +46,7 @@ setup(
         'beautifulsoup4>=4.3.2',
         'httpcache>=0.1.3',
         'html5lib>=0.999',
+        'six>=1.1,<1.4',
     ],
 
 )
