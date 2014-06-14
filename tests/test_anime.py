@@ -52,6 +52,9 @@ class ReloadTestCase(unittest.TestCase):
     def test_rating(self):
         self.assertIsInstance(self.anime.rating, str)
 
+    def test_duration(self):
+        self.assertIsInstance(self.anime.duration, int)
+
     def test_score(self):
         self.assertIsInstance(self.anime.score, float)
 
