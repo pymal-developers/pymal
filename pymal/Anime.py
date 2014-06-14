@@ -382,7 +382,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         duration_span, duration_string = duration_div.contents
         self.__duration = 0
         duration_parts = duration_string.strip().split('.')
-        duration_parts = filter(lambda x: x != 'per episode', map(lambda x: x.strip(), duration_parts))
+        duration_parts = list(map(lambda x: x.strip(), duration_parts))[:-1]
         for duration_part in duration_parts:
             number, scale = duration_part.split()
             number = int(number)
