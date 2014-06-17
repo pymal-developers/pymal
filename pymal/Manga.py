@@ -6,7 +6,10 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 import hashlib
 from urllib import request
 import os
+import io
 
+from PIL import Image
+import requests
 import bs4
 
 from pymal import decorators
@@ -126,6 +129,11 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         if self.__image_url is None:
             self.reload()
         return self.__image_url
+
+    def get_image(self) -> Image.Image:
+        sock = requests.get(self.image_url)
+        data = io.BytesIO(sock.content)
+        return Image.open(data)
 
     @property
     @decorators.load
