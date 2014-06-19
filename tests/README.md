@@ -27,5 +27,4 @@ Usage
 For every file in pymal should be a test (if it's look smart to check it).
 Every object needs to be tested with all his function. At least to check the return type.
 Any thing that it's constant should be place in `constants_for_testing.py`.
-All configurable data should be read from `account_settings.json`.
 Try to write informative message in assert if the assert shows nothing.
