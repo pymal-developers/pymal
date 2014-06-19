@@ -4,9 +4,9 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
-from xml.etree import ElementTree
-from threading import Thread
 from urllib import request
+
+import bs4
 
 from pymal import consts
 from pymal import decorators
@@ -22,7 +22,7 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
     __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
                'reload']
 
-    __URL = request.urljoin(consts.HOST_NAME, "malappinfo.php?u={0:s}&type=manga")
+    __URL = request.urljoin(consts.HOST_NAME, "mangalist/{0:s}&status=")
 
     def __init__(self, username: str, connection):
         """
@@ -72,7 +72,7 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
 
     @property
     @decorators.load
-    def on_hold(self) -> list:
+    def on_hold(self) -> set:
         return self.__on_hold
 
     @property
@@ -91,75 +91,20 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
                self.plan_to_read
 
     def reload(self):
-        resp_data = self.__connection.connect(self.__url)
-        xml_tree = ElementTree.fromstring(resp_data)
-        assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(
-            xml_tree.tag)
-        xml_mal_objects = list(xml_tree)
-        xml_general_data = xml_mal_objects[0]
-        assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(
-            xml_general_data.tag)
-        l = list(xml_general_data)
-        xml_user_id = l[0]
-        assert 'user_id' == xml_user_id.tag, xml_user_id.tag
-        assert self.__connection.user_id == int(xml_user_id.text),\
-            int(xml_user_id.text)
-        xml_user_name = l[1]
-        assert 'user_name' == xml_user_name.tag, xml_user_name.tag
-        assert self.__connection.username == xml_user_name.text.strip(),\
-            xml_user_name.text.strip()
-        xml_user_reading = l[2]
-        assert 'user_reading' == xml_user_reading.tag, xml_user_reading.tag
-        xml_user_completed = l[3]
-        assert 'user_completed' == xml_user_completed.tag,\
-            xml_user_completed.tag
-        xml_user_onhold = l[4]
-        assert 'user_onhold' == xml_user_onhold.tag, xml_user_onhold.tag
-        xml_user_dropped = l[5]
-        assert 'user_dropped' == xml_user_dropped.tag, xml_user_dropped.tag
-        xml_user_plantoread = l[6]
-        assert 'user_plantoread' == xml_user_plantoread.tag,\
-            xml_user_plantoread.tag
-        user_days_spent_watching = l[7]
-        assert 'user_days_spent_watching' == user_days_spent_watching.tag,\
-            user_days_spent_watching.tag
-        self.user_days_spent_watching = float(
-            user_days_spent_watching.text.strip())
-
-        xml_mal_objects = xml_mal_objects[1:]
-
-        self.__reading.clear()
-        self.__completed.clear()
-        self.__on_hold.clear()
-        self.__dropped.clear()
-        self.__plan_to_read.clear()
-
-        threads = list()
-        for xml_mal_object in xml_mal_objects:
-            if consts.DEBUG:
-                self.__get_my_mal_object(xml_mal_object)
-            else:
-                thread = Thread(
-                    target=self.__get_my_mal_object, args=(xml_mal_object, ))
-                thread.start()
-                threads.append(thread)
-
-        while threads:
-            threads.pop().join()
+        self.__reading = self.__get_my_animes(1)
+        self.__completed = self.__get_my_animes(2)
+        self.__on_hold = self.__get_my_animes(3)
+        self.__dropped = self.__get_my_animes(4)
+        self.__plan_to_read = self.__get_my_animes(6)
 
         self._is_loaded = True
 
-    def __get_my_mal_object(self, xml_mal_object: ElementTree.Element):
-        mal_object_id_xml = xml_mal_object.find('series_mangadb_id')
-        assert mal_object_id_xml is not None
-        mal_object_id = int(mal_object_id_xml.text)
-        my_mal_object_id_xml = xml_mal_object.find('my_id')
-        assert my_mal_object_id_xml is not None
-        my_mal_object_id = int(my_mal_object_id_xml.text)
-        mal_object = MyManga.MyManga(mal_object_id, my_mal_object_id,
-                                     self.__connection,
-                                     my_mal_xml=xml_mal_object)
-        self.map_of_lists[mal_object.my_status].add(mal_object)
+    def __get_my_animes(self, status: int) -> set:
+        data = self.__connection.connect(self.__url + str(status))
+        html = bs4.BeautifulSoup(data)
+        anime_links = html.findAll(name='a', attrs={'class': 'animetitle'})
+        anime_ids = map(lambda x: int(x['href'].split('/')[2]), anime_links)
+        return set(map(lambda x: MyManga.MyManga(x, 0, self.__connection), anime_ids))
 
     def __repr__(self):
         return "<User mangas' number is {0:d}>".format(len(self))
