@@ -8,6 +8,7 @@ from xml.etree import ElementTree
 from urllib import request
 
 from requests.auth import HTTPBasicAuth
+import bs4
 
 from pymal import global_functions
 from pymal import decorators
