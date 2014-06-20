@@ -163,7 +163,7 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
         self.map_of_lists[mal_object.my_status].add(mal_object)
 
     def __len__(self):
-        return sum([1 for obj in self])
+        return len(frozenset(self))
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))
