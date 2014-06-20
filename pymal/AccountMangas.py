@@ -103,7 +103,7 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
 
         main_div = body.find(name='div', attrs={'id': 'list_surround'})
         tables = main_div.findAll(name='table', reucrsive=False)
-        if 3 == len(tables):
+        if 4 >= len(tables):
             return frozenset()
         main_table = tables[3]
         rows = main_table.tbody.findAll(name='tr', recursive=False)
