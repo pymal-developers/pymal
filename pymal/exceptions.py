@@ -26,3 +26,10 @@ class MyAnimeListApiDeleteError(MyAnimeListApiError):
 
 class MyAnimeListApiAddError(MyAnimeListApiError):
     pass
+
+
+class NotASeason(ValueError):
+    def __init__(self, tried_season_name):
+        super().__init__("The wanted season '{0:s}' is not: 'Winter', 'Spring', 'Summer' or 'Fall'.".format(
+            tried_season_name
+        ))

@@ -53,6 +53,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         self.__end_time = None
         self.__creators = dict()
         self.__genres = dict()
+        self.__duration = 0
         self.__score = 0.0
         self.__rank = 0
         self.__popularity = 0
@@ -177,6 +178,11 @@ class Anime(object, metaclass=decorators.SingletonFactory):
     @decorators.load
     def genres(self) ->dict:
         return self.__genres
+
+    @property
+    @decorators.load
+    def duration(self) -> int:
+        return self.__duration
 
     @property
     @decorators.load
@@ -369,6 +375,23 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             self.__genres[genre_link.text.strip()] = genre_link['href']
         side_contents_divs_index += 1
 
+        # duration <div>
+        duration_div = side_contents_divs[side_contents_divs_index]
+        assert global_functions.check_side_content_div('Duration', duration_div)
+
+        duration_span, duration_string = duration_div.contents
+        self.__duration = 0
+        duration_parts = duration_string.strip().split('.')
+        duration_parts = list(map(lambda x: x.strip(), duration_parts))[:-1]
+        for duration_part in duration_parts:
+            number, scale = duration_part.split()
+            number = int(number)
+            if scale == 'min':
+                self.__duration += number
+            elif scale == 'hr':
+                self.__duration += number * 60
+            else:
+                assert False, 'scale {0:s} is unknown'.format(scale)
         side_contents_divs_index += 1
 
         # rating <div>

@@ -4,24 +4,25 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
-from xml.etree import ElementTree
-from threading import Thread
-from urllib import request
+from urllib import request, parse
+
+import bs4
 
 from pymal import consts
 from pymal import decorators
 from pymal import MyAnime
+from pymal import ReloadedSet
 
 __all__ = ['AccountAnimes']
 
 
-class AccountAnimes(object, metaclass=decorators.SingletonFactory):
+class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorators.SingletonFactory):
     """
     """
     __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
                'reload']
 
-    __URL = request.urljoin(consts.HOST_NAME, "malappinfo.php?u={0:s}&type=anime")
+    __URL = request.urljoin(consts.HOST_NAME, "animelist/{0:s}&status=")
 
     def __init__(self, username: str, connection):
         """
@@ -29,13 +30,11 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
-        self.__watching = set()
-        self.__completed = set()
-        self.__on_hold = set()
-        self.__dropped = set()
-        self.__plan_to_watch = set()
-
-        self.user_days_spent_watching = None
+        self.__watching = frozenset()
+        self.__completed = frozenset()
+        self.__on_hold = frozenset()
+        self.__dropped = frozenset()
+        self.__plan_to_watch = frozenset()
 
         self.map_of_lists = {
             1: self.__watching,
@@ -61,126 +60,70 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.load
-    def watching(self) -> set:
+    def watching(self) -> frozenset:
         return self.__watching
 
     @property
     @decorators.load
-    def completed(self) -> set:
+    def completed(self) -> frozenset:
         return self.__completed
 
     @property
     @decorators.load
-    def on_hold(self) -> set:
+    def on_hold(self) -> frozenset:
         return self.__on_hold
 
     @property
     @decorators.load
-    def dropped(self) -> set:
+    def dropped(self) -> frozenset:
         return self.__dropped
 
     @property
     @decorators.load
-    def plan_to_watch(self) -> set:
+    def plan_to_watch(self) -> frozenset:
         return self.__plan_to_watch
 
-    def __contains__(self, item: MyAnime.MyAnime) -> bool:
-        return any(map(lambda x: x == item, self))
-
-    def __iter__(self):
-        class AccountAnimesIterator(object):
-
-            def __init__(self, values):
-                self. values = list(values)
-                self.location = 0
-
-            def __iter__(self):
-                self.location = 0
-                return self
-
-            def __next__(self):
-                if self.location >= len(self.values):
-                    raise StopIteration
-                value = self.values[self.location]
-                self.location += 1
-                return value
-        return AccountAnimesIterator(self.watching | self.completed |
-                                     self.on_hold | self.dropped |
-                                     self.plan_to_watch)
+    @property
+    def _values(self) -> frozenset:
+        return self.watching | self.completed | self.on_hold | self.dropped |\
+               self.plan_to_watch
 
     def reload(self):
-        resp_data = self.__connection.connect(self.__url)
-        xml_tree = ElementTree.fromstring(resp_data)
-        assert 'myanimelist' == xml_tree.tag, 'myanimelist == {0:s}'.format(
-            xml_tree.tag)
-        xml_mal_objects = list(xml_tree)
-        xml_general_data = xml_mal_objects[0]
-        assert 'myinfo' == xml_general_data.tag, 'myinfo == {0:s}'.format(
-            xml_general_data.tag)
-        l = list(xml_general_data)
-        xml_user_id = l[0]
-        assert 'user_id' == xml_user_id.tag, xml_user_id.tag
-        assert self.__connection.user_id == int(xml_user_id.text),\
-            int(xml_user_id.text)
-        xml_user_name = l[1]
-        assert 'user_name' == xml_user_name.tag, xml_user_name.tag
-        assert self.__connection.username == xml_user_name.text.strip(),\
-            xml_user_name.text.strip()
-        xml_user_watching = l[2]
-        assert 'user_watching' == xml_user_watching.tag, xml_user_watching.tag
-        xml_user_completed = l[3]
-        assert 'user_completed' == xml_user_completed.tag,\
-            xml_user_completed.tag
-        xml_user_onhold = l[4]
-        assert 'user_onhold' == xml_user_onhold.tag, xml_user_onhold.tag
-        xml_user_dropped = l[5]
-        assert 'user_dropped' == xml_user_dropped.tag, xml_user_dropped.tag
-        xml_user_plantowatch = l[6]
-        assert 'user_plantowatch' == xml_user_plantowatch.tag,\
-            xml_user_plantowatch.tag
-        xml_user_days_spent_watching = l[7]
-        assert 'user_days_spent_watching' == xml_user_days_spent_watching.tag,\
-            xml_user_days_spent_watching.tag
-        self.user_days_spent_watching = float(
-            xml_user_days_spent_watching.text.strip())
-
-        xml_mal_objects = xml_mal_objects[1:]
-
-        self.__watching.clear()
-        self.__completed.clear()
-        self.__on_hold.clear()
-        self.__dropped.clear()
-        self.__plan_to_watch.clear()
-
-        threads = list()
-        for xml_mal_object in xml_mal_objects:
-            if consts.DEBUG:
-                self.__get_my_mal_object(xml_mal_object)
-            else:
-                thread = Thread(
-                    target=self.__get_my_mal_object, args=(xml_mal_object, ))
-                thread.start()
-                threads.append(thread)
-
-        while threads:
-            threads.pop().join()
+        self.__watching = self.__get_my_animes(1)
+        self.__completed = self.__get_my_animes(2)
+        self.__on_hold = self.__get_my_animes(3)
+        self.__dropped = self.__get_my_animes(4)
+        self.__plan_to_watch = self.__get_my_animes(6)
 
         self._is_loaded = True
 
-    def __get_my_mal_object(self, xml_mal_object: ElementTree.Element):
-        mal_object_id_xml = xml_mal_object.find('series_animedb_id')
-        assert mal_object_id_xml is not None
-        mal_object_id = int(mal_object_id_xml.text)
-        my_mal_object_id_xml = xml_mal_object.find('my_id')
-        assert my_mal_object_id_xml is not None
-        my_mal_object_id = int(my_mal_object_id_xml.text)
-        mal_object = MyAnime.MyAnime(mal_object_id, my_mal_object_id,
-                                     self.__connection,
-                                     my_mal_xml=xml_mal_object)
-        self.map_of_lists[mal_object.my_status].add(mal_object)
+    def __get_my_animes(self, status: int) -> frozenset:
+        data = self.__connection.connect(self.__url + str(status))
+        body = bs4.BeautifulSoup(data).body
 
-    def __len__(self):
-        return sum([1 for obj in self])
+        main_div = body.find(name='div', attrs={'id': 'list_surround'})
+        tables = main_div.findAll(name='table', reucrsive=False)
+        if 4 >= len(tables):
+            return frozenset()
+        main_table = tables[3]
+        rows = main_table.tbody.findAll(name='tr', recursive=False)
+
+        return frozenset(map(self.__parse_manga_div, rows))
+
+    def __parse_manga_div(self, div: bs4.element.Tag) -> MyAnime.MyAnime:
+        links_div = div.findAll(name='td', recorsive=False)[1]
+
+        link = links_div.find(name='a', attrs={'class': 'animetitle'})
+        link_id = int(link['href'].split('/')[2])
+
+        if self.__connection.is_auth:
+            my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
+            _, query = parse.splitquery(my_link['href'])
+            my_link_id = int(parse.parse_qs(query)['id'][0])
+        else:
+            my_link_id = 0
+
+        return MyAnime.MyAnime(link_id, my_link_id, self.__connection)
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))
