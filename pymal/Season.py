@@ -60,8 +60,11 @@ class Season(object, metaclass=decorators.SingletonFactory):
     def reload(self):
         sock = requests.get(self.url)
         xml = bs4.BeautifulSoup(sock.text)
-        animes_xml = xml.body.findAll(name='anime', recursive=False)
-        animes_ids = map(lambda x: int(x.malid.text), animes_xml)
+        animes_xml = frozenset(xml.body.findAll(name='anime', recursive=False))
+        animes_xml_with_id = frozenset(filter(lambda x: x.malid.text.isdigit(), animes_xml))
+        if 0 != len(animes_xml - animes_xml_with_id):
+            print("animes with no id:",animes_xml - animes_xml_with_id)
+        animes_ids = map(lambda x: int(x.malid.text), animes_xml_with_id)
         self.__animes = frozenset(map(lambda x: Anime.Anime(x), animes_ids))
 
     def __iter__(self):
