@@ -52,7 +52,7 @@ class InitTestCase(unittest.TestCase):
 
     def test_user_id(self):
         account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertIsInstance(self.account.user_id, int)
+        self.assertIsInstance(account.user_id, int)
         Account.Account._unregiter(account)
 
 
