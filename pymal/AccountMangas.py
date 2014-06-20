@@ -4,7 +4,7 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import hashlib
-from urllib import request
+from urllib import request, parse
 
 import bs4
 
@@ -30,11 +30,11 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
-        self.__reading = set()
-        self.__completed = set()
-        self.__on_hold = set()
-        self.__dropped = set()
-        self.__plan_to_read = set()
+        self.__reading = frozenset()
+        self.__completed = frozenset()
+        self.__on_hold = frozenset()
+        self.__dropped = frozenset()
+        self.__plan_to_read = frozenset()
 
         self.user_days_spent_watching = None
 
@@ -62,27 +62,27 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
 
     @property
     @decorators.load
-    def reading(self) -> set:
+    def reading(self) -> frozenset:
         return self.__reading
 
     @property
     @decorators.load
-    def completed(self) -> set:
+    def completed(self) -> frozenset:
         return self.__completed
 
     @property
     @decorators.load
-    def on_hold(self) -> set:
+    def on_hold(self) -> frozenset:
         return self.__on_hold
 
     @property
     @decorators.load
-    def dropped(self) -> set:
+    def dropped(self) -> frozenset:
         return self.__dropped
 
     @property
     @decorators.load
-    def plan_to_read(self) -> set:
+    def plan_to_read(self) -> frozenset:
         return self.__plan_to_read
 
     @property
@@ -99,12 +99,30 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
 
         self._is_loaded = True
 
-    def __get_my_animes(self, status: int) -> set:
+    def __get_my_animes(self, status: int) -> frozenset:
         data = self.__connection.connect(self.__url + str(status))
-        html = bs4.BeautifulSoup(data)
-        anime_links = html.findAll(name='a', attrs={'class': 'animetitle'})
-        anime_ids = map(lambda x: int(x['href'].split('/')[2]), anime_links)
-        return set(map(lambda x: MyManga.MyManga(x, 0, self.__connection), anime_ids))
+        body = bs4.BeautifulSoup(data).body
+
+        main_div = body.find(name='div', attrs={'id': 'list_surround'})
+        tables = main_div.findAll(name='table', reucrsive=False)
+        if 3 == len(tables):
+            return frozenset()
+        main_table = tables[3]
+        rows = main_table.tbody.findAll(name='tr', recursive=False)
+
+        return frozenset(map(self.__parse_manga_div, rows))
+
+    def __parse_manga_div(self, div: bs4.element.Tag) -> MyManga.MyManga:
+        links_div = div.findAll(name='td', recorsive=False)[1]
+
+        link = links_div.find(name='a', attrs={'class': 'animetitle'})
+        link_id = int(link['href'].split('/')[2])
+
+        my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
+        _, query = parse.splitquery(my_link['href'])
+        my_link_id = int(parse.parse_qs(query)['id'][0])
+
+        return MyManga.MyManga(link_id, my_link_id, self.__connection)
 
     def __repr__(self):
         return "<User mangas' number is {0:d}>".format(len(self))
