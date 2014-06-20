@@ -28,7 +28,13 @@ class Account(object, metaclass=decorators.SingletonFactory):
     __AUTH_CHECKER_URL =\
         request.urljoin(consts.HOST_NAME, r'api/account/verify_credentials.xml')
 
-    __FRIENDS_URL = request.urljoin(consts.HOST_NAME, 'profile/{0:s}/friends')
+    @property
+    def __MAIN_PROFILE_URL(self):
+        return request.urljoin(consts.HOST_NAME, 'profile/{0:s}'.format(self.username))
+
+    @property
+    def __FRIENDS_URL(self):
+        return self.__MAIN_PROFILE_URL + '/friends'
 
     __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
@@ -39,13 +45,12 @@ class Account(object, metaclass=decorators.SingletonFactory):
         self.__username = username
         self.__password = password
         self.connect = global_functions.connect
-        self.__user_id = 0
+        self.__user_id = None
         self.__auth_object = None
         self.__cookies = dict()
 
         self.__animes = None
         self.__mangas = None
-        self.__friends_url = self.__FRIENDS_URL.format(self.username)
         self.__friends = None
 
         if password is not None:
@@ -57,8 +62,11 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
     @property
     def user_id(self) -> int:
-        if not self.is_auth:
-            raise exceptions.UnauthenticatedAccountError(self.username)
+        if self.__user_id is None:
+            ret = self.connect(self.__MAIN_PROFILE_URL)
+            html = bs4.BeautifulSoup(ret)
+            bla = html.find(name='input', attrs={'name': 'profileMemId'})
+            self.__user_id = int(bla['value'])
         return self.__user_id
 
     @property
@@ -145,7 +153,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
         xml_id = l[0]
         assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
-        self.__user_id = int(xml_id.text)
+        assert self.user_id == int(xml_id.text)
 
         self.__password = password
 
