@@ -88,25 +88,8 @@ class AccountAnimes(object, metaclass=decorators.SingletonFactory):
         return any(map(lambda x: x == item, self))
 
     def __iter__(self):
-        class AccountAnimesIterator(object):
-
-            def __init__(self, values):
-                self. values = list(values)
-                self.location = 0
-
-            def __iter__(self):
-                self.location = 0
-                return self
-
-            def __next__(self):
-                if self.location >= len(self.values):
-                    raise StopIteration
-                value = self.values[self.location]
-                self.location += 1
-                return value
-        return AccountAnimesIterator(self.watching | self.completed |
-                                     self.on_hold | self.dropped |
-                                     self.plan_to_watch)
+        return iter(self.watching | self.completed | self.on_hold |
+                    self.dropped | self.plan_to_watch)
 
     def reload(self):
         resp_data = self.__connection.connect(self.__url)
