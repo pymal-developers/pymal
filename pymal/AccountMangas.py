@@ -29,11 +29,11 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
-        self.__reading = set()
-        self.__completed = set()
-        self.__on_hold = set()
-        self.__dropped = set()
-        self.__plan_to_read = set()
+        self.__reading = frozenset()
+        self.__completed = frozenset()
+        self.__on_hold = frozenset()
+        self.__dropped = frozenset()
+        self.__plan_to_read = frozenset()
 
         self.map_of_lists = {
             1: self.__reading,
@@ -59,27 +59,27 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.load
-    def reading(self) -> set:
+    def reading(self) -> frozenset:
         return self.__reading
 
     @property
     @decorators.load
-    def completed(self) -> set:
+    def completed(self) -> frozenset:
         return self.__completed
 
     @property
     @decorators.load
-    def on_hold(self) -> list:
+    def on_hold(self) -> frozenset:
         return self.__on_hold
 
     @property
     @decorators.load
-    def dropped(self) -> set:
+    def dropped(self) -> frozenset:
         return self.__dropped
 
     @property
     @decorators.load
-    def plan_to_read(self) -> set:
+    def plan_to_read(self) -> frozenset:
         return self.__plan_to_read
 
     def __contains__(self, item: MyManga.MyManga) -> bool:
@@ -98,18 +98,18 @@ class AccountMangas(object, metaclass=decorators.SingletonFactory):
 
         self._is_loaded = True
 
-    def __get_my_animes(self, status: int) -> set:
+    def __get_my_animes(self, status: int) -> frozenset:
         data = self.__connection.connect(self.__url + str(status))
         body = bs4.BeautifulSoup(data).body
 
         main_div = body.find(name='div', attrs={'id': 'list_surround'})
         tables = main_div.findAll(name='table', reucrsive=False)
         if 4 >= len(tables):
-            return set()
+            return frozenset()
         main_table = tables[3]
         rows = main_table.tbody.findAll(name='tr', recursive=False)
 
-        return set(map(self.__parse_manga_div, rows))
+        return frozenset(map(self.__parse_manga_div, rows))
 
     def __parse_manga_div(self, div: bs4.element.Tag) -> MyManga.MyManga:
         links_div = div.findAll(name='td', recorsive=False)[1]
