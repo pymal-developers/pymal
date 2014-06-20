@@ -6,7 +6,11 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 import hashlib
 import time
 
+import requests
+import bs4
+
 from pymal import decorators
+from pymal import exceptions
 from pymal import Anime
 
 __all__ = ['Season']
@@ -24,6 +28,7 @@ class Season(object, metaclass=decorators.SingletonFactory):
     """
     __all__ = ['animes', 'reload']
 
+    __SEASON_URL = "http://malupdater.com/MalUpdater/Seasons/{0:d}_{1:s}.xml"
     __SEAONS_NAME_TO_START_MONTH = {
         'Winter': 1,
         'Spring': 4,
@@ -31,14 +36,17 @@ class Season(object, metaclass=decorators.SingletonFactory):
         'Fall': 10
     }
 
-    def __init__(self, season_name: str, year: int or str, animes_ids: set):
+    def __init__(self, season_name: str, year: int or str):
         """
         """
-        self.season_name = season_name.title()
         self.year = int(year)
-        self.__animes_ids = animes_ids
+        self.season_name = season_name.title()
+        if self.season_name not in self.__SEAONS_NAME_TO_START_MONTH:
+            raise exceptions.NotASeason(season_name)
+        self.url = self.__SEASON_URL.format(self.year, self.season_name)
+
         self._is_loaded = False
-        self.__animes = set()
+        self.__animes = frozenset()
 
         month = str(self.__SEAONS_NAME_TO_START_MONTH[self.season_name])
         start_time_string = str(year) + ' ' + month
@@ -46,32 +54,18 @@ class Season(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.load
-    def animes(self):
+    def animes(self) -> frozenset:
         return self.__animes
 
     def reload(self):
-        self.__animes = set(map(Anime.Anime, self.__animes_ids))
-        self._is_loaded = True
-        assert len(self.__animes) == len(self.__animes_ids)
+        sock = requests.get(self.url)
+        xml = bs4.BeautifulSoup(sock.text)
+        animes_xml = xml.body.findAll(name='anime', recursive=False)
+        animes_ids = map(lambda x: int(x.malid.text), animes_xml)
+        self.__animes = frozenset(map(lambda x: Anime.Anime(x), animes_ids))
 
     def __iter__(self):
-        class SeasonIterator(object):
-
-            def __init__(self, values):
-                self. values = list(values)
-                self.location = 0
-
-            def __iter__(self):
-                self.location = 0
-                return self
-
-            def __next__(self):
-                if self.location >= len(self.values):
-                    raise StopIteration
-                value = self.values[self.location]
-                self.location += 1
-                return value
-        return SeasonIterator(self.animes)
+        return iter(self.animes)
 
     def __len__(self):
         return len(self.animes)
