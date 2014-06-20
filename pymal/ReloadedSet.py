@@ -49,9 +49,13 @@ class ReloadedSet(collections.Set):
         other_union_lists = itertools.chain(other_lists)
         items_in_all = filter(in_all, other_union_lists)
 
+        res = list()
 
+        for item in items_in_all:
+            if item not in res:
+                res.append(item)
 
-        return res
+        return frozenset(res)
 
     def __and__(self, other) -> frozenset:
         return self.intersection(other)
