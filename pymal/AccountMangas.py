@@ -118,9 +118,12 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
         link = links_div.find(name='a', attrs={'class': 'animetitle'})
         link_id = int(link['href'].split('/')[2])
 
-        my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
-        _, query = parse.splitquery(my_link['href'])
-        my_link_id = int(parse.parse_qs(query)['id'][0])
+        if self.__connection.is_auth:
+            my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
+            _, query = parse.splitquery(my_link['href'])
+            my_link_id = int(parse.parse_qs(query)['id'][0])
+        else:
+            my_link_id = 0
 
         return MyManga.MyManga(link_id, my_link_id, self.__connection)
 
