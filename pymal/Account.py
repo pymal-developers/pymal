@@ -166,7 +166,8 @@ class Account(object, metaclass=decorators.SingletonFactory):
                      headers: dict or None=None) -> str:
         """
         """
-        assert self.is_auth, "Not auth yet!"
+        if not self.is_auth:
+            raise exceptions.UnauthenticatedAccountError(self.username)
         return global_functions._connect(url, data=data, headers=headers,
                                          auth=self.__auth_object).text.strip()
 

@@ -36,8 +36,6 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
         self.__dropped = frozenset()
         self.__plan_to_read = frozenset()
 
-        self.user_days_spent_watching = None
-
         self.map_of_lists = {
             1: self.__reading,
             2: self.__completed,

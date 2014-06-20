@@ -50,13 +50,9 @@ class InitTestCase(unittest.TestCase):
         repr(account)
         Account.Account._unregiter(account)
 
-    @unittest.skip("Never worked")
     def test_user_id(self):
         account = Account.Account(ACCOUNT_TEST_USERNAME)
-        assert not account.is_auth
-
-        from pymal import exceptions
-        self.assertRaises(exceptions.UnauthenticatedAccountError, lambda x: x.user_id, account)
+        self.assertIsInstance(account.user_id, int)
         Account.Account._unregiter(account)
 
 
@@ -75,9 +71,6 @@ class FunctionsTestCase(unittest.TestCase):
 
     def test_username(self):
         self.assertIsInstance(self.account.username, str)
-
-    def test_user_id(self):
-        self.assertIsInstance(self.account.user_id, int)
 
     def test_friends(self):
         self.assertIsInstance(self.account.friends, set)
