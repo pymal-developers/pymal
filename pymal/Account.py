@@ -76,15 +76,16 @@ class Account(object, metaclass=decorators.SingletonFactory):
     @property
     def friends(self) -> set:
         class FriendsFrozenSet(set):
-            def __init__(self, account: Account):
+            def __init__(self, account: Account, url: str):
                 super().__init__()
 
                 self.account = account
+                self.__url = url
                 self.reload()
 
             def reload(self):
                 self.clear()
-                div_wrapper = global_functions.get_content_wrapper_div(self.account._Account__friends_url, self.account.connect)
+                div_wrapper = global_functions.get_content_wrapper_div(self.__url, self.account.connect)
                 assert div_wrapper is not None
 
                 list_div_friend = div_wrapper.findAll(name="div", attrs={"class": "friendBlock"})
@@ -97,7 +98,7 @@ class Account(object, metaclass=decorators.SingletonFactory):
 
                     self.add(Account(splited_friend_url[1]))
 
-        self.__friends = FriendsFrozenSet(account=self)
+        self.__friends = FriendsFrozenSet(account=self, url=self.__FRIENDS_URL)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> map:
