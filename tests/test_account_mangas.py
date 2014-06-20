@@ -39,6 +39,52 @@ class AccountMangaListTestCase(unittest.TestCase):
         self.assertEqual(str(self.mangas), "<User mangas' number is 1>")
 
 
+class AccountMangaListInteraction(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.friend = list(cls.account.friends)[0]
+        cls.mangas = cls.account.mangas
+        cls.friend_mangas = cls.friend.mangas
+
+    @classmethod
+    def tearDownClass(cls):
+        AccountMangas.AccountMangas._unregiter(cls.friend_mangas)
+        AccountMangas.AccountMangas._unregiter(cls.mangas)
+        Account.Account._unregiter(cls.friend)
+        Account.Account._unregiter(cls.account)
+
+    def test_union(self):
+        regular = self.mangas.union(self.friend_mangas)
+        operator = self.mangas | self.friend_mangas
+        self.assertEquals(regular, operator)
+
+    def test_intersection(self):
+        regular = self.mangas.intersection(self.friend_mangas)
+        operator = self.mangas & self.friend_mangas
+        self.assertEquals(regular, operator)
+
+    def test_difference(self):
+        regular = self.mangas.difference(self.friend_mangas)
+        operator = self.mangas - self.friend_mangas
+        self.assertEquals(regular, operator)
+
+    def test_symmetric_difference(self):
+        regular = self.mangas.symmetric_difference(self.friend_mangas)
+        operator = self.mangas ^ self.friend_mangas
+        self.assertEquals(regular, operator)
+
+    def test_issubset(self):
+        regular = self.mangas.issubset(self.friend_mangas)
+        operator = self.mangas <= self.friend_mangas
+        self.assertEquals(regular, operator)
+
+    def test_issuperset(self):
+        regular = self.mangas.issubset(self.friend_mangas)
+        operator = self.mangas >= self.friend_mangas
+        self.assertEquals(regular, operator)
+
+
 def main():
     unittest.main()
 

@@ -298,7 +298,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
 
         # Getting content rows <tr>
         content_form = content_td.find(name="form", attrs={'id': "myAnimeForm"})
-        assert 'myAnimeForm' == content_form['id'], content_form['id']
+        assert content_form is not None
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
 
