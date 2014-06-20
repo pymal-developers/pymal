@@ -36,12 +36,11 @@ class Seasons(object, metaclass=decorators.Singleton):
 
     def reload(self):
         sock = requests.get(self.__SEASONS_URL)
-        seasons_lines = bs4.BeautifulSoup(sock.text).body.text.splitlines()
+        body = bs4.BeautifulSoup(sock.text).body
 
-        seasons = set()
-        for season_line in seasons_lines:
-            year, seasons_name = season_line.split('_')
-            seasons.add(Season.Season(seasons_name, year))
+        seasons_lines = body.text.splitlines()
+        splitted_lines = map(lambda x: reversed(x.split('_')), seasons_lines)
+        seasons = map(lambda x: Season.Season(*tuple(x)), splitted_lines)
         self.__seasons = frozenset(seasons)
 
         self._is_loaded = True
