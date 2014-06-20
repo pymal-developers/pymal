@@ -11,14 +11,14 @@ class TestCase(unittest.TestCase):
         self.seasons = Seasons.Seasons()
 
     def test_seasons(self):
-        self.assertIsInstance(self.seasons.seasons, set)
+        self.assertIsInstance(self.seasons.seasons, frozenset)
 
         for season in self.seasons.seasons:
             self.assertIsInstance(season, Season.Season)
 
     def test_seasons_animes(self):
         season = list(self.seasons.seasons)[0]
-        self.assertIsInstance(season.animes, set)
+        self.assertIsInstance(season.animes, frozenset)
 
         for anime in season.animes:
             self.assertIsInstance(anime, Anime.Anime)
