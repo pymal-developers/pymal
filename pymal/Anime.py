@@ -481,7 +481,39 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             assert 'Characters & Voice Actors' == other_data_kids[index].contents[-1],\
                 other_data_kids[index].contents[-1]
 
+        tag_for_reviews = main_content_other_data.find(text='More reviews').parent
+        link_for_reviews = request.urljoin(consts.HOST_NAME, tag_for_reviews['href'])
+        self.__parse_reviews(link_for_reviews)
+
+        tag_for_recommendations = main_content_other_data.find(text='More recommendations').parent
+        link_for_recommendations = request.urljoin(consts.HOST_NAME, tag_for_recommendations['href'])
+        self.__parse_recommendations(link_for_recommendations)
+
         self._is_loaded = True
+
+    def __parse_reviews(self, link_for_reviews: str):
+        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_reviews, global_functions.connect)
+        content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
+        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, reviews_data_div = main_cell.findAll(name='div', recursive=False)
+        reviews_data = reviews_data_div.findAll(name='div', recursive=False)[2:]
+        for review_data in reviews_data:
+            pass
+        # TODO: might want to create a review object?
+        import IPython
+        IPython.embed()
+
+    def __parse_recommendations(self, link_for_recommendations: str):
+        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations, global_functions.connect)
+        content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
+        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, recommendations_data_div = main_cell.findAll(name='div', recursive=False)
+        recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:]
+        for recommendation_data in recommendations_data:
+            pass
+        # TODO: might want to create a review object?
+        import IPython
+        IPython.embed()
 
     @property
     def MY_MAL_XML_TEMPLATE(self) -> str:
