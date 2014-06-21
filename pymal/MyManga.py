@@ -158,16 +158,6 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_storage_value(self):
-        return self.__my_storage_value
-
-    @my_storage_type.setter
-    def my_storage_value(self, value: float):
-        int(value)
-        self.__my_storage_value = value
-
-    @property
-    @decorators.my_load
     def my_is_rereading(self):
         return self.__my_is_rereading
 
