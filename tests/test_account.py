@@ -70,7 +70,7 @@ class FunctionsTestCase(unittest.TestCase):
         self.assertIsInstance(self.account.mangas, AccountMangas.AccountMangas)
 
     def test_username(self):
-        self.assertIsInstance(self.account.username, str)
+        self.assertEqual(self.account.username, ACCOUNT_TEST_USERNAME)
 
     def test_friends(self):
         self.assertIsInstance(self.account.friends, set)
