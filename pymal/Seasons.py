@@ -9,12 +9,13 @@ import requests
 import bs4
 
 from pymal import decorators
+from pymal.types import Singleton
 from pymal import Season
 
 __all__ = ['Seasons']
 
 
-class Seasons(object, metaclass=decorators.Singleton):
+class Seasons(object, metaclass=Singleton):
     """
     Lazy making of Season from online db.
     

@@ -5,7 +5,7 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import collections
 
-from pymal import decorators
+from pymal.types import SingletonFactory
 
 
 class ReloadedSet(collections.Set):
@@ -82,7 +82,7 @@ class ReloadedSet(collections.Set):
         return self.symmetric_difference(other)
 
 
-class ReloadedSetSingletonFactoryType(type(ReloadedSet), decorators.SingletonFactory):
+class ReloadedSetSingletonFactoryType(type(ReloadedSet), SingletonFactory):
     pass
 
 

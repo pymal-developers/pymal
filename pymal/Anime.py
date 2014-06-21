@@ -10,6 +10,7 @@ import os
 import bs4
 
 from pymal import decorators
+from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions
 from pymal import exceptions
@@ -17,7 +18,7 @@ from pymal import exceptions
 __all__ = ['Anime']
 
 
-class Anime(object, metaclass=decorators.SingletonFactory):
+class Anime(object, metaclass=SingletonFactory):
     """
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',

@@ -9,6 +9,7 @@ import time
 
 from pymal import consts
 from pymal import decorators
+from pymal.types import SingletonFactory
 from pymal import Manga
 from pymal import global_functions
 from pymal import exceptions
@@ -16,7 +17,7 @@ from pymal import exceptions
 __all__ = ['MyManga']
 
 
-class MyManga(object, metaclass=decorators.SingletonFactory):
+class MyManga(object, metaclass=SingletonFactory):
     """
     Saves an account data about manga.
     

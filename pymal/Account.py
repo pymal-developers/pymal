@@ -11,7 +11,7 @@ from requests.auth import HTTPBasicAuth
 import bs4
 
 from pymal import global_functions
-from pymal import decorators
+from pymal.types import SingletonFactory
 from pymal import consts
 from pymal.account_objects import AccountAnimes
 from pymal.account_objects import AccountMangas
@@ -19,7 +19,7 @@ from pymal.account_objects import AccountMangas
 __all__ = ['Account']
 
 
-class Account(object, metaclass=decorators.SingletonFactory):
+class Account(object, metaclass=SingletonFactory):
     """
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',

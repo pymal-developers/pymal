@@ -7,12 +7,13 @@ from urllib import parse
 
 import bs4
 
-from pymal import global_functions, consts, decorators
+from pymal import global_functions, consts
+from pymal.types import Singleton
 
 __all__ = ['SearchUsers', 'SearchAnimes', 'SearchMangas']
 
 
-class Search(object, metaclass=decorators.Singleton):
+class Search(object, metaclass=Singleton):
     _SEARCH_NAME = ''
     _SEARCHED_URL_SUFFIX = ''
     _SEARCHED_OBJECT = object
