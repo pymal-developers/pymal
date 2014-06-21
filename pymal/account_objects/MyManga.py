@@ -9,16 +9,17 @@ import time
 
 from pymal import consts
 from pymal import decorators
-from pymal import Anime
+from pymal.types import SingletonFactory
+from pymal import Manga
 from pymal import global_functions
 from pymal import exceptions
 
-__all__ = ['MyAnime']
+__all__ = ['MyManga']
 
 
-class MyAnime(object, metaclass=decorators.SingletonFactory):
+class MyManga(object, metaclass=SingletonFactory):
     """
-    Saves an account data about anime.
+    Saves an account data about manga.
     
     Attributes:
         my_enable_discussion - boolean
@@ -28,11 +29,11 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         my_start_date - string as mmddyyyy.
         my_end_date - string as mmddyyyy.
         my_priority - int.
-        my_storage_type - int.  #TODO: put the dictanary here.
-        my_storage_value - float.
+        my_storage_type - int.  #TODO: put the dictnary here.
         my_is_rereading - boolean.
-        my_completed_episodes - int.
-        my_download_episodes - int.
+        my_completed_chapters - int.
+        my_completed_volumes - int.
+        my_downloaded_chapters - int.
         my_times_reread - int.
         my_reread_value - int.
         my_tags - string.
@@ -41,29 +42,29 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
                'my_start_date', 'my_end_date', 'my_priority',
-               'my_storage_type', 'my_storage_value', 'my_is_rewatching',
-               'my_completed_episodes', 'my_score', 'my_download_episodes',
-               'my_times_rewatched', 'my_rewatch_value',
+               'my_storage_type', 'my_is_rereading',
+               'my_completed_chapters', 'my_completed_volumes',
+               'my_downloaded_chapters', 'my_times_reread', 'my_reread_value',
                'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
                'update', 'delete']
 
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(
-        consts.HOST_NAME, 'editlist.php?type=anime&id={0:d}')
+        consts.HOST_NAME, 'panel.php?go=editmanga&id={0:d}')
     __MY_MAL_DELETE_URL = request.urljoin(
-        consts.HOST_NAME, 'api/animelist/delete/{0:d}.xml')
+        consts.HOST_NAME, 'api/mangalist/delete/{0:d}.xml')
     __MY_MAL_UPDATE_URL = request.urljoin(
-        consts.HOST_NAME, 'api/animelist/update/{0:d}.xml')
+        consts.HOST_NAME, 'api/mangalist/update/{0:d}.xml')
 
-    def __init__(self, mal_id: int or Anime.Anime, my_mal_id, account):
+    def __init__(self, mal_id: int or Manga.Manga, my_mal_id, account):
         """
         """
-        if isinstance(mal_id, Anime.Anime):
+        if isinstance(mal_id, Manga.Manga):
             self.obj = mal_id
         else:
-            self.obj = Anime.Anime(mal_id)
+            self.obj = Manga.Manga(mal_id)
 
-        self.__my_mal_url = self.__MY_MAL_URL.format(self.obj.id)
+        self.__my_mal_url = self.__MY_MAL_URL.format(my_mal_id)
 
         self._is_my_loaded = False
         self._account = account
@@ -76,16 +77,17 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_end_date = ''
         self.__my_priority = 0
         self.__my_storage_type = 0
-        self.__my_storage_value = 0.0
         self.__my_comments = ''
         self.__my_fan_sub_groups = ''
         self.__my_tags = []
+        self.__my_retail_volumes = 0
 
-        self.__my_is_rewatching = None
-        self.__my_completed_episodes = None
-        self.__my_download_episodes = 0
-        self.__my_times_rewatched = 0
-        self.__my_rewatch_value = None
+        self.__my_is_rereading = None
+        self.__my_completed_chapters = None
+        self.__my_completed_volumes = None
+        self.__my_downloaded_chapters = 0
+        self.__my_times_reread = 0
+        self.__my_reread_value = None
 
     @property
     def my_id(self):
@@ -157,66 +159,67 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_storage_value(self):
-        return self.__my_storage_value
+    def my_is_rereading(self):
+        return self.__my_is_rereading
 
-    @my_storage_value.setter
-    def my_storage_value(self, value: float):
-        int(value)
-        self.__my_storage_value = value
-
-    @property
-    @decorators.my_load
-    def my_is_rewatching(self):
-        return self.__my_is_rewatching
-
-    @my_is_rewatching.setter
-    def my_is_rewatching(self, value: bool):
-        self.__my_is_rewatching = value
+    @my_is_rereading.setter
+    def my_is_rereading(self, value: bool):
+        self.__my_is_rereading = value
 
     @property
     @decorators.my_load
-    def my_completed_episodes(self):
-        return self.__my_completed_episodes
+    def my_completed_chapters(self):
+        return self.__my_completed_chapters
 
-    @my_completed_episodes.setter
-    def my_completed_episodes(self, value: int):
-        if not (0 <= value <= self.episodes):
-            raise RuntimeError("value of my_completed_episodes can be 0 to self.episodes")
-        self.__my_completed_episodes = value
-
-    @property
-    @decorators.my_load
-    def my_download_episodes(self):
-        return self.__my_download_episodes
-
-    @my_download_episodes.setter
-    def my_download_episodes(self, value: int):
-        if not (0 <= value <= self.episodes):
-            raise RuntimeError("value of my_download_episodes can be 0 to self.episodes")
-        self.__my_download_episodes = value
+    @my_completed_chapters.setter
+    def my_completed_chapters(self, value: int):
+        if not (0 <= value <= self.chapters):
+            raise RuntimeError("value of my_completed_episodes can be 0 to self.chapters")
+        self.__my_completed_chapters = value
 
     @property
     @decorators.my_load
-    def my_times_rewatched(self):
-        return self.__my_times_rewatched
+    def my_completed_volumes(self):
+        return self.__my_completed_volumes
 
-    @my_times_rewatched.setter
-    def my_times_rewatched(self, value: int):
+    @my_completed_volumes.setter
+    def my_completed_volumes(self, value: int):
+        if not (0 <= value <= self.volumes):
+            raise RuntimeError("value of my_completed_volumes can be 0 to self.volumes")
+        self.__my_completed_volumes = value
+
+    @property
+    @decorators.my_load
+    def my_downloaded_chapters(self):
+        return self.__my_downloaded_chapters
+
+    @my_downloaded_chapters.setter
+    def my_downloaded_chapters(self, value: int):
+        if not (0 <= value <= self.chapters):
+            raise RuntimeError("value of my_downloaded_chapters can be 0 to self.episodes")
+        self.__my_downloaded_chapters = value
+
+    @property
+    @decorators.my_load
+    def my_times_reread(self):
+        return self.__my_times_reread
+
+    @my_times_reread.setter
+    def my_times_reread(self, value: int):
         if not (0 <= value):
-            raise RuntimeError("value of my_times_rewatched can be 0 or more")
-        self.__my_times_rewatched = value
+            raise RuntimeError("value of my_times_reread can be 0 or more")
+        self.__my_times_reread = value
 
     @property
     @decorators.my_load
-    def my_rewatch_value(self):
-        return self.__my_rewatch_value
+    def my_reread_value(self):
+        return self.__my_reread_value
 
-    @my_rewatch_value.setter
-    def my_rewatch_value(self, value: int):
+    @my_reread_value.setter
+    def my_reread_value(self, value: int):
         if not (0 <= value <= 5):
-            raise RuntimeError("value of my_rewatch_value can be 0 to 5")
-        self.__my_rewatch_value = value
+            raise RuntimeError("value of my_reread_value can be 0 to 5")
+        self.__my_reread_value = value
 
     @property
     @decorators.my_load
@@ -232,6 +235,11 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     @decorators.my_load
     def my_fan_sub_groups(self):
         return self.__my_fan_sub_groups
+
+    @property
+    @decorators.my_load
+    def my_retail_volumes(self):
+        return self.__my_retail_volumes
 
     def my_reload(self):
         # Getting content wrapper <div>
@@ -251,7 +259,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         assert content_td is not None
 
         # Getting content rows <tr>
-        content_form = content_td.find(name="form", attrs={'id': "myAnimeForm"})
+        content_form = content_td.find(name="form", attrs={'id': "mangaForm"})
         assert content_form is not None
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
@@ -270,18 +278,26 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         assert 1 == len(status_selected_options)
         self.__my_status = int(status_selected_options[0]['value'])
 
-        is_rewatch_node = content_rows[contents_divs_index].find(
-            name="input", attrs={"id": "rewatchingBox"})
-        assert is_rewatch_node is not None
-        self.__my_is_rewatching = bool(is_rewatch_node['value'])
+        is_reread_node = content_rows[contents_divs_index].find(
+            name="input", attrs={"id": "rereadingBox"})
+        assert is_reread_node is not None
+        self.__my_is_rereading = bool(is_reread_node['value'])
         contents_divs_index += 1
 
-        # Getting watched episodes
-        watched_input = content_rows[contents_divs_index].\
-            find(name="input", attrs={"id": "completedEpsID",
-                                      "name": "completed_eps"})
-        assert watched_input is not None
-        self.__my_completed_episodes = int(watched_input['value'])
+        # Getting read volumes
+        read_input = content_rows[contents_divs_index].\
+            find(name="input", attrs={"id": "vol_read",
+                                      "name": "vol_read"})
+        assert read_input is not None
+        self.__my_completed_volumes = int(read_input['value'])
+        contents_divs_index += 1
+
+        # Getting read chapters
+        read_input = content_rows[contents_divs_index].\
+            find(name="input", attrs={"id": "chap_read",
+                                      "name": "chap_read"})
+        assert read_input is not None
+        self.__my_completed_chapters = int(read_input['value'])
         contents_divs_index += 1
 
         # Getting my_score
@@ -352,13 +368,6 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_end_date = end_month_date + end_day_date + end_year_date
         contents_divs_index += 1
 
-        # Getting fansub group
-        fansub_group_content = content_rows[contents_divs_index]
-        fansub_group_input = fansub_group_content.find(
-            name="input", attrs={"name": "fansub_group"})
-        self.__my_fan_sub_groups = fansub_group_input.text
-        contents_divs_index += 1
-
         # Getting priority
         priority_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "priority"})
@@ -371,75 +380,74 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
 
         # Getting storage
         storage_type_node = content_rows[contents_divs_index].find(
-            name="select", attrs={"id": "storage"})
+            name="select", attrs={"id": "storageSel"})
         assert storage_type_node is not None
         selected_storage_type_node = storage_type_node.find(
             name="option", attrs={"selected": ""})
-        assert selected_storage_type_node is not None
-        self.__my_storage_type = int(selected_storage_type_node['value'])
-
-        storage_value_node = content_rows[contents_divs_index].find(
-            name="input", attrs={"id": "storageValue"})
-        assert storage_value_node is not None
-        self.__my_storage_value = float(storage_value_node['value'])
+        if selected_storage_type_node is None:
+            self.__my_storage_type = 0
+        else:
+            self.__my_storage_type = int(selected_storage_type_node['value'])
         contents_divs_index += 1
 
         # Getting downloaded episodes
-        downloaded_episodes_node = content_rows[contents_divs_index].\
-            find(name="input", attrs={'id': "epDownloaded",
-                                      'name': 'list_downloaded_eps'})
-        assert downloaded_episodes_node is not None
-        self.__my_download_episodes == int(downloaded_episodes_node['value'])
+        downloaded_chapters_node = content_rows[contents_divs_index].\
+            find(name="input", attrs={'id': "dChap",
+                                      'name': 'downloaded_chapters'})
+        assert downloaded_chapters_node is not None
+        self.__my_downloaded_chapters == int(downloaded_chapters_node['value'])
         contents_divs_index += 1
 
-        # Getting time rewatched
-        times_rewatched_node = content_rows[contents_divs_index].find(
-            name="input", attrs={'name': 'list_times_watched'})
-        self.__my_times_rewatched == int(times_rewatched_node['value'])
-        assert times_rewatched_node is not None
+        # Getting time reread
+        times_reread_node = content_rows[contents_divs_index].find(
+            name="input", attrs={'name': 'times_read'})
+        self.__my_times_reread == int(times_reread_node['value'])
+        assert times_reread_node is not None
         contents_divs_index += 1
 
-        # Getting rewatched value
-        rewatch_value_node = content_rows[contents_divs_index].find(
-            name="select", attrs={'name': 'list_rewatch_value'})
-        assert rewatch_value_node is not None
-        rewatch_value_option = rewatch_value_node.find(
+        # Getting reread value
+        reread_value_node = content_rows[contents_divs_index].find(
+            name="select", attrs={'name': 'reread_value'})
+        assert reread_value_node is not None
+        reread_value_option = reread_value_node.find(
             name='option', attrs={'selected': ''})
-        assert rewatch_value_option is not None
-        self.__my_rewatch_value = int(rewatch_value_option['value'])
+        if reread_value_option is None:
+            self.__my_reread_value = 0
+        else:
+            self.__my_reread_value = int(reread_value_option['value'])
         contents_divs_index += 1
 
         # Getting comments
         comment_content = content_rows[contents_divs_index]
         comment_textarea = comment_content.find(
-            name="textarea", attrs={"name": "list_comments"})
+            name="textarea", attrs={"name": "comments"})
         self.__my_comments = comment_textarea.text
         contents_divs_index += 1
 
         # Getting discuss flag
         discuss_node = content_rows[contents_divs_index].find(
-            name='select', attrs={"name": "discuss"})
+            name='input', attrs={"name": "discuss"})
         assert discuss_node is not None
         self._is_my_loaded = True
 
     def to_xml(self):
         data = self.MY_MAL_XML_TEMPLATE.format(
-            self.my_completed_episodes,
+            self.my_completed_chapters,
+            self.my_completed_volumes,
             self.my_status,
             self.my_score,
-            self.my_download_episodes,
-            self.my_storage_type,
-            self.my_storage_value,
-            self.my_times_rewatched,
-            self.my_rewatch_value,
+            self.my_downloaded_chapters,
+            self.my_times_reread,
+            self.my_reread_value,
             self.my_start_date,
             self.my_end_date,
             self.my_priority,
+            self.my_is_rereading,
             self.my_enable_discussion,
-            self.my_is_rewatching,
             self.my_comments,
             self.my_fan_sub_groups,
-            self.my_tags
+            self.my_tags,
+            self.my_retail_volumes
         )
         return data
 
@@ -477,29 +485,37 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     def increase(self) -> bool:
         if self.is_completed:
             return False
-        self.my_completed_episodes += 1
+        self.my_completed_chapters += 1
+        return True
+
+    def increase_volume(self) -> bool:
+        if self.__my_downloaded_volumes >= self.obj.volumes:
+            return False
+        self.my_completed_volumes += 1
         return True
 
     def increase_downloaded(self) -> bool:
         if self.is_completed:
             return False
-        self.my_download_episodes += 1
+        self.my_downloaded_chapters += 1
         return True
 
     @property
     def is_completed(self) -> bool:
-        return self.my_completed_episodes >= self.obj.episodes
+        return self.my_completed_chapters >= self.obj.chapters
 
     def set_completed(self) -> bool:
-        if self.obj.episodes == float('inf'):
+        if self.obj.chapters == float('inf'):
             return False
-        self.my_completed_episodes = self.obj.episodes
+        self.my_completed_chapters = self.obj.chapters
+        if self.obj.volumes != float('inf'):
+            self.my_completed_volumes = self.obj.volumes
         return True
 
     def set_completed_download(self) -> bool:
-        if self.obj.episodes == float('inf'):
+        if self.obj.chapters == float('inf'):
             return False
-        self.my_download_episodes = self.obj.episodes
+        self.my_downloaded_chapters = self.obj.chapters
         return True
 
     def __getattr__(self, name):
@@ -515,7 +531,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(str(hash(self._account)).encode())
-        hash_md5.update(b'MyAnime')
+        hash_md5.update(b'MyManga')
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):

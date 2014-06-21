@@ -10,13 +10,14 @@ import requests
 import bs4
 
 from pymal import decorators
+from pymal.types import SingletonFactory
 from pymal import exceptions
 from pymal import Anime
 
 __all__ = ['Season']
 
 
-class Season(object, metaclass=decorators.SingletonFactory):
+class Season(object, metaclass=SingletonFactory):
     """
     Lazy load of season data.
     

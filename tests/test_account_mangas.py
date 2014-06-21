@@ -1,7 +1,7 @@
 import unittest
 
 from pymal import Account
-from pymal import AccountMangas
+from pymal.account_objects import AccountMangas
 from pymal import Manga
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
