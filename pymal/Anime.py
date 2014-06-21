@@ -511,7 +511,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         except Exception:
             raise exceptions.MyAnimeListApiAddError(ret)
 
-        from pymal import MyAnime
+        from pymal.account_objects import MyAnime
         return MyAnime.MyAnime(self, my_id, account)
 
     def __eq__(self, other):

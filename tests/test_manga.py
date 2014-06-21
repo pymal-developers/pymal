@@ -3,6 +3,7 @@ import unittest
 from pymal import Account
 from pymal import Anime
 from pymal import Manga
+from pymal.account_objects import MyManga
 
 from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -170,7 +171,6 @@ class NoReloadTestCase(unittest.TestCase):
         repr(self.manga)
 
     def test_add_and_delete(self):
-        from pymal import MyManga
         manga = Manga.Manga(11)
         my_manga = manga.add(self.account)
         try:

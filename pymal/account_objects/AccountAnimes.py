@@ -10,19 +10,19 @@ import bs4
 
 from pymal import consts
 from pymal import decorators
-from pymal import MyManga
+from pymal.account_objects import MyAnime
 from pymal import ReloadedSet
 
-__all__ = ['AccountMangas']
+__all__ = ['AccountAnimes']
 
 
-class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorators.SingletonFactory):
+class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorators.SingletonFactory):
     """
     """
-    __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
+    __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
                'reload']
 
-    __URL = request.urljoin(consts.HOST_NAME, "mangalist/{0:s}&status=")
+    __URL = request.urljoin(consts.HOST_NAME, "animelist/{0:s}&status=")
 
     def __init__(self, username: str, connection):
         """
@@ -30,38 +30,38 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
         self.__connection = connection
         self.__url = self.__URL.format(username)
 
-        self.__reading = frozenset()
+        self.__watching = frozenset()
         self.__completed = frozenset()
         self.__on_hold = frozenset()
         self.__dropped = frozenset()
-        self.__plan_to_read = frozenset()
+        self.__plan_to_watch = frozenset()
 
         self.map_of_lists = {
-            1: self.__reading,
+            1: self.__watching,
             2: self.__completed,
             3: self.__on_hold,
             4: self.__dropped,
-            6: self.__plan_to_read,
+            6: self.__plan_to_watch,
 
-            '1': self.__reading,
+            '1': self.__watching,
             '2': self.__completed,
             '3': self.__on_hold,
             '4': self.__dropped,
-            '6': self.__plan_to_read,
+            '6': self.__plan_to_watch,
 
-            'reading': self.__reading,
+            'watching': self.__watching,
             'completed': self.__completed,
             'onhold': self.__on_hold,
             'dropped': self.__dropped,
-            'plantoread': self.__plan_to_read,
+            'plantowatch': self.__plan_to_watch,
         }
 
         self._is_loaded = False
 
     @property
     @decorators.load
-    def reading(self) -> frozenset:
-        return self.__reading
+    def watching(self) -> frozenset:
+        return self.__watching
 
     @property
     @decorators.load
@@ -80,20 +80,20 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
 
     @property
     @decorators.load
-    def plan_to_read(self) -> frozenset:
-        return self.__plan_to_read
+    def plan_to_watch(self) -> frozenset:
+        return self.__plan_to_watch
 
     @property
-    def _values(self):
-        return self.reading | self.completed | self.on_hold | self.dropped |\
-               self.plan_to_read
+    def _values(self) -> frozenset:
+        return self.watching | self.completed | self.on_hold | self.dropped |\
+               self.plan_to_watch
 
     def reload(self):
-        self.__reading = self.__get_my_animes(1)
+        self.__watching = self.__get_my_animes(1)
         self.__completed = self.__get_my_animes(2)
         self.__on_hold = self.__get_my_animes(3)
         self.__dropped = self.__get_my_animes(4)
-        self.__plan_to_read = self.__get_my_animes(6)
+        self.__plan_to_watch = self.__get_my_animes(6)
 
         self._is_loaded = True
 
@@ -110,7 +110,7 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
 
         return frozenset(map(self.__parse_manga_div, rows))
 
-    def __parse_manga_div(self, div: bs4.element.Tag) -> MyManga.MyManga:
+    def __parse_manga_div(self, div: bs4.element.Tag) -> MyAnime.MyAnime:
         links_div = div.findAll(name='td', recorsive=False)[1]
 
         link = links_div.find(name='a', attrs={'class': 'animetitle'})
@@ -123,10 +123,10 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory, metaclass=decorator
         else:
             my_link_id = 0
 
-        return MyManga.MyManga(link_id, my_link_id, self.__connection)
+        return MyAnime.MyAnime(link_id, my_link_id, self.__connection)
 
     def __repr__(self):
-        return "<User mangas' number is {0:d}>".format(len(self))
+        return "<User animes' number is {0:d}>".format(len(self))
 
     def __hash__(self):
         hash_md5 = hashlib.md5()

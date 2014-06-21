@@ -1,9 +1,9 @@
 import unittest
 
 from pymal import Account
-from pymal import AccountAnimes
+from pymal.account_objects import AccountAnimes
 from pymal import Anime
-from pymal import MyAnime
+from pymal.account_objects import MyAnime
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, ANIME_ID
 

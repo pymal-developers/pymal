@@ -13,8 +13,8 @@ import bs4
 from pymal import global_functions
 from pymal import decorators
 from pymal import consts
-from pymal import AccountAnimes
-from pymal import AccountMangas
+from pymal.account_objects import AccountAnimes
+from pymal.account_objects import AccountMangas
 
 __all__ = ['Account']
 

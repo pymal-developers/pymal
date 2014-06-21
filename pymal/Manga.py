@@ -465,7 +465,7 @@ class Manga(object, metaclass=decorators.SingletonFactory):
             raise exceptions.MyAnimeListApiAddError(ret)
         my_id = int(ret)
 
-        from pymal import MyManga
+        from pymal.account_objects import MyManga
         return MyManga.MyManga(self, my_id, account)
 
     def __eq__(self, other):
