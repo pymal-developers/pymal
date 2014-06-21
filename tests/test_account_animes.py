@@ -21,7 +21,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         Account.Account._unregiter(cls.account)
 
     def test_len(self):
-        self.assertEquals(len(self.animes), 1)
+        self.assertEqual(len(self.animes), 1)
 
     def test_contains(self):
         anime = Anime.Anime(ANIME_ID)
@@ -35,7 +35,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertIn(ANIME_ID, self.animes)
 
     def test_str(self):
-        self.assertEquals(str(self.animes), "<User animes' number is 1>")
+        self.assertEqual(str(self.animes), "<User animes' number is 1>")
 
 
 class AccountAnimeListInteraction(unittest.TestCase):
@@ -56,32 +56,32 @@ class AccountAnimeListInteraction(unittest.TestCase):
     def test_union(self):
         regular = self.animes.union(self.friend_animes)
         operator = self.animes | self.friend_animes
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_intersection(self):
         regular = self.animes.intersection(self.friend_animes)
         operator = self.animes & self.friend_animes
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_difference(self):
         regular = self.animes.difference(self.friend_animes)
         operator = self.animes - self.friend_animes
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_symmetric_difference(self):
         regular = self.animes.symmetric_difference(self.friend_animes)
         operator = self.animes ^ self.friend_animes
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_issubset(self):
         regular = self.animes.issubset(self.friend_animes)
         operator = self.animes <= self.friend_animes
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_issuperset(self):
         regular = self.animes.issubset(self.friend_animes)
         operator = self.animes >= self.friend_animes
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
 
 def main():

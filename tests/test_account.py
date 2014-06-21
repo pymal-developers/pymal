@@ -42,17 +42,17 @@ class InitTestCase(unittest.TestCase):
 
     def test_str_no_password(self):
         account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertEquals(str(account), "<Account username: pymal-developr>")
+        self.assertEqual(str(account), "<Account username: pymal-developr>")
         Account.Account._unregiter(account)
 
     def test_str_with_password(self):
         account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        self.assertEquals(str(account), "<Account username: pymal-developr>")
+        self.assertEqual(str(account), "<Account username: pymal-developr>")
         Account.Account._unregiter(account)
 
     def test_user_id(self):
         account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertEquals(account.user_id, 3854655)
+        self.assertEqual(account.user_id, 3854655)
         Account.Account._unregiter(account)
 
 
