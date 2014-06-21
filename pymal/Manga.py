@@ -404,7 +404,7 @@ class Manga(object, metaclass=decorators.SingletonFactory):
            'Related Manga' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = global_functions.make_list(
+                index = global_functions.make_set(
                     self.related_str_to_list_dict[
                         other_data_kids[index].strip()],
                     index, other_data_kids)

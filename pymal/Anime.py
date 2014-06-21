@@ -66,20 +66,20 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         self.__synopsis = ''
 
         # staff from row 2
-        self.__adaptations = list()
-        self.__characters = list()
-        self.__sequels = list()
-        self.__prequels = list()
-        self.__spin_offs = list()
-        self.__alternative_versions = list()
-        self.__side_stories = list()
-        self.__summaries = list()
-        self.__others = list()
-        self.__parent_stories = list()
-        self.__alternative_settings = list()
-        self.__full_stories = list()
+        self.__adaptations = set()
+        self.__characters = set()
+        self.__sequels = set()
+        self.__prequels = set()
+        self.__spin_offs = set()
+        self.__alternative_versions = set()
+        self.__side_stories = set()
+        self.__summaries = set()
+        self.__others = set()
+        self.__parent_stories = set()
+        self.__alternative_settings = set()
+        self.__full_stories = set()
 
-        self.related_str_to_list_dict = {
+        self.related_str_to_set_dict = {
             'Adaptation:': self.__adaptations,
             'Character:': self.__characters,
             'Sequel:': self.__sequels,
@@ -181,63 +181,63 @@ class Anime(object, metaclass=decorators.SingletonFactory):
     # staff from main content
     @property
     @decorators.load
-    def adaptations(self) -> list:
-        return self.__adaptations
+    def adaptations(self) -> frozenset:
+        return frozenset(self.__adaptations)
 
     @property
     @decorators.load
-    def characters(self) -> list:
-        return self.__characters
+    def characters(self) -> frozenset:
+        return frozenset(self.__characters)
 
     @property
     @decorators.load
-    def sequels(self) -> list:
-        return self.__sequels
+    def sequels(self) -> frozenset:
+        return frozenset(self.__sequels)
 
     @property
     @decorators.load
-    def prequels(self) -> list:
-        return self.__prequels
+    def prequels(self) -> frozenset:
+        return frozenset(self.__prequels)
 
     @property
     @decorators.load
-    def spin_offs(self) -> list:
-        return self.__spin_offs
+    def spin_offs(self) -> frozenset:
+        return frozenset(self.__spin_offs)
 
     @property
     @decorators.load
-    def alternative_versions(self) -> list:
-        return self.__alternative_versions
+    def alternative_versions(self) -> frozenset:
+        return frozenset(self.__alternative_versions)
 
     @property
     @decorators.load
-    def side_stories(self) -> list:
-        return self.__side_stories
+    def side_stories(self) -> frozenset:
+        return frozenset(self.__side_stories)
 
     @property
     @decorators.load
-    def summaries(self) -> list:
-        return self.__summaries
+    def summaries(self) -> frozenset:
+        return frozenset(self.__summaries)
 
     @property
     @decorators.load
-    def others(self) -> list:
-        return self.__others
+    def others(self) -> frozenset:
+        return frozenset(self.__others)
 
     @property
     @decorators.load
-    def parent_stories(self) -> list:
-        return self.__parent_stories
+    def parent_stories(self) -> frozenset:
+        return frozenset(self.__parent_stories)
 
     @property
     @decorators.load
-    def alternative_settings(self) -> list:
-        return self.__alternative_settings
+    def alternative_settings(self) -> frozenset:
+        return frozenset(self.__alternative_settings)
 
     @property
     @decorators.load
-    def full_stories(self) -> list:
-        return self.__full_stories
+    def full_stories(self) -> frozenset:
+        return frozenset(self.__full_stories)
 
     @property
     @decorators.load
@@ -435,8 +435,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
            'Related Anime' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = global_functions.make_list(
-                    self.related_str_to_list_dict[
+                index = global_functions.make_set(
+                    self.related_str_to_set_dict[
                         other_data_kids[index].strip()],
                     index, other_data_kids)
         else:
