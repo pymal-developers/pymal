@@ -160,7 +160,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     def my_storage_value(self):
         return self.__my_storage_value
 
-    @my_storage_type.setter
+    @my_storage_value.setter
     def my_storage_value(self, value: float):
         int(value)
         self.__my_storage_value = value
