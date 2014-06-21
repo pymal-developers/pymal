@@ -3,6 +3,7 @@ import unittest
 from pymal import Account
 from pymal import Anime
 from pymal import Manga
+from pymal.account_objects import MyManga
 
 from tests.constants_for_testing import MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -15,11 +16,9 @@ class ReloadTestCase(unittest.TestCase):
         cls.manga.reload()
 
     def test_manga_id(self):
-        self.assertIsInstance(self.manga.id, int)
         self.assertEqual(self.manga.id, MANGA_ID)
 
     def test_manga_title(self):
-        self.assertIsInstance(self.manga.english, str)
         self.assertEqual(self.manga.english, 'Lucky ☆ Star')
 
     def test_manga_image_url(self):
@@ -69,57 +68,57 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.synopsis, str)
 
     def test_manga_spinoff(self):
-        self.assertIsInstance(self.manga.spin_offs, list)
+        self.assertIsInstance(self.manga.spin_offs, frozenset)
         for spin_off in self.manga.spin_offs:
             self.assertIsInstance(spin_off, Manga.Manga)
 
     def test_manga_adaptations(self):
-        self.assertIsInstance(self.manga.adaptations, list)
+        self.assertIsInstance(self.manga.adaptations, frozenset)
         for adaptation in self.manga.adaptations:
             self.assertIsInstance(adaptation, Anime.Anime)
 
     def test_manga_characters(self):
-        self.assertIsInstance(self.manga.characters, list)
+        self.assertIsInstance(self.manga.characters, frozenset)
         for character in self.manga.characters:
             self.assertIsInstance(character, Manga.Manga)
 
     def test_manga_sequals(self):
-        self.assertIsInstance(self.manga.sequels, list)
+        self.assertIsInstance(self.manga.sequels, frozenset)
         for sequal in self.manga.sequels:
             self.assertIsInstance(sequal, Manga.Manga)
 
     def test_manga_prequel(self):
-        self.assertIsInstance(self.manga.prequels, list)
+        self.assertIsInstance(self.manga.prequels, frozenset)
         for prequel in self.manga.prequels:
             self.assertIsInstance(prequel, Manga.Manga)
 
     def test_manga_alternative_versions(self):
-        self.assertIsInstance(self.manga.alternative_versions, list)
+        self.assertIsInstance(self.manga.alternative_versions, frozenset)
         for alternative_version in self.manga.alternative_versions:
             self.assertIsInstance(alternative_version, Manga.Manga)
 
     def test_manga_side_story(self):
-        self.assertIsInstance(self.manga.side_stories, list)
+        self.assertIsInstance(self.manga.side_stories, frozenset)
         for side_story in self.manga.side_stories:
             self.assertIsInstance(side_story, Manga.Manga)
 
     def test_manga_summaries(self):
-        self.assertIsInstance(self.manga.summaries, list)
+        self.assertIsInstance(self.manga.summaries, frozenset)
         for summary in self.manga.summaries:
             self.assertIsInstance(summary, Manga.Manga)
 
     def test_manga_other(self):
-        self.assertIsInstance(self.manga.others, list)
+        self.assertIsInstance(self.manga.others, frozenset)
         for other in self.manga.others:
             self.assertIsInstance(other, Manga.Manga)
 
     def test_manga_parent_stories(self):
-        self.assertIsInstance(self.manga.parent_stories, list)
+        self.assertIsInstance(self.manga.parent_stories, frozenset)
         for parent_story in self.manga.parent_stories:
             self.assertIsInstance(parent_story, Manga.Manga)
 
     def test_manga_alternative_settings(self):
-        self.assertIsInstance(self.manga.alternative_settings, list)
+        self.assertIsInstance(self.manga.alternative_settings, frozenset)
         for alternative_setting in self.manga.alternative_settings:
             self.assertIsInstance(alternative_setting, Manga.Manga)
 
@@ -172,7 +171,6 @@ class NoReloadTestCase(unittest.TestCase):
         repr(self.manga)
 
     def test_add_and_delete(self):
-        from pymal import MyManga
         manga = Manga.Manga(11)
         my_manga = manga.add(self.account)
         try:
