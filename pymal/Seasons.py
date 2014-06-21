@@ -9,24 +9,25 @@ import requests
 import bs4
 
 from pymal import decorators
+from pymal.types import Singleton
 from pymal import Season
 
 __all__ = ['Seasons']
 
 
-class Seasons(object, metaclass=decorators.Singleton):
+class Seasons(object, metaclass=Singleton):
     """
     Lazy making of Season from online db.
     
     Attributes:
-        seasons: set of Season.
+        seasons: frozenset of Season.
     """
     __all__ = ['seasons', 'reload']
 
     __SEASONS_URL = 'http://malupdater.com/MalUpdater/Seasons/index.txt'
 
     def __init__(self):
-        self.__seasons = set()
+        self.__seasons = frozenset()
         self._is_loaded = False
 
     @property

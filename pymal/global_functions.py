@@ -15,7 +15,7 @@ import bs4
 
 from pymal import consts
 
-__all__ = ['connect', 'get_next_index', 'make_list', 'check_side_content_div', 'get_content_wrapper_div']
+__all__ = ['connect', 'get_next_index', 'make_set', 'check_side_content_div', 'get_content_wrapper_div']
 
 __SESSION = requests.session()
 if httpcache is not None:
@@ -76,12 +76,12 @@ def get_next_index(i: int, list_of_tags: list) -> int:
     return i + 1
 
 
-def make_list(self_list: list, i: int, list_of_tags: list) -> int:
+def make_set(self_set: set, i: int, list_of_tags: list) -> int:
     """
     return the index after the next <br/> and inserting all the link until it.
 
-    :type self_list: list
-    :param self_list: a list to append links to
+    :type self_set: set
+    :param self_set: a list to append links to
     :type i: int
     :param i: an index
     :type list_of_tags: list
@@ -103,14 +103,14 @@ def make_list(self_list: list, i: int, list_of_tags: list) -> int:
             splitter = '/manga/'
         else:
             print('unknown tag', tag_href)
-            self_list.append(
+            self_set.add(
                 request.urljoin(consts.HOST_NAME, list_of_tags[i]['href']))
             continue
         obj_id = tag_href.split(splitter)[1].split('/')[0]
         if not obj_id.isdigit():
             print('unknown tag', tag_href)
             continue
-        self_list.append(obj(int(obj_id)))
+        self_set.add(obj(int(obj_id)))
     return n_i
 
 
