@@ -524,11 +524,7 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         return list(set(dir(type(self)) + list(self.__dict__.keys()) + dir(self.obj)))
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return hash(other) == hash(self)
-        if isinstance(other, self.obj.__class__):
-            return hash(other) == hash(self.obj)
-        return False
+        return self.obj == other
 
     def __hash__(self):
         hash_md5 = hashlib.md5()
