@@ -32,7 +32,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
-    def __init__(self, mal_id: int, mal_xml=None):
+    def __init__(self, mal_id: int):
         """
         """
         self.__id = mal_id
@@ -42,15 +42,15 @@ class Anime(object, metaclass=decorators.SingletonFactory):
 
         # Getting staff from html
         # staff from side content
-        self.__title = None
-        self.__image_url = None
+        self.__title = ''
+        self.__image_url = ''
         self.__english = ''
-        self.__synonyms = None
+        self.__synonyms = ''
         self.__japanese = ''
-        self.__type = None
-        self.__status = None
-        self.__start_time = None
-        self.__end_time = None
+        self.__type = ''
+        self.__status = 0
+        self.__start_time = 0
+        self.__end_time = 0
         self.__creators = dict()
         self.__genres = dict()
         self.__duration = 0
@@ -59,7 +59,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         self.__popularity = 0
 
         self.__rating = ''
-        self.__episodes = None
+        self.__episodes = 0
 
         # staff from main content
         # staff from row 1
@@ -94,39 +94,18 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             'Full story:': self.__full_stories,
         }
 
-        if mal_xml is not None:
-            self.__title = mal_xml.find('series_title').text.strip()
-            self.__synonyms = mal_xml.find('series_synonyms').text
-            if self.__synonyms is not None:
-                self.__synonyms = self.__synonyms.strip()
-            # TODO: make this number to a string (or the string to a number?)
-            self.__type = mal_xml.find('series_type').text.strip()
-            self_status = mal_xml.find('series_status').text.strip()
-            if self_status.isdigit():
-                self.__status = int(self_status)
-            else:
-                self.__status = self_status
-                print('self.__status=', self.__status)
-            self.__start_time = global_functions.make_time(mal_xml.find('series_start').text.strip())
-            self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
-            self.__image_url = mal_xml.find('series_image').text.strip()
-
-            self.__episodes = int(mal_xml.find('series_episodes').text)
-
     @property
     def id(self) -> int:
         return self.__id
 
     @property
+    @decorators.load
     def title(self) -> str:
-        if self.__title is None:
-            self.reload()
         return self.__title
 
     @property
+    @decorators.load
     def image_url(self) -> str:
-        if self.__image_url is None:
-            self.reload()
         return self.__image_url
 
     @property
@@ -135,9 +114,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         return self.__english
 
     @property
+    @decorators.load
     def synonyms(self) -> str:
-        if self.__synonyms is None:
-            self.reload()
         return self.__synonyms
 
     @property
@@ -146,27 +124,23 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         return self.__japanese
 
     @property
+    @decorators.load
     def type(self) -> str:
-        if self.__type is None:
-            self.reload()
         return self.__type
 
     @property
+    @decorators.load
     def status(self) -> int:
-        if self.__status is None:
-            self.reload()
         return self.__status
 
     @property
+    @decorators.load
     def start_time(self) -> int:
-        if self.__start_time is None:
-            self.reload()
         return self.__start_time
 
     @property
+    @decorators.load
     def end_time(self) -> int:
-        if self.__end_time is None:
-            self.reload()
         return self.__end_time
 
     @property
@@ -271,9 +245,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         return self.__rating
 
     @property
+    @decorators.load
     def episodes(self) -> int:
-        if self.__episodes is None:
-            self.reload()
         return self.__episodes
 
     def reload(self):
