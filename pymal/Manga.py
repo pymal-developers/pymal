@@ -32,7 +32,7 @@ class Manga(object, metaclass=decorators.SingletonFactory):
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/add/{0:d}.xml')
 
-    def __init__(self, mal_id: int, mal_xml=None):
+    def __init__(self, mal_id: int):
         """
         """
         self.__id = mal_id
@@ -42,42 +42,42 @@ class Manga(object, metaclass=decorators.SingletonFactory):
 
         # Getting staff from html
         # staff from side content
-        self.__title = None
-        self.__image_url = None
+        self.__title = ''
+        self.__image_url = ''
         self.__english = ''
-        self.__synonyms = None
+        self.__synonyms = ''
         self.__japanese = ''
-        self.__type = None
-        self.__status = None
-        self.__start_time = None
-        self.__end_time = None
+        self.__type = ''
+        self.__status = 0
+        self.__start_time = 0
+        self.__end_time = 0
         self.__creators = dict()
         self.__genres = dict()
         self.__score = 0.0
         self.__rank = 0
         self.__popularity = 0
 
-        self._chapters = None
-        self._volumes = None
+        self._chapters = 0
+        self._volumes = 0
 
         # staff from main content
         # staff from row 1
         self.__synopsis = ''
 
         # staff from row 2
-        self.__adaptations = list()
-        self.__characters = list()
-        self.__sequels = list()
-        self.__prequels = list()
-        self.__spin_offs = list()
-        self.__alternative_versions = list()
-        self.__side_stories = list()
-        self.__summaries = list()
-        self.__others = list()
-        self.__parent_stories = list()
-        self.__alternative_settings = list()
+        self.__adaptations = set()
+        self.__characters = set()
+        self.__sequels = set()
+        self.__prequels = set()
+        self.__spin_offs = set()
+        self.__alternative_versions = set()
+        self.__side_stories = set()
+        self.__summaries = set()
+        self.__others = set()
+        self.__parent_stories = set()
+        self.__alternative_settings = set()
 
-        self.related_str_to_list_dict = {
+        self.related_str_to_set_dict = {
             'Adaptation:': self.__adaptations,
             'Character:': self.__characters,
             'Sequel:': self.__sequels,
@@ -91,40 +91,18 @@ class Manga(object, metaclass=decorators.SingletonFactory):
             'Alternative setting:': self.__alternative_settings,
         }
 
-        if mal_xml is not None:
-            self.__title = mal_xml.find('series_title').text.strip()
-            self.__synonyms = mal_xml.find('series_synonyms').text
-            if self.__synonyms is not None:
-                self.__synonyms = self.__synonyms.strip()
-            # TODO: make this number to a string (or the string to a number?)
-            self.__type = mal_xml.find('series_type').text.strip()
-            self_status = mal_xml.find('series_status').text.strip()
-            if self_status.isdigit():
-                self.__status = int(self_status)
-            else:
-                self.__status = self_status
-                print('self.__status=', self.__status)
-            self.__start_time = global_functions.make_time(mal_xml.find('series_start').text.strip())
-            self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
-            self.__image_url = mal_xml.find('series_image').text.strip()
-
-            self.__chapters = int(mal_xml.find('series_chapters').text)
-            self.__volumes = int(mal_xml.find('series_volumes').text)
-
     @property
     def id(self) -> int:
         return self.__id
 
     @property
+    @decorators.load
     def title(self) -> str:
-        if self.__title is None:
-            self.reload()
         return self.__title
 
     @property
+    @decorators.load
     def image_url(self) -> str:
-        if self.__image_url is None:
-            self.reload()
         return self.__image_url
 
     @property
@@ -133,9 +111,8 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         return self.__english
 
     @property
+    @decorators.load
     def synonyms(self) -> str:
-        if self.__synonyms is None:
-            self.reload()
         return self.__synonyms
 
     @property
@@ -144,27 +121,23 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         return self.__japanese
 
     @property
+    @decorators.load
     def type(self) -> str:
-        if self.__type is None:
-            self.reload()
         return self.__type
 
     @property
+    @decorators.load
     def status(self) -> int:
-        if self.__status is None:
-            self.reload()
         return self.__status
 
     @property
+    @decorators.load
     def start_time(self) -> int:
-        if self.__start_time is None:
-            self.reload()
         return self.__start_time
 
     @property
+    @decorators.load
     def end_time(self) -> int:
-        if self.__end_time is None:
-            self.reload()
         return self.__end_time
 
     @property
@@ -200,69 +173,67 @@ class Manga(object, metaclass=decorators.SingletonFactory):
     # staff from main content
     @property
     @decorators.load
-    def adaptations(self) -> list:
-        return self.__adaptations
+    def adaptations(self) -> frozenset:
+        return frozenset(self.__adaptations)
 
     @property
     @decorators.load
-    def characters(self) -> list:
-        return self.__characters
+    def characters(self) -> frozenset:
+        return frozenset(self.__characters)
 
     @property
     @decorators.load
-    def sequels(self) -> list:
-        return self.__sequels
+    def sequels(self) -> frozenset:
+        return frozenset(self.__sequels)
 
     @property
     @decorators.load
-    def prequels(self) -> list:
-        return self.__prequels
+    def prequels(self) -> frozenset:
+        return frozenset(self.__prequels)
 
     @property
     @decorators.load
-    def spin_offs(self) -> list:
-        return self.__spin_offs
+    def spin_offs(self) -> frozenset:
+        return frozenset(self.__spin_offs)
 
     @property
     @decorators.load
-    def alternative_versions(self) -> list:
-        return self.__alternative_versions
+    def alternative_versions(self) -> frozenset:
+        return frozenset(self.__alternative_versions)
 
     @property
     @decorators.load
-    def side_stories(self) -> list:
-        return self.__side_stories
+    def side_stories(self) -> frozenset:
+        return frozenset(self.__side_stories)
 
     @property
     @decorators.load
-    def summaries(self) -> list:
-        return self.__summaries
+    def summaries(self) -> frozenset:
+        return frozenset(self.__summaries)
 
     @property
     @decorators.load
-    def others(self) -> list:
-        return self.__others
+    def others(self) -> frozenset:
+        return frozenset(self.__others)
 
     @property
     @decorators.load
-    def parent_stories(self) -> list:
-        return self.__parent_stories
+    def parent_stories(self) -> frozenset:
+        return frozenset(self.__parent_stories)
 
     @property
     @decorators.load
-    def alternative_settings(self) -> list:
-        return self.__alternative_settings
+    def alternative_settings(self) -> frozenset:
+        return frozenset(self.__alternative_settings)
 
     @property
+    @decorators.load
     def volumes(self) -> int:
-        if self._volumes is None:
-            self.reload()
         return self.__volumes
 
     @property
+    @decorators.load
     def chapters(self) -> int:
-        if self.__chapters is None:
-            self.reload()
         return self.__chapters
 
     def reload(self):
@@ -433,8 +404,8 @@ class Manga(object, metaclass=decorators.SingletonFactory):
            'Related Manga' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = global_functions.make_list(
-                    self.related_str_to_list_dict[
+                index = global_functions.make_set(
+                    self.related_str_to_set_dict[
                         other_data_kids[index].strip()],
                     index, other_data_kids)
         else:
@@ -492,9 +463,10 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         )
         if not ret.isdigit():
             raise exceptions.MyAnimeListApiAddError(ret)
+        my_id = int(ret)
 
         from pymal import MyManga
-        return MyManga.MyManga(self, int(ret), account)
+        return MyManga.MyManga(self, my_id, account)
 
     def __eq__(self, other):
         if isinstance(other, Manga):

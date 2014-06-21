@@ -20,15 +20,23 @@ class AccountMangaListTestCase(unittest.TestCase):
         Account.Account._unregiter(cls.account)
 
     def test_len(self):
-        self.assertGreater(len(self.mangas), 0)
+        self.assertEqual(len(self.mangas), 1)
 
-    def test_contains(self):
+    def test_contains_manga(self):
         my_manga = list(self.mangas)[0]
         manga = Manga.Manga(my_manga.id)
         self.assertIn(manga, self.mangas)
 
+    def test_contains_my_manga(self):
+        my_manga = list(self.mangas)[0]
+        self.assertIn(my_manga, self.mangas)
+
+    def test_contains_id(self):
+        my_manga = list(self.mangas)[0]
+        self.assertIn(my_manga.id, self.mangas)
+
     def test_str(self):
-        repr(self.mangas)
+        self.assertEqual(str(self.mangas), "<User mangas' number is 1>")
 
 
 class AccountMangaListInteraction(unittest.TestCase):
@@ -49,32 +57,32 @@ class AccountMangaListInteraction(unittest.TestCase):
     def test_union(self):
         regular = self.mangas.union(self.friend_mangas)
         operator = self.mangas | self.friend_mangas
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_intersection(self):
         regular = self.mangas.intersection(self.friend_mangas)
         operator = self.mangas & self.friend_mangas
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_difference(self):
         regular = self.mangas.difference(self.friend_mangas)
         operator = self.mangas - self.friend_mangas
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_symmetric_difference(self):
         regular = self.mangas.symmetric_difference(self.friend_mangas)
         operator = self.mangas ^ self.friend_mangas
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_issubset(self):
         regular = self.mangas.issubset(self.friend_mangas)
         operator = self.mangas <= self.friend_mangas
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
     def test_issuperset(self):
         regular = self.mangas.issubset(self.friend_mangas)
         operator = self.mangas >= self.friend_mangas
-        self.assertEquals(regular, operator)
+        self.assertEqual(regular, operator)
 
 
 def main():

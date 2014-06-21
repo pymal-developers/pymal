@@ -55,14 +55,13 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
     __MY_MAL_UPDATE_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/update/{0:d}.xml')
 
-    def __init__(self, mal_id: int or Manga.Manga, my_mal_id, account,
-                 my_mal_xml: None=None):
+    def __init__(self, mal_id: int or Manga.Manga, my_mal_id, account):
         """
         """
         if isinstance(mal_id, Manga.Manga):
             self.obj = mal_id
         else:
-            self.obj = Manga.Manga(mal_id, mal_xml=my_mal_xml)
+            self.obj = Manga.Manga(mal_id)
 
         self.__my_mal_url = self.__MY_MAL_URL.format(my_mal_id)
 
@@ -70,16 +69,16 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self._account = account
 
         self.__my_mal_id = my_mal_id
-        self.__my_status = None
+        self.__my_status = 0
         self.my_enable_discussion = False
-        self.__my_score = None
-        self.__my_start_date = None
-        self.__my_end_date = None
+        self.__my_score = 0.0
+        self.__my_start_date = ''
+        self.__my_end_date = ''
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_comments = ''
         self.__my_fan_sub_groups = ''
-        self.__my_tags = None
+        self.__my_tags = []
         self.__my_retail_volumes = 0
 
         self.__my_is_rereading = None
@@ -89,52 +88,13 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_times_reread = 0
         self.__my_reread_value = None
 
-        if my_mal_xml is not None:
-            self.__my_id = int(my_mal_xml.find('my_id').text)
-            self.__my_status = int(my_mal_xml.find('my_status').text)
-            if my_mal_xml.find('my_rereadingg').text is not None:
-                self.__my_is_rereading = bool(
-                    int(my_mal_xml.find('my_rereadingg').text))
-            else:
-                self.__my_is_rereading = False
-            self.__my_completed_episodes = int(
-                my_mal_xml.find('my_read_chapters').text.strip())
-            self.__my_completed_volumes = int(
-                my_mal_xml.find('my_read_volumes').text.strip())
-            self.__my_score = int(my_mal_xml.find('my_score').text)
-            my_start_date = my_mal_xml.find('my_start_date').text.strip()
-            if my_start_date == consts.MALAPPINFO_NONE_TIME:
-                self.__my_start_date = consts.MALAPI_NONE_TIME
-            else:
-                my_start_date = time.strptime(
-                    my_start_date, consts.MALAPPINFO_FORMAT_TIME)
-                self.__my_start_date = time.strftime(
-                    consts.MALAPI_FORMAT_TIME, my_start_date)
-            my_end_date = my_mal_xml.find('my_finish_date').text.strip()
-            if my_end_date == consts.MALAPPINFO_NONE_TIME:
-                self.__my_end_date = consts.MALAPI_NONE_TIME
-            else:
-                my_end_date = time.strptime(
-                    my_end_date, consts.MALAPPINFO_FORMAT_TIME)
-                self.__my_end_date = time.strftime(
-                    consts.MALAPI_FORMAT_TIME, my_end_date)
-            self.__my_reread_value = int(
-                my_mal_xml.find('my_rereading_chap').text.strip())
-            my_tags_xml = my_mal_xml.find('my_tags')
-            if my_tags_xml.text is None:
-                self.__my_tags = ''
-            else:
-                self.__my_tags = my_tags_xml.text.strip().split(
-                    self.__TAG_SEPARATOR)
-
     @property
     def my_id(self):
         return self.__my_mal_id
 
     @property
+    @decorators.my_load
     def my_status(self):
-        if self.__my_status is None:
-            self.my_reload()
         return self.__my_status
 
     @my_status.setter
@@ -144,9 +104,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_status = value
 
     @property
+    @decorators.my_load
     def my_score(self):
-        if self.__my_score is None:
-            self.my_reload()
         return self.__my_score
 
     @my_score.setter
@@ -156,9 +115,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_score = value
 
     @property
+    @decorators.my_load
     def my_start_date(self):
-        if self.__my_start_date is None:
-            self.my_reload()
         return self.__my_start_date
 
     @my_start_date.setter
@@ -167,9 +125,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_start_date = value
 
     @property
+    @decorators.my_load
     def my_end_date(self):
-        if self.__my_end_date is None:
-            self.my_reload()
         return self.__my_end_date
 
     @my_end_date.setter
@@ -201,18 +158,7 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_storage_value(self):
-        return self.__my_storage_value
-
-    @my_storage_type.setter
-    def my_storage_value(self, value: float):
-        int(value)
-        self.__my_storage_value = value
-
-    @property
     def my_is_rereading(self):
-        if self.__my_is_rereading is None:
-            self.my_reload()
         return self.__my_is_rereading
 
     @my_is_rereading.setter
@@ -220,9 +166,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_is_rereading = value
 
     @property
+    @decorators.my_load
     def my_completed_chapters(self):
-        if self.__my_completed_chapters is None:
-            self.my_reload()
         return self.__my_completed_chapters
 
     @my_completed_chapters.setter
@@ -232,9 +177,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_completed_chapters = value
 
     @property
+    @decorators.my_load
     def my_completed_volumes(self):
-        if self.__my_completed_volumes is None:
-            self.my_reload()
         return self.__my_completed_volumes
 
     @my_completed_volumes.setter
@@ -255,9 +199,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_downloaded_chapters = value
 
     @property
+    @decorators.my_load
     def my_times_reread(self):
-        if self.__my_times_reread is None:
-            self.my_reload()
         return self.__my_times_reread
 
     @my_times_reread.setter
@@ -267,9 +210,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_times_reread = value
 
     @property
+    @decorators.my_load
     def my_reread_value(self):
-        if self.__my_reread_value is None:
-            self.my_reload()
         return self.__my_reread_value
 
     @my_reread_value.setter
@@ -279,9 +221,8 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         self.__my_reread_value = value
 
     @property
+    @decorators.my_load
     def my_tags(self):
-        if self.__my_tags is None:
-            self.my_reload()
         return self.__my_tags
 
     @property
@@ -583,11 +524,7 @@ class MyManga(object, metaclass=decorators.SingletonFactory):
         return list(set(dir(type(self)) + list(self.__dict__.keys()) + dir(self.obj)))
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return hash(other) == hash(self)
-        if isinstance(other, self.obj.__class__):
-            return hash(other) == hash(self.obj)
-        return False
+        return self.obj == other
 
     def __hash__(self):
         hash_md5 = hashlib.md5()

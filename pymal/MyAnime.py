@@ -55,14 +55,13 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     __MY_MAL_UPDATE_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/update/{0:d}.xml')
 
-    def __init__(self, mal_id: int or Anime.Anime, my_mal_id, account,
-                 my_mal_xml: None=None):
+    def __init__(self, mal_id: int or Anime.Anime, my_mal_id, account):
         """
         """
         if isinstance(mal_id, Anime.Anime):
             self.obj = mal_id
         else:
-            self.obj = Anime.Anime(mal_id, mal_xml=my_mal_xml)
+            self.obj = Anime.Anime(mal_id)
 
         self.__my_mal_url = self.__MY_MAL_URL.format(self.obj.id)
 
@@ -70,17 +69,17 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self._account = account
 
         self.__my_mal_id = my_mal_id
-        self.__my_status = None
+        self.__my_status = 0
         self.my_enable_discussion = False
-        self.__my_score = None
-        self.__my_start_date = None
-        self.__my_end_date = None
+        self.__my_score = 0.0
+        self.__my_start_date = ''
+        self.__my_end_date = ''
         self.__my_priority = 0
         self.__my_storage_type = 0
         self.__my_storage_value = 0.0
         self.__my_comments = ''
         self.__my_fan_sub_groups = ''
-        self.__my_tags = None
+        self.__my_tags = []
 
         self.__my_is_rewatching = None
         self.__my_completed_episodes = None
@@ -88,50 +87,13 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_times_rewatched = 0
         self.__my_rewatch_value = None
 
-        if my_mal_xml is not None:
-            self.__my_id = int(my_mal_xml.find('my_id').text)
-            self.__my_status = int(my_mal_xml.find('my_status').text)
-            if my_mal_xml.find('my_rewatching').text is not None:
-                self.__my_is_rewatching = bool(
-                    int(my_mal_xml.find('my_rewatching').text))
-            else:
-                self.__my_is_rewatching = False
-            self.__my_completed_episodes = int(
-                my_mal_xml.find('my_watched_episodes').text.strip())
-            self.__my_score = int(my_mal_xml.find('my_score').text)
-            my_start_date = my_mal_xml.find('my_start_date').text.strip()
-            if my_start_date == consts.MALAPPINFO_NONE_TIME:
-                self.__my_start_date = consts.MALAPI_NONE_TIME
-            else:
-                my_start_date = time.strptime(
-                    my_start_date, consts.MALAPPINFO_FORMAT_TIME)
-                self.__my_start_date = time.strftime(
-                    consts.MALAPI_FORMAT_TIME, my_start_date)
-            my_end_date = my_mal_xml.find('my_finish_date').text.strip()
-            if my_end_date == consts.MALAPPINFO_NONE_TIME:
-                self.__my_end_date = consts.MALAPI_NONE_TIME
-            else:
-                my_end_date = time.strptime(
-                    my_end_date, consts.MALAPPINFO_FORMAT_TIME)
-                self.__my_end_date = time.strftime(
-                    consts.MALAPI_FORMAT_TIME, my_end_date)
-            self.__my_rewatch_value = int(
-                my_mal_xml.find('my_rewatching_ep').text.strip())
-            my_tags_xml = my_mal_xml.find('my_tags')
-            if my_tags_xml.text is None:
-                self.__my_tags = ''
-            else:
-                self.__my_tags = my_tags_xml.text.strip().split(
-                    self.__TAG_SEPARATOR)
-
     @property
     def my_id(self):
         return self.__my_mal_id
 
     @property
+    @decorators.my_load
     def my_status(self):
-        if self.__my_status is None:
-            self.my_reload()
         return self.__my_status
 
     @my_status.setter
@@ -141,9 +103,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_status = value
 
     @property
+    @decorators.my_load
     def my_score(self):
-        if self.__my_score is None:
-            self.my_reload()
         return self.__my_score
 
     @my_score.setter
@@ -153,9 +114,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_score = value
 
     @property
+    @decorators.my_load
     def my_start_date(self):
-        if self.__my_start_date is None:
-            self.my_reload()
         return self.__my_start_date
 
     @my_start_date.setter
@@ -164,9 +124,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_start_date = value
 
     @property
+    @decorators.my_load
     def my_end_date(self):
-        if self.__my_end_date is None:
-            self.my_reload()
         return self.__my_end_date
 
     @my_end_date.setter
@@ -201,15 +160,14 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
     def my_storage_value(self):
         return self.__my_storage_value
 
-    @my_storage_type.setter
+    @my_storage_value.setter
     def my_storage_value(self, value: float):
         int(value)
         self.__my_storage_value = value
 
     @property
+    @decorators.my_load
     def my_is_rewatching(self):
-        if self.__my_is_rewatching is None:
-            self.my_reload()
         return self.__my_is_rewatching
 
     @my_is_rewatching.setter
@@ -217,9 +175,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_is_rewatching = value
 
     @property
+    @decorators.my_load
     def my_completed_episodes(self):
-        if self.__my_completed_episodes is None:
-            self.my_reload()
         return self.__my_completed_episodes
 
     @my_completed_episodes.setter
@@ -240,9 +197,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_download_episodes = value
 
     @property
+    @decorators.my_load
     def my_times_rewatched(self):
-        if self.__my_times_rewatched is None:
-            self.my_reload()
         return self.__my_times_rewatched
 
     @my_times_rewatched.setter
@@ -252,9 +208,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_times_rewatched = value
 
     @property
+    @decorators.my_load
     def my_rewatch_value(self):
-        if self.__my_rewatch_value is None:
-            self.my_reload()
         return self.__my_rewatch_value
 
     @my_rewatch_value.setter
@@ -264,9 +219,8 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         self.__my_rewatch_value = value
 
     @property
+    @decorators.my_load
     def my_tags(self):
-        if self.__my_tags is None:
-            self.my_reload()
         return self.__my_tags
 
     @property
@@ -555,11 +509,7 @@ class MyAnime(object, metaclass=decorators.SingletonFactory):
         return list(set(dir(type(self)) + list(self.__dict__.keys()) + dir(self.obj)))
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return hash(other) == hash(self)
-        if isinstance(other, self.obj.__class__):
-            return hash(other) == hash(self.obj)
-        return False
+        return self.obj == other
 
     def __hash__(self):
         hash_md5 = hashlib.md5()

@@ -35,7 +35,7 @@ class ReloadedSet(collections.Set):
         res = set(self)
         for other in others:
             res |= frozenset(other)
-        return res
+        return frozenset(res)
 
     def __or__(self, other) -> frozenset:
         return self.union(other)

@@ -21,7 +21,7 @@ class Season(object, metaclass=decorators.SingletonFactory):
     Lazy load of season data.
     
     Attributes:
-        animes - a set of animes.
+        animes - a frozenset of animes.
         year - the season year.
         season_name - The season name.
           Can be 'Winter', 'Spring', 'Summer' or 'Fall'.
