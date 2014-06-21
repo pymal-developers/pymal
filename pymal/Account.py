@@ -19,7 +19,7 @@ from pymal.account_objects import AccountMangas
 __all__ = ['Account']
 
 
-class Account(object, metaclass=SingletonFactory):
+class Account(object, metaclass=SingletonFactory.SingletonFactory):
     """
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',

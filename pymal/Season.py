@@ -17,7 +17,7 @@ from pymal import Anime
 __all__ = ['Season']
 
 
-class Season(object, metaclass=SingletonFactory):
+class Season(object, metaclass=SingletonFactory.SingletonFactory):
     """
     Lazy load of season data.
     

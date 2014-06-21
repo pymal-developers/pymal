@@ -18,7 +18,7 @@ from pymal import exceptions
 __all__ = ['Manga']
 
 
-class Manga(object, metaclass=SingletonFactory):
+class Manga(object, metaclass=SingletonFactory.SingletonFactory):
     """
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',

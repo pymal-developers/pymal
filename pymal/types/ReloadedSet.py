@@ -82,7 +82,7 @@ class ReloadedSet(collections.Set):
         return self.symmetric_difference(other)
 
 
-class ReloadedSetSingletonFactoryType(type(ReloadedSet), SingletonFactory):
+class ReloadedSetSingletonFactoryType(type(ReloadedSet), SingletonFactory.SingletonFactory):
     pass
 
 
