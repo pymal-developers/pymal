@@ -463,9 +463,10 @@ class Manga(object, metaclass=decorators.SingletonFactory):
         )
         if not ret.isdigit():
             raise exceptions.MyAnimeListApiAddError(ret)
+        my_id = int(ret)
 
         from pymal import MyManga
-        return MyManga.MyManga(self, int(ret), account)
+        return MyManga.MyManga(self, my_id, account)
 
     def __eq__(self, other):
         if isinstance(other, Manga):
