@@ -19,14 +19,14 @@ class Seasons(object, metaclass=decorators.Singleton):
     Lazy making of Season from online db.
     
     Attributes:
-        seasons: set of Season.
+        seasons: frozenset of Season.
     """
     __all__ = ['seasons', 'reload']
 
     __SEASONS_URL = 'http://malupdater.com/MalUpdater/Seasons/index.txt'
 
     def __init__(self):
-        self.__seasons = set()
+        self.__seasons = frozenset()
         self._is_loaded = False
 
     @property
