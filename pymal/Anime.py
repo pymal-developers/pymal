@@ -13,6 +13,7 @@ import requests
 import bs4
 
 from pymal import decorators
+from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions
 from pymal import exceptions
@@ -20,7 +21,7 @@ from pymal import exceptions
 __all__ = ['Anime']
 
 
-class Anime(object, metaclass=decorators.SingletonFactory):
+class Anime(object, metaclass=SingletonFactory):
     """
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
@@ -35,7 +36,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/add/{0:d}.xml')
 
-    def __init__(self, mal_id: int, mal_xml=None):
+    def __init__(self, mal_id: int):
         """
         """
         self.__id = mal_id
@@ -45,15 +46,15 @@ class Anime(object, metaclass=decorators.SingletonFactory):
 
         # Getting staff from html
         # staff from side content
-        self.__title = None
-        self.__image_url = None
+        self.__title = ''
+        self.__image_url = ''
         self.__english = ''
-        self.__synonyms = None
+        self.__synonyms = ''
         self.__japanese = ''
-        self.__type = None
-        self.__status = None
-        self.__start_time = None
-        self.__end_time = None
+        self.__type = ''
+        self.__status = 0
+        self.__start_time = 0
+        self.__end_time = 0
         self.__creators = dict()
         self.__genres = dict()
         self.__duration = 0
@@ -62,27 +63,27 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         self.__popularity = 0
 
         self.__rating = ''
-        self.__episodes = None
+        self.__episodes = 0
 
         # staff from main content
         # staff from row 1
         self.__synopsis = ''
 
         # staff from row 2
-        self.__adaptations = list()
-        self.__characters = list()
-        self.__sequels = list()
-        self.__prequels = list()
-        self.__spin_offs = list()
-        self.__alternative_versions = list()
-        self.__side_stories = list()
-        self.__summaries = list()
-        self.__others = list()
-        self.__parent_stories = list()
-        self.__alternative_settings = list()
-        self.__full_stories = list()
+        self.__adaptations = set()
+        self.__characters = set()
+        self.__sequels = set()
+        self.__prequels = set()
+        self.__spin_offs = set()
+        self.__alternative_versions = set()
+        self.__side_stories = set()
+        self.__summaries = set()
+        self.__others = set()
+        self.__parent_stories = set()
+        self.__alternative_settings = set()
+        self.__full_stories = set()
 
-        self.related_str_to_list_dict = {
+        self.related_str_to_set_dict = {
             'Adaptation:': self.__adaptations,
             'Character:': self.__characters,
             'Sequel:': self.__sequels,
@@ -97,39 +98,18 @@ class Anime(object, metaclass=decorators.SingletonFactory):
             'Full story:': self.__full_stories,
         }
 
-        if mal_xml is not None:
-            self.__title = mal_xml.find('series_title').text.strip()
-            self.__synonyms = mal_xml.find('series_synonyms').text
-            if self.__synonyms is not None:
-                self.__synonyms = self.__synonyms.strip()
-            # TODO: make this number to a string (or the string to a number?)
-            self.__type = mal_xml.find('series_type').text.strip()
-            self_status = mal_xml.find('series_status').text.strip()
-            if self_status.isdigit():
-                self.__status = int(self_status)
-            else:
-                self.__status = self_status
-                print('self.__status=', self.__status)
-            self.__start_time = global_functions.make_time(mal_xml.find('series_start').text.strip())
-            self.__end_time = global_functions.make_time(mal_xml.find('series_end').text.strip())
-            self.__image_url = mal_xml.find('series_image').text.strip()
-
-            self.__episodes = int(mal_xml.find('series_episodes').text)
-
     @property
     def id(self) -> int:
         return self.__id
 
     @property
+    @decorators.load
     def title(self) -> str:
-        if self.__title is None:
-            self.reload()
         return self.__title
 
     @property
+    @decorators.load
     def image_url(self) -> str:
-        if self.__image_url is None:
-            self.reload()
         return self.__image_url
 
     def get_image(self) -> Image.Image:
@@ -143,9 +123,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         return self.__english
 
     @property
+    @decorators.load
     def synonyms(self) -> str:
-        if self.__synonyms is None:
-            self.reload()
         return self.__synonyms
 
     @property
@@ -154,27 +133,23 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         return self.__japanese
 
     @property
+    @decorators.load
     def type(self) -> str:
-        if self.__type is None:
-            self.reload()
         return self.__type
 
     @property
+    @decorators.load
     def status(self) -> int:
-        if self.__status is None:
-            self.reload()
         return self.__status
 
     @property
+    @decorators.load
     def start_time(self) -> int:
-        if self.__start_time is None:
-            self.reload()
         return self.__start_time
 
     @property
+    @decorators.load
     def end_time(self) -> int:
-        if self.__end_time is None:
-            self.reload()
         return self.__end_time
 
     @property
@@ -215,63 +190,63 @@ class Anime(object, metaclass=decorators.SingletonFactory):
     # staff from main content
     @property
     @decorators.load
-    def adaptations(self) -> list:
-        return self.__adaptations
+    def adaptations(self) -> frozenset:
+        return frozenset(self.__adaptations)
 
     @property
     @decorators.load
-    def characters(self) -> list:
-        return self.__characters
+    def characters(self) -> frozenset:
+        return frozenset(self.__characters)
 
     @property
     @decorators.load
-    def sequels(self) -> list:
-        return self.__sequels
+    def sequels(self) -> frozenset:
+        return frozenset(self.__sequels)
 
     @property
     @decorators.load
-    def prequels(self) -> list:
-        return self.__prequels
+    def prequels(self) -> frozenset:
+        return frozenset(self.__prequels)
 
     @property
     @decorators.load
-    def spin_offs(self) -> list:
-        return self.__spin_offs
+    def spin_offs(self) -> frozenset:
+        return frozenset(self.__spin_offs)
 
     @property
     @decorators.load
-    def alternative_versions(self) -> list:
-        return self.__alternative_versions
+    def alternative_versions(self) -> frozenset:
+        return frozenset(self.__alternative_versions)
 
     @property
     @decorators.load
-    def side_stories(self) -> list:
-        return self.__side_stories
+    def side_stories(self) -> frozenset:
+        return frozenset(self.__side_stories)
 
     @property
     @decorators.load
-    def summaries(self) -> list:
-        return self.__summaries
+    def summaries(self) -> frozenset:
+        return frozenset(self.__summaries)
 
     @property
     @decorators.load
-    def others(self) -> list:
-        return self.__others
+    def others(self) -> frozenset:
+        return frozenset(self.__others)
 
     @property
     @decorators.load
-    def parent_stories(self) -> list:
-        return self.__parent_stories
+    def parent_stories(self) -> frozenset:
+        return frozenset(self.__parent_stories)
 
     @property
     @decorators.load
-    def alternative_settings(self) -> list:
-        return self.__alternative_settings
+    def alternative_settings(self) -> frozenset:
+        return frozenset(self.__alternative_settings)
 
     @property
     @decorators.load
-    def full_stories(self) -> list:
-        return self.__full_stories
+    def full_stories(self) -> frozenset:
+        return frozenset(self.__full_stories)
 
     @property
     @decorators.load
@@ -279,9 +254,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         return self.__rating
 
     @property
+    @decorators.load
     def episodes(self) -> int:
-        if self.__episodes is None:
-            self.reload()
         return self.__episodes
 
     def reload(self):
@@ -470,8 +444,8 @@ class Anime(object, metaclass=decorators.SingletonFactory):
            'Related Anime' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
-                index = global_functions.make_list(
-                    self.related_str_to_list_dict[
+                index = global_functions.make_set(
+                    self.related_str_to_set_dict[
                         other_data_kids[index].strip()],
                     index, other_data_kids)
         else:
@@ -546,7 +520,7 @@ class Anime(object, metaclass=decorators.SingletonFactory):
         except Exception:
             raise exceptions.MyAnimeListApiAddError(ret)
 
-        from pymal import MyAnime
+        from pymal.account_objects import MyAnime
         return MyAnime.MyAnime(self, my_id, account)
 
     def __eq__(self, other):

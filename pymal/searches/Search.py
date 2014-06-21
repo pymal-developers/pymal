@@ -7,12 +7,13 @@ from urllib import parse
 
 import bs4
 
-from pymal import global_functions, consts, decorators
+from pymal import global_functions, consts
+from pymal.types import Singleton
 
 __all__ = ['SearchUsers', 'SearchAnimes', 'SearchMangas']
 
 
-class Search(object, metaclass=decorators.Singleton):
+class Search(object, metaclass=Singleton):
     _SEARCH_NAME = ''
     _SEARCHED_URL_SUFFIX = ''
     _SEARCHED_OBJECT = object
@@ -32,20 +33,20 @@ class Search(object, metaclass=decorators.Singleton):
         url_parts[4] = parse.urlencode(query)
         return parse.urlunparse(url_parts)
 
-    def __get_list(self, search_line: str, show_number: int) -> set:
+    def __get_list(self, search_line: str, show_number: int) -> frozenset:
         search_url = self.__make_url(search_line, show_number)
 
         sock = global_functions._connect(search_url)
 
         if sock.url != search_url:
-            return set([parse.urlsplit(sock.url).path])
+            return frozenset([parse.urlsplit(sock.url).path])
 
         html = bs4.BeautifulSoup(sock.text)
         div_content = html.find(name='div', attrs={'id': 'content'})
         divs_pic = div_content.findAll(name='div', attrs={'class': 'picSurround'})
-        return set(map(lambda x: x.a['href'], divs_pic))
+        return frozenset(map(lambda x: x.a['href'], divs_pic))
 
-    def search(self, search_line: str) -> set:
+    def search(self, search_line: str) -> frozenset:
         ret = set()
         current_index = 0
         res = self.__get_list(search_line, current_index)
@@ -55,4 +56,4 @@ class Search(object, metaclass=decorators.Singleton):
             res = self.__get_list(search_line, current_index)
         ret.update(res)
 
-        return set(map(lambda x: self._SEARCHED_OBJECT(x.split(self._SEARCHED_URL_SUFFIX)[1]), ret))
+        return frozenset(map(lambda x: self._SEARCHED_OBJECT(x.split(self._SEARCHED_URL_SUFFIX)[1]), ret))
