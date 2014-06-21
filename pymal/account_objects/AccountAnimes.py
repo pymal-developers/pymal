@@ -10,13 +10,13 @@ import bs4
 
 from pymal import consts
 from pymal import decorators
-from pymal.types import SingletonFactory, ReloadedSet
+from pymal.types import ReloadedSet
 from pymal.account_objects import MyAnime
 
 __all__ = ['AccountAnimes']
 
 
-class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory, metaclass=SingletonFactory):
+class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     """
     """
     __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',

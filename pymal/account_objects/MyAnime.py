@@ -17,7 +17,7 @@ from pymal import exceptions
 __all__ = ['MyAnime']
 
 
-class MyAnime(object, metaclass=SingletonFactory):
+class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
     """
     Saves an account data about anime.
     
