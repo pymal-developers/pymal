@@ -3,8 +3,9 @@ import unittest
 from pymal import Account
 from pymal import AccountAnimes
 from pymal import Anime
+from pymal import MyAnime
 
-from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, ANIME_ID
 
 
 class AccountAnimeListTestCase(unittest.TestCase):
@@ -23,17 +24,15 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertEquals(len(self.animes), 1)
 
     def test_contains(self):
-        my_anime = list(self.animes)[0]
-        anime = Anime.Anime(my_anime.id)
+        anime = Anime.Anime(ANIME_ID)
         self.assertIn(anime, self.animes)
 
     def test_contains_my_manga(self):
-        my_anime = list(self.animes)[0]
+        my_anime = MyAnime.MyAnime(ANIME_ID, 0, self.account)
         self.assertIn(my_anime, self.animes)
 
     def test_contains_id(self):
-        my_anime = list(self.animes)[0]
-        self.assertIn(my_anime.id, self.animes)
+        self.assertIn(ANIME_ID, self.animes)
 
     def test_str(self):
         self.assertEquals(str(self.animes), "<User animes' number is 1>")
