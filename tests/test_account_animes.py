@@ -36,7 +36,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertIn(my_anime.id, self.animes)
 
     def test_str(self):
-        self.assertEquals(str(self.animes), "<User animes' number is 0>")
+        self.assertEquals(str(self.animes), "<User animes' number is 1>")
 
 
 class AccountAnimeListInteraction(unittest.TestCase):
