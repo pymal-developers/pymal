@@ -15,7 +15,7 @@ from pymal import Season
 __all__ = ['Seasons']
 
 
-class Seasons(object, metaclass=Singleton):
+class Seasons(object, metaclass=Singleton.Singleton):
     """
     Lazy making of Season from online db.
     
