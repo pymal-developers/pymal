@@ -47,6 +47,6 @@ setup(
         'httpcache>=0.1.3',
         'html5lib>=0.999',
         'six>=1.1,<1.4',
+        'pillow>=2.4.0',
     ],
-
 )
