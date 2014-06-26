@@ -7,14 +7,14 @@ All accounts connected object are placed here.
 Objects
 -------
 
-#### AccountAnimes
+### AccountAnimes
 It should lazy load accounts' list of animes.
 It can held future global data about accounts' animes.
 It should't be used out side of context of account
 
 In the package it only a package for list(MyAnime).
 
-#### AccountMangas
+### AccountMangas
 It should lazy load accounts' list of mangas.
 It can held future global data about accounts' mangas.
 It should't be used out side of context of account.
