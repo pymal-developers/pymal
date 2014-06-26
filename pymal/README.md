@@ -32,20 +32,14 @@ Objects
 ### Account
 It should held all the data about the account.
 Also it's the only one who has the password and authenticated connection. All other object should use him.
+Objects which connected to Account are placed under `account_object` folder.
 
-#### AccountAnimes
-It should lazy load accounts' list of animes.
-It can held future global data about accounts' animes.
-It should't be used out side of context of account
+You can find there:
 
-In the package it only a package for list(MyAnime).
-
-#### AccountMangas
-It should lazy load accounts' list of mangas.
-It can held future global data about accounts' mangas.
-It should't be used out side of context of account.
-
-In the package it only a package for list(MyManga).
+ * AccountAnimes
+ * AccountMangas
+ * MyAnime
+ * MyManga
 
 ### Anime
 This object and `Manga` should have a very close interface (except for volumes-chapters vs episodes).
@@ -54,16 +48,6 @@ A very basic object to obtain generic data about an anime.
 ### Manga
 This object and `Anime` should have a very close interface (except for volumes-chapters vs episodes).
 A very basic object to obtain generic data about a manga.
-
-### MyAnime
-This object and `MyManga` should have a very close interface (except for volumes-chapters vs episodes).
-A basic object to obtain account specific data about an anime.
-Can manipulate the anime data in the account's list.
-
-### MyManga
-This object and `MyAnime` should have a very close interface (except for volumes-chapters vs episodes).
-A basic object to obtain account specific data about a manga.
-Can manipulate the manga data in the account's list.
 
 ### Seasons
 This object is loaded from a different db.
