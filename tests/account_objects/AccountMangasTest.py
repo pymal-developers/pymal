@@ -4,10 +4,11 @@ from pymal import Account
 from pymal.account_objects import AccountMangas
 from pymal import Manga
 
-from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, MANGA_ID
 
 
 class AccountMangaListTestCase(unittest.TestCase):
+    EXPECTED_LENGTH = 2
 
     @classmethod
     def setUpClass(cls):
@@ -20,7 +21,7 @@ class AccountMangaListTestCase(unittest.TestCase):
         Account.Account._unregiter(cls.account)
 
     def test_len(self):
-        self.assertEqual(len(self.mangas), 1)
+        self.assertEqual(len(self.mangas), self.EXPECTED_LENGTH)
 
     def test_contains_manga(self):
         my_manga = list(self.mangas)[0]
@@ -32,11 +33,10 @@ class AccountMangaListTestCase(unittest.TestCase):
         self.assertIn(my_manga, self.mangas)
 
     def test_contains_id(self):
-        my_manga = list(self.mangas)[0]
-        self.assertIn(my_manga.id, self.mangas)
+        self.assertIn(MANGA_ID, self.mangas)
 
     def test_str(self):
-        self.assertEqual(str(self.mangas), "<User mangas' number is 1>")
+        self.assertEqual(str(self.mangas), "<User mangas' number is {0:d}>".format(self.EXPECTED_LENGTH))
 
 
 class AccountMangaListInteraction(unittest.TestCase):
