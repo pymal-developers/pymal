@@ -9,6 +9,7 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 
 
 class AccountAnimeListTestCase(unittest.TestCase):
+    EXPECTED_LENGTH = 2
 
     @classmethod
     def setUpClass(cls):
@@ -21,7 +22,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         Account.Account._unregiter(cls.account)
 
     def test_len(self):
-        self.assertEqual(len(self.animes), 1)
+        self.assertEqual(len(self.animes), self.EXPECTED_LENGTH)
 
     def test_contains(self):
         anime = Anime.Anime(ANIME_ID)
@@ -35,7 +36,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertIn(ANIME_ID, self.animes)
 
     def test_str(self):
-        self.assertEqual(str(self.animes), "<User animes' number is 1>")
+        self.assertEqual(str(self.animes), "<User animes' number is {0:d}>".format(self.EXPECTED_LENGTH))
 
 
 class AccountAnimeListInteraction(unittest.TestCase):
