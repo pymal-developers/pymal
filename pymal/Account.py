@@ -188,3 +188,6 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         hash_md5 = hashlib.md5()
         hash_md5.update(self.username.encode())
         return int(hash_md5.hexdigest(), 16)
+
+    def __format__(self, format_spec):
+        return str(self).__format__(format_spec)

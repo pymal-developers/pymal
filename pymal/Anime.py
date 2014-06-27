@@ -576,3 +576,6 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         title = '' if self.__title is None else ' ' + self.__title
         return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title,
                                               self.__id)
+
+    def __format__(self, format_spec):
+        return str(self).__format__(format_spec)
