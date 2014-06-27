@@ -3,16 +3,8 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import hashlib
-import time
-
-import requests
-import bs4
-
 from pymal import decorators
 from pymal.types import SingletonFactory
-from pymal import exceptions
-from pymal import Anime
 
 __all__ = ['Season']
 
@@ -40,6 +32,9 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
     def __init__(self, season_name: str, year: int or str):
         """
         """
+        import time
+        from pymal import exceptions
+
         self.year = int(year)
         self.season_name = season_name.title()
         if self.season_name not in self.__SEAONS_NAME_TO_START_MONTH:
@@ -59,6 +54,11 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__animes
 
     def reload(self):
+        import requests
+        import bs4
+
+        from pymal import Anime
+
         sock = requests.get(self.url)
         xml = bs4.BeautifulSoup(sock.text)
         animes_xml = frozenset(xml.body.findAll(name='anime', recursive=False))
@@ -75,6 +75,8 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
         return len(self.animes)
 
     def __hash__(self):
+        import hashlib
+
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.year).encode())
         hash_md5.update(self.season_name.encode())
