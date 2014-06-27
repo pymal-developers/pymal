@@ -6,6 +6,8 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 class Review(object):
     def __init__(self, div):
+        from pymal import Account
+
         time_div, general_data_div, text_div, _ = div.findAll(name="div", recursive=False)
 
         self.date = time_div.div.text
@@ -13,7 +15,6 @@ class Review(object):
         general_data_row = general_data_div.table.tbody.tr
         _, user_cell, general_data_cell = general_data_row.findAll(name="td", recursive=False)
 
-        from pymal import Account
         self.account = Account.Account(user_cell.a.text)
         helpful_span, watched_span = user_cell.find(name="div", attrs={"class": "lightLink spaceit"}).findAll(name="span")
 
