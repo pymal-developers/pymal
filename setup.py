@@ -13,7 +13,12 @@ setup(
     author='pymal-developers',
     license="BSD",
     url='https://bitbucket.org/pymal-developers/pymal/',
-    keywords=["MyAnimeList", "MAL", "pymal"],
+    keywords=[
+        "MyAnimeList", "myanimelist",
+        "MAL", "mal",
+        "pymal",
+        "my anime list", "anime list", "anime"
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
