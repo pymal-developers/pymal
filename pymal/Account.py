@@ -3,18 +3,11 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import hashlib
-from xml.etree import ElementTree
 from urllib import request
-
-from requests.auth import HTTPBasicAuth
-import bs4
 
 from pymal import global_functions
 from pymal.types import SingletonFactory
-from pymal import consts
-from pymal.account_objects import AccountAnimes
-from pymal.account_objects import AccountMangas
+from pymal.consts import HOST_NAME
 
 __all__ = ['Account']
 
@@ -26,22 +19,24 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
                'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
     
     __AUTH_CHECKER_URL =\
-        request.urljoin(consts.HOST_NAME, r'api/account/verify_credentials.xml')
+        request.urljoin(HOST_NAME, r'api/account/verify_credentials.xml')
 
     @property
     def __MAIN_PROFILE_URL(self):
-        return request.urljoin(consts.HOST_NAME, 'profile/{0:s}'.format(self.username))
+        return request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
 
     @property
     def __FRIENDS_URL(self):
         return self.__MAIN_PROFILE_URL + '/friends'
 
-    __MY_LOGIN_URL = request.urljoin(consts.HOST_NAME, 'login.php')
+    __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
     def __init__(self, username: str, password: str or None=None):
         """
         """
+        from pymal.account_objects import AccountAnimes, AccountMangas
+
         self.__username = username
         self.__password = password
         self.connect = global_functions.connect
@@ -49,8 +44,8 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         self.__auth_object = None
         self.__cookies = dict()
 
-        self.__animes = None
-        self.__mangas = None
+        self.__animes = AccountAnimes.AccountAnimes(self.username, self)
+        self.__mangas = AccountMangas.AccountMangas(self.username, self)
         self.__friends = None
 
         if password is not None:
@@ -63,6 +58,8 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     @property
     def user_id(self) -> int:
         if self.__user_id is None:
+            import bs4
+
             ret = self.connect(self.__MAIN_PROFILE_URL)
             html = bs4.BeautifulSoup(ret)
             bla = html.find(name='input', attrs={'name': 'profileMemId'})
@@ -70,15 +67,11 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__user_id
 
     @property
-    def mangas(self) -> AccountMangas.AccountMangas:
-        if self.__mangas is None:
-            self.__mangas = AccountMangas.AccountMangas(self.username, self)
+    def mangas(self):
         return self.__mangas
 
     @property
-    def animes(self) -> AccountAnimes.AccountAnimes:
-        if self.__animes is None:
-            self.__animes = AccountAnimes.AccountAnimes(self.username, self)
+    def animes(self):
         return self.__animes
 
     @property
@@ -113,6 +106,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         """
         """
         from pymal import searches
+
         if is_anime:
             results = searches.search_animes(search_line)
             account_object_list = self.animes
@@ -135,6 +129,9 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         """
         Checking if the new password is valid
         """
+        from xml.etree import ElementTree
+        from requests.auth import HTTPBasicAuth
+
         self.__auth_object = HTTPBasicAuth(self.username, password)
         data = self.auth_connect(self.__AUTH_CHECKER_URL)
         if data == 'Invalid credentials':
@@ -166,6 +163,8 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
                      headers: dict or None=None) -> str:
         """
         """
+        from pymal import exceptions
+
         if not self.is_auth:
             raise exceptions.UnauthenticatedAccountError(self.username)
         return global_functions._connect(url, data=data, headers=headers,
@@ -185,6 +184,8 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         return "<Account username: {0:s}>".format(self.username)
 
     def __hash__(self):
+        import hashlib
+
         hash_md5 = hashlib.md5()
         hash_md5.update(self.username.encode())
         return int(hash_md5.hexdigest(), 16)
