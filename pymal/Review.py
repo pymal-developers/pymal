@@ -28,7 +28,7 @@ class Review(object):
         self.data = text_div.text
 
     def __repr__(self):
-        return "<{0:s} written by {1:s} when watched {2:s}, rated {3:d} ({4:d}/{5:d})>".format(
+        return "<{0:s} written by {1:s} when {2:s}, rated {3:d} ({4:d}/{5:d})>".format(
             self.__class__.__name__,
             self.account.username,
             self.when_written,
