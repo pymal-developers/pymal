@@ -3,15 +3,12 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import hashlib
 from urllib import request
 import time
 
 from pymal import consts
 from pymal import decorators
 from pymal.types import SingletonFactory
-from pymal import Manga
-from pymal import global_functions
 from pymal import exceptions
 
 __all__ = ['MyManga']
@@ -56,9 +53,10 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
     __MY_MAL_UPDATE_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/update/{0:d}.xml')
 
-    def __init__(self, mal_id: int or Manga.Manga, my_mal_id, account):
+    def __init__(self, mal_id: int, my_mal_id, account):
         """
         """
+        from pymal import Manga
         if isinstance(mal_id, Manga.Manga):
             self.obj = mal_id
         else:
@@ -242,6 +240,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__my_retail_volumes
 
     def my_reload(self):
+        from pymal import global_functions
+
         # Getting content wrapper <div>
         content_wrapper_div = global_functions.get_content_wrapper_div(
             self.__my_mal_url, self._account.auth_connect)
@@ -528,6 +528,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         return self.obj == other
 
     def __hash__(self):
+        import hashlib
+
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(str(hash(self._account)).encode())
