@@ -3,14 +3,8 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import os
-
-import requests
-import bs4
-
 from pymal import decorators
 from pymal.types import Singleton
-from pymal.inner_objects import Season
 
 __all__ = ['Seasons']
 
@@ -36,6 +30,11 @@ class Seasons(object, metaclass=Singleton.Singleton):
         return self.__seasons
 
     def reload(self):
+        import requests
+        import bs4
+
+        from pymal.inner_objects import Season
+
         sock = requests.get(self.__SEASONS_URL)
         body = bs4.BeautifulSoup(sock.text).body
 
@@ -50,6 +49,8 @@ class Seasons(object, metaclass=Singleton.Singleton):
         return any(map(lambda x: item in x, self.seasons))
 
     def __repr__(self):
+        import os
+
         return (os.linesep + '\t').join(map(str, ['<Seasons>'] +
                                             list(self.seasons)))
 
