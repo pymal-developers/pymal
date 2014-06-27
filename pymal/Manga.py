@@ -13,8 +13,7 @@ import requests
 import bs4
 
 from pymal import decorators
-from pymal import Review
-from pymal import Recommendation
+from pymal.inner_objects import Review, Recommendation
 from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions

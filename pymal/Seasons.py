@@ -10,7 +10,7 @@ import bs4
 
 from pymal import decorators
 from pymal.types import Singleton
-from pymal import Season
+from pymal.inner_objects import Season
 
 __all__ = ['Seasons']
 
