@@ -3,21 +3,15 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import hashlib
 from urllib import request
-import os
-import io
 
-from PIL import Image
 import requests
 import bs4
 
 from pymal import decorators
-from pymal.inner_objects import Review, Recommendation
 from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions
-from pymal import exceptions
 
 __all__ = ['Manga']
 
@@ -110,7 +104,11 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
     def image_url(self) -> str:
         return self.__image_url
 
-    def get_image(self) -> Image.Image:
+    def get_image(self):
+        import io
+
+        from PIL import Image
+
         sock = requests.get(self.image_url)
         data = io.BytesIO(sock.content)
         return Image.open(data)
@@ -247,6 +245,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__chapters
 
     def reload(self):
+        import os
+
         # Getting content wrapper <div>
         content_wrapper_div = global_functions.get_content_wrapper_div(self.__mal_url, global_functions.connect)
 
@@ -444,6 +444,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         self._is_loaded = True
 
     def __parse_reviews(self, link_for_reviews: str):
+        from pymal.inner_objects import Review
+
         content_wrapper_div = global_functions.get_content_wrapper_div(link_for_reviews, global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
         _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
@@ -452,6 +454,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         self.reviews = frozenset(map(Review.Review, reviews_data))
 
     def __parse_recommendations(self, link_for_recommendations: str):
+        from pymal.inner_objects import Recommendation
+
         content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations, global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
         _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
@@ -484,6 +488,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
     def add(self, account):
         """
         """
+        from pymal import exceptions
+
         data = self.MY_MAL_XML_TEMPLATE.format(
             0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
             consts.MALAPI_NONE_TIME, 0, False, False, '', '', '', 0
@@ -514,6 +520,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         return False
 
     def __hash__(self):
+        import hashlib
+
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(b'Manga')
