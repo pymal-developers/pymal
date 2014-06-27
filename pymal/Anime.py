@@ -13,6 +13,8 @@ import requests
 import bs4
 
 from pymal import decorators
+from pymal import Review
+from pymal import Recommendation
 from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions
@@ -478,24 +480,16 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
         _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
         _, reviews_data_div = main_cell.findAll(name='div', recursive=False)
-        reviews_data = reviews_data_div.findAll(name='div', recursive=False)[2:]
-        for review_data in reviews_data:
-            pass
-        # TODO: might want to create a review object?
-        import IPython
-        IPython.embed()
+        reviews_data = reviews_data_div.findAll(name='div', recursive=False)[2:-2]
+        self.reviews = frozenset(map(Review.Review, reviews_data))
 
     def __parse_recommendations(self, link_for_recommendations: str):
         content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations, global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
         _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
         _, recommendations_data_div = main_cell.findAll(name='div', recursive=False)
-        recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:]
-        for recommendation_data in recommendations_data:
-            pass
-        # TODO: might want to create a review object?
-        import IPython
-        IPython.embed()
+        recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:-1]
+        self.recommendations = frozenset(map(Recommendation.Recommendation, recommendations_data))
 
     @property
     def MY_MAL_XML_TEMPLATE(self) -> str:
