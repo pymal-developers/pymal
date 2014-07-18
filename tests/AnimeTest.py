@@ -5,7 +5,7 @@ from pymal import Anime
 from pymal import Manga
 from pymal.account_objects import MyAnime
 
-from tests.constants_for_testing import ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from tests.constants_for_testing import ADD_ANIME_ID, ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
 
 class ReloadTestCase(unittest.TestCase):
@@ -183,15 +183,14 @@ class NoReloadTestCase(unittest.TestCase):
         repr(self.anime)
 
     def test_add_and_delete(self):
-        anime = Anime.Anime(20707)
+        anime = Anime.Anime(ADD_ANIME_ID)
         my_anime = anime.add(self.account)
-        try:
-            self.assertIsInstance(my_anime, MyAnime.MyAnime)
-            self.account.animes.reload()
-            self.assertIn(my_anime, self.account.animes)
-        finally:
-            my_anime.delete()
 
+        self.assertIsInstance(my_anime, MyAnime.MyAnime)
+        self.account.animes.reload()
+        self.assertIn(my_anime, self.account.animes)
+
+        my_anime.delete()
         self.account.animes.reload()
         self.assertNotIn(my_anime, self.account.animes)
 
