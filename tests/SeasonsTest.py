@@ -2,7 +2,7 @@ import unittest
 
 from pymal import Anime
 from pymal import Seasons
-from pymal import Season
+from pymal.inner_objects import Season
 
 
 class TestCase(unittest.TestCase):

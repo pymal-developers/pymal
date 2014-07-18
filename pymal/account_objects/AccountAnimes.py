@@ -3,15 +3,11 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import hashlib
-from urllib import request, parse
+from urllib import request
 
-import bs4
-
-from pymal import consts
+from pymal.consts import HOST_NAME
 from pymal import decorators
 from pymal.types import ReloadedSet
-from pymal.account_objects import MyAnime
 
 __all__ = ['AccountAnimes']
 
@@ -22,7 +18,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
                'reload']
 
-    __URL = request.urljoin(consts.HOST_NAME, "animelist/{0:s}&status=")
+    __URL = request.urljoin(HOST_NAME, "animelist/{0:s}&status=")
 
     def __init__(self, username: str, connection):
         """
@@ -98,6 +94,8 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         self._is_loaded = True
 
     def __get_my_animes(self, status: int) -> frozenset:
+        import bs4
+
         data = self.__connection.connect(self.__url + str(status))
         body = bs4.BeautifulSoup(data).body
 
@@ -110,7 +108,11 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
 
         return frozenset(map(self.__parse_manga_div, rows))
 
-    def __parse_manga_div(self, div: bs4.element.Tag) -> MyAnime.MyAnime:
+    def __parse_manga_div(self, div):
+        from urllib import parse
+
+        from pymal.account_objects import MyAnime
+
         links_div = div.findAll(name='td', recorsive=False)[1]
 
         link = links_div.find(name='a', attrs={'class': 'animetitle'})
@@ -129,6 +131,8 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         return "<User animes' number is {0:d}>".format(len(self))
 
     def __hash__(self):
+        import hashlib
+
         hash_md5 = hashlib.md5()
         hash_md5.update(self.__connection.username.encode())
         hash_md5.update(self.__class__.__name__.encode())

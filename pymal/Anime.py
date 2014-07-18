@@ -3,12 +3,8 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-import hashlib
 from urllib import request
-import os
-import io
 
-from PIL import Image
 import requests
 import bs4
 
@@ -16,7 +12,6 @@ from pymal import decorators
 from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions
-from pymal import exceptions
 
 __all__ = ['Anime']
 
@@ -112,7 +107,11 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
     def image_url(self) -> str:
         return self.__image_url
 
-    def get_image(self) -> Image.Image:
+    def get_image(self):
+        import io
+
+        from PIL import Image
+
         sock = requests.get(self.image_url)
         data = io.BytesIO(sock.content)
         return Image.open(data)
@@ -259,6 +258,8 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__episodes
 
     def reload(self):
+        import os
+
         # Getting content wrapper <div>
         content_wrapper_div = global_functions.get_content_wrapper_div(self.__mal_url, global_functions.connect)
 
@@ -463,7 +464,35 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
             assert 'Characters & Voice Actors' == other_data_kids[index].contents[-1],\
                 other_data_kids[index].contents[-1]
 
+        tag_for_reviews = main_content_other_data.find(text='More reviews').parent
+        link_for_reviews = request.urljoin(consts.HOST_NAME, tag_for_reviews['href'])
+        self.__parse_reviews(link_for_reviews)
+
+        tag_for_recommendations = main_content_other_data.find(text='More recommendations').parent
+        link_for_recommendations = request.urljoin(consts.HOST_NAME, tag_for_recommendations['href'])
+        self.__parse_recommendations(link_for_recommendations)
+
         self._is_loaded = True
+
+    def __parse_reviews(self, link_for_reviews: str):
+        from pymal.inner_objects import Review
+
+        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_reviews, global_functions.connect)
+        content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
+        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, reviews_data_div = main_cell.findAll(name='div', recursive=False)
+        reviews_data = reviews_data_div.findAll(name='div', recursive=False)[2:-2]
+        self.reviews = frozenset(map(Review.Review, reviews_data))
+
+    def __parse_recommendations(self, link_for_recommendations: str):
+        from pymal.inner_objects import Recommendation
+
+        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations, global_functions.connect)
+        content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
+        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, recommendations_data_div = main_cell.findAll(name='div', recursive=False)
+        recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:-1]
+        self.recommendations = frozenset(map(Recommendation.Recommendation, recommendations_data))
 
     @property
     def MY_MAL_XML_TEMPLATE(self) -> str:
@@ -490,6 +519,8 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
     def add(self, account):
         """
         """
+        from pymal import exceptions
+
         data = self.MY_MAL_XML_TEMPLATE.format(
             0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
             consts.MALAPI_NONE_TIME, 0, False, False, '', '', ''
@@ -535,6 +566,8 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         return False
 
     def __hash__(self):
+        import hashlib
+
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(b'Anime')
@@ -544,3 +577,6 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         title = '' if self.__title is None else ' ' + self.__title
         return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title,
                                               self.__id)
+
+    def __format__(self, format_spec):
+        return str(self).__format__(format_spec)
