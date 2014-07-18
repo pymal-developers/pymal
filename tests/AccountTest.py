@@ -3,6 +3,7 @@ import unittest
 from pymal import Account
 from pymal.account_objects import AccountMangas
 from pymal.account_objects import AccountAnimes
+from pymal.account_objects import AccountFriends
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -68,15 +69,10 @@ class FunctionsTestCase(unittest.TestCase):
     def test_reload(self):
         self.assertIsInstance(self.account.animes, AccountAnimes.AccountAnimes)
         self.assertIsInstance(self.account.mangas, AccountMangas.AccountMangas)
+        self.assertIsInstance(self.account.friends, AccountFriends.AccountFriends)
 
     def test_username(self):
         self.assertEqual(self.account.username, ACCOUNT_TEST_USERNAME)
-
-    def test_friends(self):
-        self.assertIsInstance(self.account.friends, set)
-        for friend in self.account.friends:
-            self.assertIsInstance(friend, Account.Account)
-            self.assertIn(self.account, friend.friends)
 
 
 def main():
