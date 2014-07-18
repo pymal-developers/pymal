@@ -8,7 +8,7 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 
 
 class AccountMangaListTestCase(unittest.TestCase):
-    EXPECTED_LENGTH = 2
+    EXPECTED_LENGTH = 1
 
     @classmethod
     def setUpClass(cls):
