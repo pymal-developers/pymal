@@ -21,14 +21,6 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     __AUTH_CHECKER_URL =\
         request.urljoin(HOST_NAME, r'api/account/verify_credentials.xml')
 
-    @property
-    def __MAIN_PROFILE_URL(self):
-        return request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
-
-    @property
-    def __FRIENDS_URL(self):
-        return self.__MAIN_PROFILE_URL + '/friends'
-
     __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
     __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
 
@@ -43,6 +35,9 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         self.__user_id = None
         self.__auth_object = None
         self.__cookies = dict()
+
+        self.__main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
+        self.__friends_url = self.__main_profile_url + '/friends'
 
         self.__animes = AccountAnimes.AccountAnimes(self.username, self)
         self.__mangas = AccountMangas.AccountMangas(self.username, self)
@@ -60,7 +55,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         if self.__user_id is None:
             import bs4
 
-            ret = self.connect(self.__MAIN_PROFILE_URL)
+            ret = self.connect(self.__main_profile_url)
             html = bs4.BeautifulSoup(ret)
             bla = html.find(name='input', attrs={'name': 'profileMemId'})
             self.__user_id = int(bla['value'])
@@ -76,30 +71,10 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     def friends(self) -> set:
-        class FriendsFrozenSet(set):
-            def __init__(self, account: Account, url: str):
-                super().__init__()
+        from pymal.account_objects import AccountFriends
 
-                self.account = account
-                self.__url = url
-                self.reload()
-
-            def reload(self):
-                self.clear()
-                div_wrapper = global_functions.get_content_wrapper_div(self.__url, self.account.connect)
-                assert div_wrapper is not None
-
-                list_div_friend = div_wrapper.findAll(name="div", attrs={"class": "friendBlock"})
-                for div_friend in list_div_friend:
-                    div_pic = div_friend.find(name="div", attrs={'class': 'picSurround'})
-                    assert div_pic is not None
-
-                    splited_friend_url = div_pic.a['href'].split('/profile/', 1)
-                    assert len(splited_friend_url) == 2
-
-                    self.add(Account(splited_friend_url[1]))
-
-        self.__friends = FriendsFrozenSet(account=self, url=self.__FRIENDS_URL)
+        if self.__friends is None:
+            self.__friends = AccountFriends.AccountFriends(self.__friends_url, self)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> map:
