@@ -14,6 +14,20 @@ __all__ = ['Account']
 
 class Account(object, metaclass=SingletonFactory.SingletonFactory):
     """
+    Account object that keeps all the account data in MAL.
+
+    Properties:
+     - username
+     - user_id
+     - mangas
+     - animes
+     - friends
+     - is_auth
+
+     Functions:
+      - search - like regular search but switching all the Anime/Manga to MyAnime/MyManga.
+      - change_password
+      - auth_connect
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',
                'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
@@ -26,6 +40,10 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
     def __init__(self, username: str, password: str or None=None):
         """
+        :param username: The account username.
+        :type: str
+        :param password: Required for quick connection, instead of calling later change_password.
+        :type: str or None
         """
         from pymal.account_objects import AccountAnimes, AccountMangas
 
@@ -34,7 +52,6 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         self.connect = global_functions.connect
         self.__user_id = None
         self.__auth_object = None
-        self.__cookies = dict()
 
         self.__main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
         self.__friends_url = self.__main_profile_url + '/friends'
@@ -48,10 +65,20 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     def username(self) -> str:
+        """
+        Returns the user name.
+
+        :rtype: str
+        """
         return self.__username
 
     @property
     def user_id(self) -> int:
+        """
+        Returns the user id. If unknown loading it.
+
+        :rtype: int
+        """
         if self.__user_id is None:
             import bs4
 
@@ -63,14 +90,29 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     def mangas(self):
+        """
+        Return list of account's mangas.
+
+        :rtype: AccountMangas
+        """
         return self.__mangas
 
     @property
     def animes(self):
+        """
+        Return list of account's animes.
+
+        :rtype: AccountAnimes
+        """
         return self.__animes
 
     @property
     def friends(self) -> set:
+        """
+        Return list of account's friends.
+
+        :rtype: AccountFriends
+        """
         from pymal.account_objects import AccountFriends
 
         if self.__friends is None:
@@ -79,6 +121,12 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
     def search(self, search_line: str, is_anime: bool=True) -> map:
         """
+        Searching like reagular search but switching all the object in "my" lists to the "my" objects.
+
+        :param search_line: the search line.
+        :type: str
+        :param is_anime: True is searching for anime, False for manga.
+        :type: bool
         """
         from pymal import searches
 
@@ -103,6 +151,9 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def change_password(self, password: str) -> bool:
         """
         Checking if the new password is valid
+
+        :param password
+        :type: str
         """
         from xml.etree import ElementTree
         from requests.auth import HTTPBasicAuth
@@ -137,6 +188,15 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def auth_connect(self, url: str, data: str or None=None,
                      headers: dict or None=None) -> str:
         """
+        Returns data after using the account authenticate to get the data.
+
+        :param url: The url to get.
+        :type: str
+        :param data: The data to pass (will change the request to "POST")
+        :type: str or None
+        :param headers: Headers for the request.
+        :type: dict or None
+        :rtype: str
         """
         from pymal import exceptions
 
@@ -146,12 +206,11 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
                                          auth=self.__auth_object).text.strip()
 
     @property
-    def __cookies_string(self) -> str:
-        return ";".join(["=".join(item)for item in self.__cookies.items()])
-
-    @property
     def is_auth(self) -> bool:
         """
+        Return True if the password is right (and able to authenticate).
+
+        :rtype: bool
         """
         return self.__auth_object is not None
 
