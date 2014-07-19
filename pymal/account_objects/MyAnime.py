@@ -241,7 +241,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
         bas_result = content_wrapper_div.find(name='div',
                                               attrs={'class': 'badresult'})
-        if bas_result is None:
+        if bas_result is not None:
             raise exceptions.FailedToReloadError(bas_result)
 
         # Getting content <td>
