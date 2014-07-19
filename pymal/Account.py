@@ -154,9 +154,12 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
         :param password
         :type: str
+
+        :exception exceptions.FailedToParseError: when failed
         """
         from xml.etree import ElementTree
         from requests.auth import HTTPBasicAuth
+        from pymal import exceptions
 
         self.__auth_object = HTTPBasicAuth(self.username, password)
         data = self.auth_connect(self.__AUTH_CHECKER_URL)
@@ -166,17 +169,20 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
             return False
         xml_user = ElementTree.fromstring(data)
 
-        assert 'user' == xml_user.tag, 'user == {0:s}'.format(xml_user.tag)
+        if 'user' != xml_user.tag:
+            raise exceptions.FailedToParseError('user == {0:s}'.format(xml_user.tag))
         l = list(xml_user)
         xml_username = l[1]
-        assert 'username' == xml_username.tag,\
-            'username == {0:s}'.format(xml_username.tag)
-        assert self.username == xml_username.text.strip(),\
-            'username = {0:s}'.format(xml_username.text.strip())
+        if 'username' != xml_username.tag:
+            raise exceptions.FailedToParseError('username == {0:s}'.format(xml_username.tag))
+        if self.username != xml_username.text.strip():
+            raise exceptions.FailedToParseError('username = {0:s}'.format(xml_username.text.strip()))
 
         xml_id = l[0]
-        assert 'id' == xml_id.tag, 'id == {0:s}'.format(xml_id.tag)
-        assert self.user_id == int(xml_id.text)
+        if 'id' != xml_id.tag:
+            raise exceptions.FailedToParseError('id == {0:s}'.format(xml_id.tag))
+        if self.user_id != int(xml_id.text):
+            raise exceptions.FailedToParseError()
 
         self.__password = password
 
