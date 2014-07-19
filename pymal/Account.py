@@ -17,15 +17,15 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     Account object that keeps all the account data in MAL.
 
     Properties:
-     - username
-     - user_id
-     - mangas
-     - animes
-     - friends
-     - is_auth
+     - username - str
+     - user_id - int
+     - mangas - AccountMangas
+     - animes - AccountAnimes
+     - friends - AccountFriedns
+     - is_auth - bool
 
      Functions:
-      - search - like regular search but switching all the Anime/Manga to MyAnime/MyManga.
+      - search
       - change_password
       - auth_connect
     """
