@@ -138,8 +138,9 @@ def __get_myanimelist_div(url: str, connection_function) -> bs4.element.Tag:
         div = html.body.find(name="div", attrs={"id": 'myanimelist'})
         if div is not None:
             return div
-    assert not got_robot, "Got robot."
-    raise exceptions.FailedToParseError("my anime list div wasnt found")
+    if got_robot:
+        raise exceptions.GotRobotError()
+    raise exceptions.FailedToParseError("my anime list div wasn't found")
 
 
 def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
