@@ -14,6 +14,7 @@ except ImportError:
 import bs4
 
 from pymal import consts
+from pymal import exceptions
 
 __all__ = ['connect', 'get_next_index', 'make_set', 'check_side_content_div', 'get_content_wrapper_div']
 
@@ -93,7 +94,8 @@ def make_set(self_set: set, i: int, list_of_tags: list) -> int:
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
-        assert 'a' == list_of_tags[i].name, list_of_tags[i].name
+        if 'a' != list_of_tags[i].name:
+            exceptions.FailedToParseError(list_of_tags[i].name)
         tag_href = list_of_tags[i]['href']
         if '/anime/' in tag_href:
             obj = Anime.Anime
@@ -116,7 +118,8 @@ def make_set(self_set: set, i: int, list_of_tags: list) -> int:
 
 def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
     span_node = div_node.span
-    assert span_node is not None, div_node
+    if span_node is None:
+        raise exceptions.FailedToParseError(div_node)
     expected_text += ":"
     if ['dark_text'] != span_node['class']:
         return False
@@ -136,7 +139,7 @@ def __get_myanimelist_div(url: str, connection_function) -> bs4.element.Tag:
         if div is not None:
             return div
     assert not got_robot, "Got robot."
-    assert False, "my anime list div wasnt found"
+    raise exceptions.FailedToParseError("my anime list div wasnt found")
 
 
 def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
@@ -145,7 +148,8 @@ def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
     # Getting content wrapper <div>
     content_wrapper_div = myanimelist_div.find(
         name="div", attrs={"id": "contentWrapper"}, recursive=False)
-    assert content_wrapper_div is not None
+    if content_wrapper_div is None:
+        raise exceptions.FailedToParseError(myanimelist_div)
     return content_wrapper_div
 
 
