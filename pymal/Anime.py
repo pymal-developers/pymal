@@ -18,6 +18,45 @@ __all__ = ['Anime']
 
 class Anime(object, metaclass=SingletonFactory.SingletonFactory):
     """
+    Anime object that keeps all the anime data in MAL.
+
+    Properties:
+     - id - int
+     - title - str
+     - image_url - str
+     - english - str
+     - synonyms - str
+     - japanese - str
+     - type - str
+     - status - int
+     - start_time - int
+     - end_time - int
+     - creators - dict
+     - genres - dict
+     - duration - int
+     - score - float
+     - rank - int
+     - popularity - int
+     - rating - str
+     - episodes - int
+     - synopsis - str
+
+     - adaptations - frozenset
+     - characters - frozenset
+     - sequels - frozenset
+     - prequels - frozenset
+     - spin_offs - frozenset
+     - alternative_versions - frozenset
+     - side_stories - frozenset
+     - summaries - frozenset
+     - others - frozenset
+     - parent_stories - frozenset
+     - alternative_settings - frozenset
+     - full_stories - frozenset
+
+     Functions:
+      - reload
+      - add
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
                'type', 'status', 'start_time', 'end_time', 'creators',
@@ -33,6 +72,8 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
 
     def __init__(self, mal_id: int):
         """
+        :param mal_id: the anime id in mal.
+        :type: int
         """
         self.__id = mal_id
         self._is_loaded = False
@@ -518,6 +559,10 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
 
     def add(self, account):
         """
+        :param account: the account to add him self anime.
+        :type: Account
+
+        :rtype: MyAnime
         """
         from pymal import exceptions
 
