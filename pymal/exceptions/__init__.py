@@ -15,3 +15,7 @@ class NotASeason(ValueError):
         super().__init__("The wanted season '{0:s}' is not: 'Winter', 'Spring', 'Summer' or 'Fall'.".format(
             tried_season_name
         ))
+
+
+from pymal.exceptions.FailedToParseError import *
+from pymal.exceptions.MyAnimeListApiError import *

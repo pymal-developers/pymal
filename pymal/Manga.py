@@ -285,6 +285,7 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
 
     def reload(self):
         import os
+        from pymal import exceptions
 
         # Getting content wrapper <div>
         content_wrapper_div = global_functions.get_content_wrapper_div(self.__mal_url, global_functions.connect)
@@ -295,8 +296,9 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting content <div>
         content_div = content_wrapper_div.find(
             name="div", attrs={"id": "content"}, recursive=False)
-        if consts.DEBUG:
-            assert content_div is not None
+
+        if content_div is None:
+            raise exceptions.FailedToReloadError(content_wrapper_div)
 
         content_table = content_div.table
 
@@ -309,7 +311,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting manga image url <img>
         img_div = side_contents_divs[0]
         img_link = img_div.find(name="a")
-        assert img_link is not None
+        if img_link is None:
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         self.__image_url = img_link.img['src']
 
         side_contents_divs_index = 3
@@ -343,49 +346,56 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
 
         # type <div>
         type_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Type', type_div)
+        if not global_functions.check_side_content_div('Type', type_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         type_span, self_type = type_div.contents
         self.__type = self_type.strip()
         side_contents_divs_index += 1
 
         # volumes <div>
         volumes_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Volumes', volumes_div)
+        if not global_functions.check_side_content_div('Volumes', volumes_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         volumes_span, self_volumes = volumes_div.contents
         self.__volumes = global_functions.make_counter(self_volumes.strip())
         side_contents_divs_index += 1
 
         # chapters <div>
         chapters_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Chapters', chapters_div)
+        if not global_functions.check_side_content_div('Chapters', chapters_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         chapters_span, self_chapters = chapters_div.contents
         self.__chapters = global_functions.make_counter(self_chapters .strip())
         side_contents_divs_index += 1
 
         # status <div>
         status_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Status', status_div)
+        if not global_functions.check_side_content_div('Status', status_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         status_span, self.__status = status_div.contents
         self.__status = self.__status.strip()
         side_contents_divs_index += 1
 
         # published <div>
         published_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Published', published_div)
+        if not global_functions.check_side_content_div('Published', published_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         published_span, published = published_div.contents
         self.__start_time, self.__end_time = global_functions.make_start_and_end_time(published)
         side_contents_divs_index += 1
 
         # genres <div>
         genres_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Genres', genres_div)
+        if not global_functions.check_side_content_div('Genres', genres_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         for genre_link in genres_div.findAll(name='a'):
             self.__genres[genre_link.text.strip()] = genre_link['href']
         side_contents_divs_index += 1
 
         # authors <div>
         authors_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Authors', authors_div)
+        if not global_functions.check_side_content_div('Authors', authors_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         for authors_link in authors_div.findAll(name='a'):
             self.__creators[authors_link.text.strip()] = authors_link['href']
         side_contents_divs_index += 1
@@ -394,36 +404,41 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
 
         # score <div>
         score_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Score', score_div)
+        if not global_functions.check_side_content_div('Score', score_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         score_span, self_score = score_div.contents[:2]
         self.__score = float(self_score)
         side_contents_divs_index += 1
 
         # rank <div>
         rank_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Ranked', rank_div)
+        if not global_functions.check_side_content_div('Ranked', rank_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         rank_span, self_rank = rank_div.contents[:2]
         self_rank = self_rank.strip()
-        assert self_rank.startswith("#")
+        if not self_rank.startswith("#"):
+            raise exceptions.FailedToReloadError(self_rank)
         self.__rank = int(self_rank[1:])
         side_contents_divs_index += 1
 
         # popularity <div>
         popularity_div = side_contents_divs[side_contents_divs_index]
-        assert global_functions.check_side_content_div('Popularity', popularity_div)
+        if not global_functions.check_side_content_div('Popularity', popularity_div):
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         popularity_span, self_popularity = popularity_div.contents[:2]
         self_popularity = self_popularity.strip()
-        assert self_popularity.startswith("#")
+        if not self_popularity.startswith("#"):
+            raise exceptions.FailedToReloadError(self_popularity)
         self.__popularity = int(self_popularity[1:])
 
         # Data from main content
         main_content = contents[1]
         main_content_inner_divs = main_content.findAll(
             name='div', recursive=False)
-        if consts.DEBUG:
-            assert 2 == len(main_content_inner_divs), \
-                "Got len(main_content_inner_divs) == {0:d}".format(
-                    len(main_content_inner_divs))
+        if 2 != len(main_content_inner_divs):
+            raise exceptions.FailedToReloadError(
+            "Got len(main_content_inner_divs) == {0:d}".format(
+                len(main_content_inner_divs)))
         main_content_datas = main_content_inner_divs[
             1].table.tbody.findAll(name="tr", recursive=False)
 
@@ -433,9 +448,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting synopsis
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
-        if consts.DEBUG:
-            assert 'Synopsis' == synopsis_cell.h2.text.strip(
-            ), synopsis_cell.h2.text.strip()
+        if 'Synopsis' != synopsis_cell.h2.text.strip():
+            raise exceptions.FailedToReloadError(synopsis_cell.h2.text.strip())
         self.__synopsis = os.linesep.join([
             synopsis_cell_content.strip()
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
@@ -462,15 +476,15 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         next_index = global_functions.get_next_index(index, other_data_kids)
 
         if consts.DEBUG:
-            assert next_index - \
-                index == 2, "{0:d} - {1:d}".format(next_index, index)
+            if next_index - index != 2:
+                raise exceptions.FailedToReloadError("{0:d} - {1:d}".format(next_index, index))
             index = next_index + 1
 
             # Getting all the data under 'Characters & Voice Actors'
-            assert 'h2' == other_data_kids[index].name, 'h2 == {0:s}'.format(
-                other_data_kids[index].name)
-            assert 'Characters' == other_data_kids[index].contents[-1],\
-                other_data_kids[index].contents[-1]
+            if 'h2' != other_data_kids[index].name:
+                raise exceptions.FailedToReloadError('h2 == {0:s}'.format(other_data_kids[index].name))
+            if 'Characters' != other_data_kids[index].contents[-1]:
+                raise exceptions.FailedToReloadError(other_data_kids[index].contents[-1])
 
         tag_for_reviews = main_content_other_data.find(text='More reviews').parent
         link_for_reviews = request.urljoin(consts.HOST_NAME, tag_for_reviews['href'])
