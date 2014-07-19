@@ -249,7 +249,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="div", attrs={"id": "content"}, recursive=False)
         if content_div is None:
             raise exceptions.FailedToReloadError(content_wrapper_div)
-
         content_td = content_div.table.tr.td
         if content_td is None:
             raise exceptions.FailedToReloadError(content_div)
@@ -258,7 +257,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         content_form = content_td.find(name="form", attrs={'id': "myAnimeForm"})
         if content_form is None:
             raise exceptions.FailedToReloadError(content_td)
-
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
 
@@ -283,7 +281,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="input", attrs={"id": "rewatchingBox"})
         if is_rewatch_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         self.__my_is_rewatching = bool(is_rewatch_node['value'])
         contents_divs_index += 1
 
@@ -293,7 +290,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
                                       "name": "completed_eps"})
         if watched_input is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         self.__my_completed_episodes = int(watched_input['value'])
         contents_divs_index += 1
 
@@ -302,12 +298,10 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "score"})
         if score_select is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         score_selected_option = score_select.find(
             name="option", attrs={"selected": ""})
         if score_selected_option is None:
             raise exceptions.FailedToReloadError(score_select)
-
         self.__my_score = int(float(score_selected_option['value']))
         contents_divs_index += 1
 
@@ -323,7 +317,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "startMonth"})
         if start_month_date_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         start_month_date = start_month_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -331,7 +324,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "startDay"})
         if start_day_date_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         start_day_date = start_day_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -339,7 +331,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "startYear"})
         if start_year_date_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         start_year_date = start_year_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -355,7 +346,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "endMonth"})
         if end_month_date_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         end_month_date = end_month_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -363,7 +353,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "endDay"})
         if end_day_date_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         end_day_date = end_day_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -371,7 +360,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "endYear"})
         if end_year_date_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         end_year_date = end_year_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -393,12 +381,10 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"name": "priority"})
         if priority_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         selected_priority_node = priority_node.find(
             name="option", attrs={"selected": ""})
         if selected_priority_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         self.__my_priority = int(selected_priority_node['value'])
         contents_divs_index += 1
 
@@ -407,7 +393,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={"id": "storage"})
         if storage_type_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         selected_storage_type_node = storage_type_node.find(
             name="option", attrs={"selected": ""})
         if selected_storage_type_node is None:
@@ -419,7 +404,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="input", attrs={"id": "storageValue"})
         if storage_value_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         self.__my_storage_value = float(storage_value_node['value'])
         contents_divs_index += 1
 
@@ -429,7 +413,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
                                       'name': 'list_downloaded_eps'})
         if downloaded_episodes_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         self.__my_download_episodes == int(downloaded_episodes_node['value'])
         contents_divs_index += 1
 
@@ -439,7 +422,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         self.__my_times_rewatched == int(times_rewatched_node['value'])
         if times_rewatched_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         contents_divs_index += 1
 
         # Getting rewatched value
@@ -447,7 +429,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name="select", attrs={'name': 'list_rewatch_value'})
         if rewatch_value_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         rewatch_value_option = rewatch_value_node.find(
             name='option', attrs={'selected': ''})
         if rewatch_value_option is None:
@@ -468,7 +449,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             name='select', attrs={"name": "discuss"})
         if discuss_node is None:
             raise exceptions.FailedToReloadError(content_rows)
-
         self._is_my_loaded = True
 
     def to_xml(self):
