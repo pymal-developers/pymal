@@ -284,6 +284,9 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__chapters
 
     def reload(self):
+        """
+        :exception exceptions.FailedToReloadError: when failed.
+        """
         import os
         from pymal import exceptions
 
@@ -542,6 +545,8 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
         """
         :param account: the account to add him self manga.
         :type: Account
+
+        :exception exceptions.MyAnimeListApiAddError: when failed.
 
         :rtype: MyManga
         """

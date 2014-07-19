@@ -299,6 +299,9 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         return self.__episodes
 
     def reload(self):
+        """
+        :exception exceptions.FailedToReloadError: when failed.
+        """
         import os
         from pymal import exceptions
 
@@ -576,6 +579,8 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         """
         :param account: the account to add him self anime.
         :type: Account
+
+        :exception exceptions.MyAnimeListApiAddError: when failed.
 
         :rtype: MyAnime
         """
