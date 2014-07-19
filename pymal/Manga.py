@@ -18,6 +18,45 @@ __all__ = ['Manga']
 
 class Manga(object, metaclass=SingletonFactory.SingletonFactory):
     """
+    Anime object that keeps all the anime data in MAL.
+
+    Properties:
+     - id - int
+     - title - str
+     - image_url - str
+     - english - str
+     - synonyms - str
+     - japanese - str
+     - type - str
+     - status - int
+     - start_time - int
+     - end_time - int
+     - creators - dict
+     - genres - dict
+     - duration - int
+     - score - float
+     - rank - int
+     - popularity - int
+     - rating - str
+     - chapters - int
+     - volumes - int
+     - synopsis - str
+
+     - adaptations - frozenset
+     - characters - frozenset
+     - sequels - frozenset
+     - prequels - frozenset
+     - spin_offs - frozenset
+     - alternative_versions - frozenset
+     - side_stories - frozenset
+     - summaries - frozenset
+     - others - frozenset
+     - parent_stories - frozenset
+     - alternative_settings - frozenset
+
+     Functions:
+      - reload
+      - add
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
                'type', 'status', 'start_time', 'end_time', 'creators',
@@ -487,6 +526,10 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
 
     def add(self, account):
         """
+        :param account: the account to add him self manga.
+        :type: Account
+
+        :rtype: MyManga
         """
         from pymal import exceptions
 
