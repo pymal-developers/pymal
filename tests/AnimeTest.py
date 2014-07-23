@@ -1,11 +1,16 @@
 import unittest
+from unittest.mock import Mock
+from os import path
 
 from pymal import Account
 from pymal import Anime
 from pymal import Manga
+from pymal import global_functions
 from pymal.account_objects import MyAnime
+import bs4
 
-from tests.constants_for_testing import ADD_ANIME_ID, ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from tests.constants_for_testing import ADD_ANIME_ID, ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD,\
+    SOURCES_DIRECTORY
 
 
 class ReloadTestCase(unittest.TestCase):
@@ -13,7 +18,20 @@ class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.anime = Anime.Anime(ANIME_ID)
+        cls.__global_functions_get_content_wrapper_div = global_functions.get_content_wrapper_div
+
+        with open(path.join(SOURCES_DIRECTORY, "Lucky☆Star - MyAnimeList.net.html"), "rb") as f:
+            data = f.read().decode()
+        html = bs4.BeautifulSoup(data, "html5lib")
+        myanimelist_div = html.body.find(name="div", attrs={"id": 'myanimelist'})
+        content_wrapper_div = myanimelist_div.find(name="div", attrs={"id": "contentWrapper"}, recursive=False)
+        global_functions.get_content_wrapper_div = Mock(return_value=content_wrapper_div)
+
         cls.anime.reload()
+
+    @classmethod
+    def tearDownClass(cls):
+        global_functions.get_content_wrapper_div = cls.__global_functions_get_content_wrapper_div
 
     def test_id(self):
         self.assertEqual(self.anime.id, ANIME_ID)
