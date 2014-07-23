@@ -3,6 +3,8 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
+from pymal import exceptions
+
 
 class Recommendation(object):
     def __init__(self, div):
@@ -19,7 +21,7 @@ class Recommendation(object):
             _, _, first_recommend, _, other_recommends = data
             recommends = [first_recommend] + other_recommends.findAll(name="div", recursive=False)
         else:
-            assert False, "Unknown size of data: " + str(len(data))
+            raise exceptions.FailedToReloadError( "Unknown size of data: " + str(len(data)))
 
         self.recommends = dict()
 

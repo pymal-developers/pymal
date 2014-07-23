@@ -38,7 +38,7 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
         self.year = int(year)
         self.season_name = season_name.title()
         if self.season_name not in self.__SEAONS_NAME_TO_START_MONTH:
-            raise exceptions.NotASeason(season_name)
+            raise exceptions.NotASeasonError(season_name)
         self.url = self.__SEASON_URL.format(self.year, self.season_name)
 
         self._is_loaded = False

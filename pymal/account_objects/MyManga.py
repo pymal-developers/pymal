@@ -248,19 +248,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
 
         bas_result = content_wrapper_div.find(name='div',
                                               attrs={'class': 'badresult'})
-        assert bas_result is None
+        if bas_result is not None:
+            raise exceptions.FailedToReloadError(bas_result)
 
         # Getting content <td>
         content_div = content_wrapper_div.find(
             name="div", attrs={"id": "content"}, recursive=False)
-        assert content_div is not None
-
+        if content_div is None:
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         content_td = content_div.table.tr.td
-        assert content_td is not None
+        if content_td is None:
+            raise exceptions.FailedToReloadError(content_div)
 
         # Getting content rows <tr>
         content_form = content_td.find(name="form", attrs={'id': "mangaForm"})
-        assert content_form is not None
+        if content_form is None:
+            raise exceptions.FailedToReloadError(content_td)
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
 
@@ -269,18 +272,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting my_status
         status_select = content_rows[contents_divs_index].find(
             name="select", attrs={"id": "status", "name": "status"})
-        assert status_select is not None
+        if status_select is None:
+            raise exceptions.FailedToReloadError(content_rows)
+
         # TODO: make this look better
         status_selected_options = list(filter(
             lambda x: 'selected' in x.attrs,
             status_select.findAll(name="option")
         ))
-        assert 1 == len(status_selected_options)
+        if 1 != len(status_selected_options):
+            raise exceptions.FailedToReloadError(status_selected_options)
         self.__my_status = int(status_selected_options[0]['value'])
 
         is_reread_node = content_rows[contents_divs_index].find(
             name="input", attrs={"id": "rereadingBox"})
-        assert is_reread_node is not None
+        if is_reread_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_is_rereading = bool(is_reread_node['value'])
         contents_divs_index += 1
 
@@ -288,7 +295,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         read_input = content_rows[contents_divs_index].\
             find(name="input", attrs={"id": "vol_read",
                                       "name": "vol_read"})
-        assert read_input is not None
+        if read_input is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_completed_volumes = int(read_input['value'])
         contents_divs_index += 1
 
@@ -296,17 +304,20 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         read_input = content_rows[contents_divs_index].\
             find(name="input", attrs={"id": "chap_read",
                                       "name": "chap_read"})
-        assert read_input is not None
+        if read_input is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_completed_chapters = int(read_input['value'])
         contents_divs_index += 1
 
         # Getting my_score
         score_select = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "score"})
-        assert score_select is not None
+        if score_select is None:
+            raise exceptions.FailedToReloadError(content_rows)
         score_selected_option = score_select.find(
             name="option", attrs={"selected": ""})
-        assert score_selected_option is not None
+        if score_selected_option is  None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_score = int(float(score_selected_option['value']))
         contents_divs_index += 1
 
@@ -320,19 +331,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting start date
         start_month_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "startMonth"})
-        assert start_month_date_node is not None
+        if start_month_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         start_month_date = start_month_date_node.find(
             name="option", attrs={"selected": ""})
 
         start_day_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "startDay"})
-        assert start_day_date_node is not None
+        if start_day_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         start_day_date = start_day_date_node.find(
             name="option", attrs={"selected": ""})
 
         start_year_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "startYear"})
-        assert start_year_date_node is not None
+        if start_year_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         start_year_date = start_year_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -346,19 +360,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting end date
         end_month_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "endMonth"})
-        assert end_month_date_node is not None
+        if end_month_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         end_month_date = end_month_date_node.find(
             name="option", attrs={"selected": ""})
 
         end_day_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "endDay"})
-        assert end_day_date_node is not None
+        if end_day_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         end_day_date = end_day_date_node.find(
             name="option", attrs={"selected": ""})
 
         end_year_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "endYear"})
-        assert end_year_date_node is not None
+        if end_year_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         end_year_date = end_year_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -371,17 +388,20 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting priority
         priority_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "priority"})
-        assert priority_node is not None
+        if priority_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         selected_priority_node = priority_node.find(
             name="option", attrs={"selected": ""})
-        assert selected_priority_node is not None
+        if selected_priority_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_priority = int(selected_priority_node['value'])
         contents_divs_index += 1
 
         # Getting storage
         storage_type_node = content_rows[contents_divs_index].find(
             name="select", attrs={"id": "storageSel"})
-        assert storage_type_node is not None
+        if storage_type_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         selected_storage_type_node = storage_type_node.find(
             name="option", attrs={"selected": ""})
         if selected_storage_type_node is None:
@@ -394,7 +414,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         downloaded_chapters_node = content_rows[contents_divs_index].\
             find(name="input", attrs={'id': "dChap",
                                       'name': 'downloaded_chapters'})
-        assert downloaded_chapters_node is not None
+        if downloaded_chapters_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_downloaded_chapters == int(downloaded_chapters_node['value'])
         contents_divs_index += 1
 
@@ -402,13 +423,15 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         times_reread_node = content_rows[contents_divs_index].find(
             name="input", attrs={'name': 'times_read'})
         self.__my_times_reread == int(times_reread_node['value'])
-        assert times_reread_node is not None
+        if times_reread_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         contents_divs_index += 1
 
         # Getting reread value
         reread_value_node = content_rows[contents_divs_index].find(
             name="select", attrs={'name': 'reread_value'})
-        assert reread_value_node is not None
+        if reread_value_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         reread_value_option = reread_value_node.find(
             name='option', attrs={'selected': ''})
         if reread_value_option is None:
@@ -427,7 +450,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting discuss flag
         discuss_node = content_rows[contents_divs_index].find(
             name='input', attrs={"name": "discuss"})
-        assert discuss_node is not None
+        if discuss_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self._is_my_loaded = True
 
     def to_xml(self):
