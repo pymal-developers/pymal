@@ -42,10 +42,10 @@ class ReloadTestCase(unittest.TestCase):
         #self.assertEqual(self.anime.episodes, float('inf'))
 
     def test_start_time(self):
-        self.assertEqual(self.anime.start_time, 1175979600)
+        self.assertEqual(self.anime.start_time, 1175990400)
 
     def test_end_time(self):
-        self.assertEqual(self.anime.end_time, 1189976400.0)
+        self.assertEqual(self.anime.end_time, 1189987200)
 
     def test_rating(self):
         self.assertEqual(self.anime.rating, 'PG-13 - Teens 13 or older')
