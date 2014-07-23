@@ -513,13 +513,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         return self.obj == other
 
     def __hash__(self):
-        import hashlib
-
-        hash_md5 = hashlib.md5()
-        hash_md5.update(str(self.id).encode())
-        hash_md5.update(str(hash(self._account)).encode())
-        hash_md5.update(b'MyAnime')
-        return int(hash_md5.hexdigest(), 16)
+        return hash(self.obj)
 
     def __repr__(self):
         title = " '{0:s}'".format(self.title) if self.obj._is_loaded else ''
