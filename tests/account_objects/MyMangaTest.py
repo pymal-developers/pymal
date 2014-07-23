@@ -75,11 +75,7 @@ class ReloadTestCase(unittest.TestCase):
 
     def test_to_xml(self):
         xml = self.manga.to_xml()
-        try:
-            ElementTree.fromstring(xml)
-        except BaseException as err:
-            print(err)
-            self.assertTrue(False)
+        ElementTree.fromstring(xml)
 
     def test_str(self):
         repr(self.manga)
