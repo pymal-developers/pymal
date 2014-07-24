@@ -60,10 +60,10 @@ class ReloadTestCase(unittest.TestCase):
         #self.assertEqual(self.anime.episodes, float('inf'))
 
     def test_start_time(self):
-        self.assertEqual(self.anime.start_time, 1175979600)
+        self.assertEqual(self.anime.start_time, 1175990400)
 
     def test_end_time(self):
-        self.assertEqual(self.anime.end_time, 1189976400)
+        self.assertEqual(self.anime.end_time, 1189987200)
 
     def test_rating(self):
         self.assertEqual(self.anime.rating, 'PG-13 - Teens 13 or older')
@@ -81,7 +81,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.popularity, int)
 
     def test_synopsis(self):
-        print(self.anime.synopsis.decode())
+        print(self.anime.synopsis.encode())
         self.assertEqual(self.anime.synopsis, """Having fun in school, doing homework \ntogether, cooking and eating, playing videogames, watching anime. All \nthose little things make up the daily life of the anime—and \nchocolate-loving—Izumi Konata and her friends. Sometimes relaxing but \nmore than often simply funny!\r\n""")
 
     def test_spinoff(self):
