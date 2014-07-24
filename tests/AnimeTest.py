@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock
+import os
 from os import path
 
 from pymal import Account
@@ -81,8 +82,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.popularity, int)
 
     def test_synopsis(self):
-        print(self.anime.synopsis.encode())
-        self.assertEqual(self.anime.synopsis, """Having fun in school, doing homework \ntogether, cooking and eating, playing videogames, watching anime. All \nthose little things make up the daily life of the anime—and \nchocolate-loving—Izumi Konata and her friends. Sometimes relaxing but \nmore than often simply funny!\r\n""")
+        self.assertEqual(self.anime.synopsis, "Having fun in school, doing homework \ntogether, cooking and eating, playing videogames, watching anime. All \nthose little things make up the daily life of the anime—and \nchocolate-loving—Izumi Konata and her friends. Sometimes relaxing but \nmore than often simply funny!" + os.linesep)
 
     def test_spinoff(self):
         self.assertIsInstance(self.anime.spin_offs, frozenset)
