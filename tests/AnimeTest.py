@@ -40,7 +40,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertEqual(self.anime.title, 'Lucky☆Star')
 
     def test_image_url(self):
-        self.assertEqual(self.anime.image_url, 'http://cdn.myanimelist.net/images/anime/13/15010.jpg')
+        self.assertEqual(self.anime.image_url, 'Lucky%E2%98%86Star%20-%20MyAnimeList.net_files/15010.jpg')
 
     def test_english(self):
         self.assertEqual(self.anime.english, 'Lucky☆Star')
@@ -60,10 +60,10 @@ class ReloadTestCase(unittest.TestCase):
         #self.assertEqual(self.anime.episodes, float('inf'))
 
     def test_start_time(self):
-        self.assertEqual(self.anime.start_time, 1175990400)
+        self.assertEqual(self.anime.start_time, 1175979600)
 
     def test_end_time(self):
-        self.assertEqual(self.anime.end_time, 1189987200)
+        self.assertEqual(self.anime.end_time, 1189976400)
 
     def test_rating(self):
         self.assertEqual(self.anime.rating, 'PG-13 - Teens 13 or older')
@@ -81,7 +81,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.popularity, int)
 
     def test_synopsis(self):
-        self.assertEqual(self.anime.synopsis, """Having fun in school, doing homework together, cooking and eating, playing videogames, watching anime. All those little things make up the daily life of the anime—and chocolate-loving—Izumi Konata and her friends. Sometimes relaxing but more than often simply funny!\r\n""")
+        self.assertEqual(self.anime.synopsis, """Having fun in school, doing homework \ntogether, cooking and eating, playing videogames, watching anime. All \nthose little things make up the daily life of the anime—and \nchocolate-loving—Izumi Konata and her friends. Sometimes relaxing but \nmore than often simply funny!\r\n""")
 
     def test_spinoff(self):
         self.assertIsInstance(self.anime.spin_offs, frozenset)
