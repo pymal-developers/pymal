@@ -81,6 +81,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.anime.popularity, int)
 
     def test_synopsis(self):
+        print(self.anime.synopsis.decode())
         self.assertEqual(self.anime.synopsis, """Having fun in school, doing homework \ntogether, cooking and eating, playing videogames, watching anime. All \nthose little things make up the daily life of the anime—and \nchocolate-loving—Izumi Konata and her friends. Sometimes relaxing but \nmore than often simply funny!\r\n""")
 
     def test_spinoff(self):
