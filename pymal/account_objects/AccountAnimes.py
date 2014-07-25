@@ -14,6 +14,18 @@ __all__ = ['AccountAnimes']
 
 class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     """
+    AccountAnimes is a slow loading of an account anime list.
+
+    Properties:
+     - map_of_lists
+     - watching - frozenset
+     - completed - frozenset
+     - on_hold - frozenset
+     - dropped - frozenset
+     - plan_to_watch - frozenset
+
+    Functions:
+     - reload
     """
     __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
                'reload']
@@ -22,6 +34,8 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
 
     def __init__(self, account):
         """
+        :param account: Which account this anime list is connected to.
+        :type: Account
         """
         self.__account = account
         self.__url = self.__URL.format(account.username)
@@ -57,34 +71,61 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     @property
     @decorators.load
     def watching(self) -> frozenset:
+        """
+        :return: The watching list
+        :rtype: frozenset
+        """
         return self.__watching
 
     @property
     @decorators.load
     def completed(self) -> frozenset:
+        """
+        :return: The completed list
+        :rtype: frozenset
+        """
         return self.__completed
 
     @property
     @decorators.load
     def on_hold(self) -> frozenset:
+        """
+        :return: The on hold list
+        :rtype: frozenset
+        """
         return self.__on_hold
 
     @property
     @decorators.load
     def dropped(self) -> frozenset:
+        """
+        :return: The dropped list
+        :rtype: frozenset
+        """
         return self.__dropped
 
     @property
     @decorators.load
     def plan_to_watch(self) -> frozenset:
+        """
+        :return: The plan to watch list
+        :rtype: frozenset
+        """
         return self.__plan_to_watch
 
     @property
     def _values(self) -> frozenset:
+        """
+        :return: The all the animes
+        :rtype: frozenset
+        """
         return self.watching | self.completed | self.on_hold | self.dropped |\
                self.plan_to_watch
 
     def reload(self):
+        """
+        reloading data from MAL.
+        """
         self.__watching = self.__get_my_animes(1)
         self.__completed = self.__get_my_animes(2)
         self.__on_hold = self.__get_my_animes(3)
