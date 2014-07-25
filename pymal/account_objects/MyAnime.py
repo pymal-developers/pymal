@@ -690,6 +690,8 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         if self.obj.episodes == float('inf'):
             return False
         self.my_completed_episodes = self.obj.episodes
+        self.my_is_rewatching = False
+        self.my_status = 2
         return True
 
     def set_completed_download(self) -> bool:
