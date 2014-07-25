@@ -299,7 +299,7 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         :return: The times of rereading is a positive value.
         :type: int
         """
-        return self.__my_times_rewatched
+        return self.__my_times_reread
 
     @my_times_reread.setter
     def my_times_reread(self, times_reread: int):
