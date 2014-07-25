@@ -5,7 +5,23 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 
 class Review(object):
+    """
+    Review holds all the data from a review in MAL about an anime.
+
+    Properties:
+        date - string
+        account - Account
+        helpful - int
+        watched - int
+        when_written - string
+        rating - int
+        data - string
+    """
     def __init__(self, div):
+        """
+        :param div: The div of the review to parse all the data from it.
+        :type: bs4.element.Tag
+        """
         from pymal import Account
 
         time_div, general_data_div, text_div, _ = div.findAll(name="div", recursive=False)
