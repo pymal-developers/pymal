@@ -14,17 +14,31 @@ __all__ = ['AccountMangas']
 
 class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
     """
+    AccountAnimes is a slow loading of an account anime list.
+
+    Properties:
+     - map_of_lists
+     - reading - frozenset
+     - completed - frozenset
+     - on_hold - frozenset
+     - dropped - frozenset
+     - plan_to_read - frozenset
+
+    Functions:
+     - reload
     """
     __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
                'reload']
 
     __URL = request.urljoin(HOST_NAME, "mangalist/{0:s}&status=")
 
-    def __init__(self, username: str, connection):
+    def __init__(self, account):
         """
+        :param account: Which account this manga list is connected to.
+        :type: Account
         """
-        self.__connection = connection
-        self.__url = self.__URL.format(username)
+        self.__account = account
+        self.__url = self.__URL.format(account.username)
 
         self.__reading = frozenset()
         self.__completed = frozenset()
@@ -57,34 +71,61 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
     @property
     @decorators.load
     def reading(self) -> frozenset:
+        """
+        :return: The reading list
+        :rtype: frozenset
+        """
         return self.__reading
 
     @property
     @decorators.load
     def completed(self) -> frozenset:
+        """
+        :return: The completed list
+        :rtype: frozenset
+        """
         return self.__completed
 
     @property
     @decorators.load
     def on_hold(self) -> frozenset:
+        """
+        :return: The on hold list
+        :rtype: frozenset
+        """
         return self.__on_hold
 
     @property
     @decorators.load
     def dropped(self) -> frozenset:
+        """
+        :return: The dropped list
+        :rtype: frozenset
+        """
         return self.__dropped
 
     @property
     @decorators.load
     def plan_to_read(self) -> frozenset:
+        """
+        :return: The plan to read list
+        :rtype: frozenset
+        """
         return self.__plan_to_read
 
     @property
-    def _values(self):
+    def _values(self) -> frozenset:
+        """
+        :return: The all the mangas
+        :rtype: frozenset
+        """
         return self.reading | self.completed | self.on_hold | self.dropped |\
                self.plan_to_read
 
     def reload(self):
+        """
+        reloading data from MAL.
+        """
         self.__reading = self.__get_my_animes(1)
         self.__completed = self.__get_my_animes(2)
         self.__on_hold = self.__get_my_animes(3)

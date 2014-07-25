@@ -57,7 +57,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         self.__friends_url = self.__main_profile_url + '/friends'
 
         self.__animes = AccountAnimes.AccountAnimes(self)
-        self.__mangas = AccountMangas.AccountMangas(self.username, self)
+        self.__mangas = AccountMangas.AccountMangas(self)
         self.__friends = None
 
         if password is not None:
