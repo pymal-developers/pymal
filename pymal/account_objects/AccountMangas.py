@@ -137,7 +137,7 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
     def __get_my_animes(self, status: int) -> frozenset:
         import bs4
 
-        data = self.__connection.connect(self.__url + str(status))
+        data = self.__account.connect(self.__url + str(status))
         body = bs4.BeautifulSoup(data).body
 
         main_div = body.find(name='div', attrs={'id': 'list_surround'})
@@ -159,14 +159,14 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
         link = links_div.find(name='a', attrs={'class': 'animetitle'})
         link_id = int(link['href'].split('/')[2])
 
-        if self.__connection.is_auth:
+        if self.__account.is_auth:
             my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
             _, query = parse.splitquery(my_link['href'])
             my_link_id = int(parse.parse_qs(query)['id'][0])
         else:
             my_link_id = 0
 
-        return MyManga.MyManga(link_id, my_link_id, self.__connection)
+        return MyManga.MyManga(link_id, my_link_id, self.__account)
 
     def __repr__(self):
         return "<User mangas' number is {0:d}>".format(len(self))
@@ -175,6 +175,6 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
         import hashlib
 
         hash_md5 = hashlib.md5()
-        hash_md5.update(self.__connection.username.encode())
+        hash_md5.update(self.__account.username.encode())
         hash_md5.update(self.__class__.__name__.encode())
         return int(hash_md5.hexdigest(), 16)
