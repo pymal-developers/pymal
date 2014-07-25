@@ -145,7 +145,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_start_date(self):
+    def my_start_date(self) -> str:
         """
         :return: the start date of watching.
         """
@@ -162,7 +162,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_end_date(self):
+    def my_end_date(self) -> str:
         """
         :return: the end date of watching.
         :type: str
@@ -180,7 +180,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_priority(self):
+    def my_priority(self) -> int:
         """
         :return: The priority value as int between 0 to 3
         :rtype: int
@@ -199,7 +199,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_storage_type(self):
+    def my_storage_type(self) -> int:
         """
         :return: The storage type of the downloaded episodes. Between 0 to 7.
         :rtype: int
@@ -218,7 +218,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_storage_value(self):
+    def my_storage_value(self) -> float:
         """
         :return: the storage value (the size you saved) - float but a real number!
         :rtype: float
@@ -236,7 +236,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_is_rewatching(self):
+    def my_is_rewatching(self) -> bool:
         """
         :return: a flag to know if rewatching now.
         :rtype: bool
@@ -253,7 +253,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_completed_episodes(self):
+    def my_completed_episodes(self) -> int:
         """
         :return: the number of completed episodes.
         :rtype: int
@@ -272,7 +272,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_download_episodes(self):
+    def my_download_episodes(self) -> int:
         """
         :return: the number of downloaded episodes.
         :rtype: int
@@ -291,7 +291,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_times_rewatched(self):
+    def my_times_rewatched(self) -> int:
         """
         :return: The times of rewatching is a positive value.
         :type: int
@@ -310,7 +310,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     @decorators.my_load
-    def my_rewatch_value(self):
+    def my_rewatch_value(self) -> int:
         """
         :return: The rewatching is between 0 to 5.
         :type: int
@@ -675,7 +675,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
     @property
     def is_completed(self) -> bool:
         """
-        :return: True if the nujber of completed episode is equal to number of episode in anime.
+        :return: True if the number of completed episode is equal to number of episode in anime.
         :rtype: bool
         """
         return self.my_completed_episodes == self.obj.episodes
