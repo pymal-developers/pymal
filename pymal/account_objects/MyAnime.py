@@ -644,7 +644,6 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             raise exceptions.MyAnimeListApiDeleteError(ret)
 
     def increase(self) -> bool:
-        if self.is_completed:
         """
         Increasing the watched episode.
         If it is completed, setting the flag of rewatching.
@@ -652,7 +651,12 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         :return: True if succeed to set every.
         :rtype: bool
         """
+        if self.my_completed_episodes >= self.obj.episodes:
             return False
+        if 0 == self.my_completed_episodes and 2 != self.my_status:
+            self.my_is_rewatching = True
+            self.my_times_rewatched += 1
+            self.my_completed_episodes = 0
         self.my_completed_episodes += 1
         return True
 
