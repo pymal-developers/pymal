@@ -659,8 +659,12 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         :return: True if succeed to set every.
         :rtype: bool
         """
-        if self.is_completed:
+        if self.my_completed_chapters >= self.obj.chapters:
             return False
+        if 0 == self.my_completed_chapters and 2 != self.my_status:
+            self.my_is_rereading = True
+            self.my_times_reread += 1
+            self.my_completed_chapters = 0
         self.my_completed_chapters += 1
         return True
 
