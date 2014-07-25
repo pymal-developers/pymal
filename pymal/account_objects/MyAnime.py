@@ -661,13 +661,13 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         return True
 
     def increase_downloaded(self) -> bool:
-        if self.is_completed:
         """
         Increasing the downloaded episode.
 
         :return: True if succeed to set every.
         :rtype: bool
         """
+        if self.my_download_episodes >= self.obj.episodes:
             return False
         self.my_download_episodes += 1
         return True
