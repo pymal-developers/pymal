@@ -36,6 +36,17 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         my_tags - string.
         my_comments - string
         my_fan_sub_groups - string.
+
+    Functions:
+        my_reload
+        to_xml
+        add
+        update
+        delete
+        increase
+        increase_downloaded
+        set_completed
+        set_completed_download
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
                'my_start_date', 'my_end_date', 'my_priority',
@@ -87,61 +98,103 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         self.__my_rewatch_value = None
 
     @property
-    def my_id(self):
+    def my_id(self) -> int:
+        """
+        :return: the id in the account.
+        :rtype: int
+        """
         return self.__my_mal_id
 
     @property
     @decorators.my_load
-    def my_status(self):
+    def my_status(self) -> int:
+        """
+        :return: the status as number between 1 to 6.
+        :rtype: int
+        """
         return self.__my_status
 
     @my_status.setter
-    def my_status(self, value: int):
-        if not (1 <= value <= 6):
+    def my_status(self, status: int):
+        """
+        :param status: the value to put in status. must be between 1 to 6.
+        :type: int
+        """
+        if not (1 <= status <= 6):
             raise RuntimeError("value of my_statue can be 1 to 6")
-        self.__my_status = value
+        self.__my_status = status
 
     @property
     @decorators.my_load
-    def my_score(self):
+    def my_score(self) -> int:
+        """
+        :return: The score as int between 0 to 10.
+        :rtype: int
+        """
         return self.__my_score
 
     @my_score.setter
-    def my_score(self, value: int):
-        if not (0 <= value <= 10):
-            raise RuntimeError("value of my_score can be 0 to 10")
-        self.__my_score = value
+    def my_score(self, score: int):
+        """
+        :param score: The score. Must be between 0 to 10.
+        :type: int
+        """
+        if not (0 <= score <= 10):
+            raise RuntimeError("score must be between 0 to 10")
+        self.__my_score = score
 
     @property
     @decorators.my_load
     def my_start_date(self):
+        """
+        :return: the start date of watching.
+        """
         return self.__my_start_date
 
     @my_start_date.setter
-    def my_start_date(self, value: str):
-        time.strptime(value, consts.MALAPI_FORMAT_TIME)
-        self.__my_start_date = value
+    def my_start_date(self, start_date_string: str):
+        """
+        :param start_date_string: An string that look like {@link consts.MALAPI_FORMAT_TIME}".
+        :type: str
+        """
+        time.strptime(start_date_string, consts.MALAPI_FORMAT_TIME)
+        self.__my_start_date = start_date_string
 
     @property
     @decorators.my_load
     def my_end_date(self):
+        """
+        :return: the end date of watching.
+        """
         return self.__my_end_date
 
     @my_end_date.setter
-    def my_end_date(self, value: str):
-        time.strptime(value, consts.MALAPI_FORMAT_TIME)
-        self.__my_end_date = value
+    def my_end_date(self, end_date_string: str):
+        """
+        :param end_date_string: An string that look like {@link consts.MALAPI_FORMAT_TIME}".
+        :type: str
+        """
+        time.strptime(end_date_string, consts.MALAPI_FORMAT_TIME)
+        self.__my_end_date = end_date_string
 
     @property
     @decorators.my_load
     def my_priority(self):
+        """
+        :return: The priority value as int between 0 to 3
+        :rtype: int
+        """
         return self.__my_priority
 
     @my_priority.setter
-    def my_priority(self, value: int):
-        if not (0 <= value <= 3):
-            raise RuntimeError("value of my_priority can be 0 to 3")
-        self.__my_priority = value
+    def my_priority(self, priority: int):
+        """
+        :param priority: priority must be between 0 to 3.
+        :type: int
+        """
+        if not (0 <= priority <= 3):
+            raise RuntimeError("priority can be 0 to 3")
+        self.__my_priority = priority
 
     @property
     @decorators.my_load
