@@ -33,7 +33,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.my_completed_volumes, int)
 
     def test_my_tags(self):
-        self.assertIsInstance(self.manga.my_tags, str)
+        self.assertIsInstance(self.manga.my_tags, frozenset)
 
     def test_my_comments(self):
         self.assertIsInstance(self.manga.my_comments, str)
@@ -107,7 +107,7 @@ class NoReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.my_completed_volumes, int)
 
     def test_my_tags(self):
-        self.assertIsInstance(self.manga.my_tags, str)
+        self.assertIsInstance(self.manga.my_tags, frozenset)
 
     def test_my_start_date(self):
         self.assertIsInstance(self.manga.my_start_date, str)

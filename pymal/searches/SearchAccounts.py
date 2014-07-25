@@ -9,6 +9,9 @@ __all__ = ['SearchAccounts']
 
 
 class SearchAccounts(Search.Search):
+    """
+    Searching for accounts.
+    """
     _SEARCH_NAME = 'users'
     _SEARCHED_URL_SUFFIX = '/profile/'
 

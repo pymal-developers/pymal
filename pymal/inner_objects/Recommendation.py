@@ -7,7 +7,18 @@ from pymal import exceptions
 
 
 class Recommendation(object):
+    """
+    Recommendation holds all the data from a recommendation in MAL about an anime.
+
+    Properties:
+        recommended_anime - Anime.Anime
+        recommends - dict
+    """
     def __init__(self, div):
+        """
+        :param div: The dic of the recommendation to parse all the data from it.
+        :type: bs4.element.Tag
+        """
         from pymal import Account, Anime
 
         recommended, recommends_divs = div.table.tbody.tr.findAll(name="td", recursive=False)

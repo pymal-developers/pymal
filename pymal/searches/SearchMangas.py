@@ -9,6 +9,9 @@ __all__ = ['SearchMangas']
 
 
 class SearchMangas(Search.Search):
+    """
+    Searching for mangas.
+    """
     _SEARCH_NAME = 'manga'
     _SEARCHED_URL_SUFFIX = '/manga/'
 
