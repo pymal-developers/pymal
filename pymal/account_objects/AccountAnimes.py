@@ -20,11 +20,11 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
 
     __URL = request.urljoin(HOST_NAME, "animelist/{0:s}&status=")
 
-    def __init__(self, username: str, account):
+    def __init__(self, account):
         """
         """
         self.__account = account
-        self.__url = self.__URL.format(username)
+        self.__url = self.__URL.format(account.username)
 
         self.__watching = frozenset()
         self.__completed = frozenset()
