@@ -674,11 +674,11 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     def is_completed(self) -> bool:
-        return self.my_completed_episodes >= self.obj.episodes
         """
         :return: True if the nujber of completed episode is equal to number of episode in anime.
         :rtype: bool
         """
+        return self.my_completed_episodes == self.obj.episodes
 
     def set_completed(self) -> bool:
         """
