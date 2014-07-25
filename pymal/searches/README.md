@@ -12,6 +12,6 @@ It a super class for all searches via search line in MAL.
 
 All the other inheritance from it and changes some consts.
 
- * SearchAccounts.
- * SearchAnimes.
- * SearchMangas.
+ * SearchAccounts - find accounts.
+ * SearchAnimes - find animes.
+ * SearchMangas - find mangas.
