@@ -14,6 +14,13 @@ __all__ = ['SearchUsers', 'SearchAnimes', 'SearchMangas']
 
 
 class Search(object, metaclass=Singleton):
+    """
+    A search engine.
+    Change the following properties and it will search for you:
+     - _SEARCH_NAME
+     - _SEARCHED_URL_SUFFIX
+     - _SEARCHED_OBJECT
+    """
     _SEARCH_NAME = ''
     _SEARCHED_URL_SUFFIX = ''
     _SEARCHED_OBJECT = object
@@ -47,6 +54,12 @@ class Search(object, metaclass=Singleton):
         return frozenset(map(lambda x: x.a['href'], divs_pic))
 
     def search(self, search_line: str) -> frozenset:
+        """
+        :param search_line: the search line to find
+        :type: str
+        :return: the found results
+        :rtype: frozenset
+        """
         ret = set()
         current_index = 0
         res = self.__get_list(search_line, current_index)
