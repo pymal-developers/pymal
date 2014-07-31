@@ -33,9 +33,20 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         my_download_episodes - int.
         my_times_reread - int.
         my_reread_value - int.
-        my_tags - string.
+        my_tags - frozenset.
         my_comments - string
         my_fan_sub_groups - string.
+
+    Functions:
+        my_reload
+        to_xml
+        add
+        update
+        delete
+        increase
+        increase_downloaded
+        set_completed
+        set_completed_download
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
                'my_start_date', 'my_end_date', 'my_priority',
@@ -78,7 +89,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         self.__my_storage_value = 0.0
         self.__my_comments = ''
         self.__my_fan_sub_groups = ''
-        self.__my_tags = []
+        self.__my_tags = frozenset()
 
         self.__my_is_rewatching = None
         self.__my_completed_episodes = None
@@ -87,152 +98,266 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         self.__my_rewatch_value = None
 
     @property
-    def my_id(self):
+    def my_id(self) -> int:
+        """
+        :return: the id in the account.
+        :rtype: int
+        """
         return self.__my_mal_id
 
     @property
     @decorators.my_load
-    def my_status(self):
+    def my_status(self) -> int:
+        """
+        :return: the status as number between 1 to 6.
+        :rtype: int
+        """
         return self.__my_status
 
     @my_status.setter
-    def my_status(self, value: int):
-        if not (1 <= value <= 6):
+    def my_status(self, status: int):
+        """
+        :param status: the value to put in status. must be between 1 to 6.
+        :type: int
+        """
+        if not (1 <= status <= 6):
             raise RuntimeError("value of my_statue can be 1 to 6")
-        self.__my_status = value
+        self.__my_status = status
 
     @property
     @decorators.my_load
-    def my_score(self):
+    def my_score(self) -> int:
+        """
+        :return: The score as int between 0 to 10.
+        :rtype: int
+        """
         return self.__my_score
 
     @my_score.setter
-    def my_score(self, value: int):
-        if not (0 <= value <= 10):
-            raise RuntimeError("value of my_score can be 0 to 10")
-        self.__my_score = value
+    def my_score(self, score: int):
+        """
+        :param score: The score. Must be between 0 to 10.
+        :type: int
+        """
+        if not (0 <= score <= 10):
+            raise RuntimeError("score must be between 0 to 10")
+        self.__my_score = score
 
     @property
     @decorators.my_load
-    def my_start_date(self):
+    def my_start_date(self) -> str:
+        """
+        :return: the start date of watching.
+        """
         return self.__my_start_date
 
     @my_start_date.setter
-    def my_start_date(self, value: str):
-        time.strptime(value, consts.MALAPI_FORMAT_TIME)
-        self.__my_start_date = value
+    def my_start_date(self, start_date_string: str):
+        """
+        :param start_date_string: An string that look like {@link consts.MALAPI_FORMAT_TIME}".
+        :type: str
+        """
+        time.strptime(start_date_string, consts.MALAPI_FORMAT_TIME)
+        self.__my_start_date = start_date_string
 
     @property
     @decorators.my_load
-    def my_end_date(self):
+    def my_end_date(self) -> str:
+        """
+        :return: the end date of watching.
+        :type: str
+        """
         return self.__my_end_date
 
     @my_end_date.setter
-    def my_end_date(self, value: str):
-        time.strptime(value, consts.MALAPI_FORMAT_TIME)
-        self.__my_end_date = value
+    def my_end_date(self, end_date_string: str):
+        """
+        :param end_date_string: An string that look like {@link consts.MALAPI_FORMAT_TIME}".
+        :type: str
+        """
+        time.strptime(end_date_string, consts.MALAPI_FORMAT_TIME)
+        self.__my_end_date = end_date_string
 
     @property
     @decorators.my_load
-    def my_priority(self):
+    def my_priority(self) -> int:
+        """
+        :return: The priority value as int between 0 to 3
+        :rtype: int
+        """
         return self.__my_priority
 
     @my_priority.setter
-    def my_priority(self, value: int):
-        if not (0 <= value <= 3):
-            raise RuntimeError("value of my_priority can be 0 to 3")
-        self.__my_priority = value
+    def my_priority(self, priority: int):
+        """
+        :param priority: priority must be between 0 to 3.
+        :type: int
+        """
+        if not (0 <= priority <= 3):
+            raise RuntimeError("priority can be 0 to 3")
+        self.__my_priority = priority
 
     @property
     @decorators.my_load
-    def my_storage_type(self):
+    def my_storage_type(self) -> int:
+        """
+        :return: The storage type of the downloaded episodes. Between 0 to 7.
+        :rtype: int
+        """
         return self.__my_storage_type
 
     @my_storage_type.setter
-    def my_storage_type(self, value: int):
-        if not (0 <= value <= 7):
+    def my_storage_type(self, storage_type: int):
+        """
+        :param storage_type: int between 0 to 7.
+        :type: int
+        """
+        if not (0 <= storage_type <= 7):
             raise RuntimeError("value of my_storage_type can be 0 to 7")
-        self.__my_storage_type = value
+        self.__my_storage_type = storage_type
 
     @property
     @decorators.my_load
-    def my_storage_value(self):
+    def my_storage_value(self) -> float:
+        """
+        :return: the storage value (the size you saved) - float but a real number!
+        :rtype: float
+        """
         return self.__my_storage_value
 
     @my_storage_value.setter
-    def my_storage_value(self, value: float):
-        int(value)
-        self.__my_storage_value = value
+    def my_storage_value(self, storage_value: float):
+        """
+        :param storage_value: the storage value (the size you saved) - float but a real number!
+        :type: float
+        """
+        int(storage_value)
+        self.__my_storage_value = storage_value
 
     @property
     @decorators.my_load
-    def my_is_rewatching(self):
+    def my_is_rewatching(self) -> bool:
+        """
+        :return: a flag to know if rewatching now.
+        :rtype: bool
+        """
         return self.__my_is_rewatching
 
     @my_is_rewatching.setter
-    def my_is_rewatching(self, value: bool):
-        self.__my_is_rewatching = value
+    def my_is_rewatching(self, is_rewatching: bool):
+        """
+        :param is_rewatching: a flag to know if rewatching now.
+        :type: bool
+        """
+        self.__my_is_rewatching = is_rewatching
 
     @property
     @decorators.my_load
-    def my_completed_episodes(self):
+    def my_completed_episodes(self) -> int:
+        """
+        :return: the number of completed episodes.
+        :rtype: int
+        """
         return self.__my_completed_episodes
 
     @my_completed_episodes.setter
-    def my_completed_episodes(self, value: int):
-        if not (0 <= value <= self.episodes):
+    def my_completed_episodes(self, completed_episodes: int):
+        """
+        :param completed_episodes: the number of completed episodes. Between 0 to number of episodes.
+        :type: int
+        """
+        if not (0 <= completed_episodes <= self.episodes):
             raise RuntimeError("value of my_completed_episodes can be 0 to self.episodes")
-        self.__my_completed_episodes = value
+        self.__my_completed_episodes = completed_episodes
 
     @property
     @decorators.my_load
-    def my_download_episodes(self):
+    def my_download_episodes(self) -> int:
+        """
+        :return: the number of downloaded episodes.
+        :rtype: int
+        """
         return self.__my_download_episodes
 
     @my_download_episodes.setter
-    def my_download_episodes(self, value: int):
-        if not (0 <= value <= self.episodes):
-            raise RuntimeError("value of my_download_episodes can be 0 to self.episodes")
-        self.__my_download_episodes = value
+    def my_download_episodes(self, downloaded_episodes: int):
+        """
+        :param downloaded_episodes: the number of downloaded episodes. Between 0 to number of episodes.
+        :type: int
+        """
+        if not (0 <= downloaded_episodes <= self.episodes):
+            raise RuntimeError("downloaded episodes can be 0 to self.episodes")
+        self.__my_download_episodes = downloaded_episodes
 
     @property
     @decorators.my_load
-    def my_times_rewatched(self):
+    def my_times_rewatched(self) -> int:
+        """
+        :return: The times of rewatching is a positive value.
+        :type: int
+        """
         return self.__my_times_rewatched
 
     @my_times_rewatched.setter
-    def my_times_rewatched(self, value: int):
-        if not (0 <= value):
+    def my_times_rewatched(self, times_rewatched: int):
+        """
+        :param times_rewatched: the times of rewatching must be a positive value.
+        :type: int
+        """
+        if not (0 <= times_rewatched):
             raise RuntimeError("value of my_times_rewatched can be 0 or more")
-        self.__my_times_rewatched = value
+        self.__my_times_rewatched = times_rewatched
 
     @property
     @decorators.my_load
-    def my_rewatch_value(self):
+    def my_rewatch_value(self) -> int:
+        """
+        :return: The rewatching is between 0 to 5.
+        :type: int
+        """
         return self.__my_rewatch_value
 
     @my_rewatch_value.setter
-    def my_rewatch_value(self, value: int):
-        if not (0 <= value <= 5):
-            raise RuntimeError("value of my_rewatch_value can be 0 to 5")
-        self.__my_rewatch_value = value
+    def my_rewatch_value(self, rewatch_value: int):
+        """
+        :param rewatch_value: The rewatching must be between 0 to 5.
+        :type: int
+        """
+        if not (0 <= rewatch_value <= 5):
+            raise RuntimeError("rewatch value can be 0 to 5")
+        self.__my_rewatch_value = rewatch_value
 
     @property
     @decorators.my_load
     def my_tags(self):
+        """
+        :return: the account tags.
+        :rtype: frozenset
+        """
         return self.__my_tags
 
     @property
     @decorators.my_load
     def my_comments(self):
+        """
+        :return: the comment of the account about the anime.
+        :rtype: str
+        """
         return self.__my_comments
 
     @property
     @decorators.my_load
     def my_fan_sub_groups(self):
+        """
+        :return: the fan sub groups
+        :rtype: str
+        """
         return self.__my_fan_sub_groups
 
     def my_reload(self):
+        """
+        Reloading data from MAL.
+        """
         from pymal import global_functions
 
         # Getting content wrapper <div>
@@ -309,7 +434,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         tag_content = content_rows[contents_divs_index]
         tag_textarea = tag_content.find(
             name="textarea", attrs={"name": "tags"})
-        self.__my_tags = tag_textarea.text
+        self.__my_tags = frozenset(tag_textarea.text.split(self.__TAG_SEPARATOR))
         contents_divs_index += 1
 
         # Getting start date
@@ -452,6 +577,10 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         self._is_my_loaded = True
 
     def to_xml(self):
+        """
+        :return: the anime as an xml string.
+        :rtype: str
+        """
         data = self.MY_MAL_XML_TEMPLATE.format(
             self.my_completed_episodes,
             self.my_status,
@@ -468,17 +597,27 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             self.my_is_rewatching,
             self.my_comments,
             self.my_fan_sub_groups,
-            self.my_tags
+            self.__TAG_SEPARATOR.join(self.my_tags)
         )
         return data
 
     def add(self, account):
+        """
+        Adding the anime to an account.
+        If its the same account as this owner returning this.
+
+        :param account: account to connect to the anime.
+        :type: Account
+        :return: anime connected to the account
+        :rtype: MyAnime
+        """
         if account == self._account:
             return self
         return self.obj.add(account)
 
     def update(self):
         """
+        Updating the anime data.
         """
         xml = ''.join(map(lambda x: x.strip(), self.to_xml().splitlines()))
         update_url = self.__MY_MAL_UPDATE_URL.format(self.id)
@@ -492,6 +631,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
 
     def delete(self):
         """
+        Deleteing the anime from the list.
         """
         xml = ''.join(map(lambda x: x.strip(), self.to_xml().splitlines()))
         delete_url = self.__MY_MAL_DELETE_URL.format(self.id)
@@ -504,28 +644,63 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
             raise exceptions.MyAnimeListApiDeleteError(ret)
 
     def increase(self) -> bool:
-        if self.is_completed:
+        """
+        Increasing the watched episode.
+        If it is completed, setting the flag of rewatching.
+
+        :return: True if succeed to set every.
+        :rtype: bool
+        """
+        if self.my_completed_episodes >= self.obj.episodes:
             return False
+        if 0 == self.my_completed_episodes and 2 != self.my_status:
+            self.my_is_rewatching = True
+            self.my_times_rewatched += 1
+            self.my_completed_episodes = 0
         self.my_completed_episodes += 1
         return True
 
     def increase_downloaded(self) -> bool:
-        if self.is_completed:
+        """
+        Increasing the downloaded episode.
+
+        :return: True if succeed to set every.
+        :rtype: bool
+        """
+        if self.my_download_episodes >= self.obj.episodes:
             return False
         self.my_download_episodes += 1
         return True
 
     @property
     def is_completed(self) -> bool:
-        return self.my_completed_episodes >= self.obj.episodes
+        """
+        :return: True if the number of completed episode is equal to number of episode in anime.
+        :rtype: bool
+        """
+        return self.my_completed_episodes == self.obj.episodes
 
     def set_completed(self) -> bool:
+        """
+        Setting the anime as completed.
+
+        :return: True if succeed
+        :rtype: bool
+        """
         if self.obj.episodes == float('inf'):
             return False
         self.my_completed_episodes = self.obj.episodes
+        self.my_is_rewatching = False
+        self.my_status = 2
         return True
 
     def set_completed_download(self) -> bool:
+        """
+        Setting the number of downloaded episodes as completed.
+
+        :return: True if succeed
+        :rtype: bool
+        """
         if self.obj.episodes == float('inf'):
             return False
         self.my_download_episodes = self.obj.episodes
@@ -541,13 +716,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         return self.obj == other
 
     def __hash__(self):
-        import hashlib
-
-        hash_md5 = hashlib.md5()
-        hash_md5.update(str(self.id).encode())
-        hash_md5.update(str(hash(self._account)).encode())
-        hash_md5.update(b'MyAnime')
-        return int(hash_md5.hexdigest(), 16)
+        return hash(self.obj)
 
     def __repr__(self):
         title = " '{0:s}'".format(self.title) if self.obj._is_loaded else ''

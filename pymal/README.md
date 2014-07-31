@@ -38,6 +38,7 @@ You can find there:
 
  * AccountAnimes
  * AccountMangas
+ * AccountFriends
  * MyAnime
  * MyManga
 
@@ -51,6 +52,3 @@ A very basic object to obtain generic data about a manga.
 
 ### Seasons
 This object is loaded from a different db.
-
-#### Season
-An inner object of Seasons. Don't use it.

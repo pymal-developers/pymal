@@ -9,6 +9,12 @@ from pymal.types import SingletonFactory
 
 
 class ReloadedSet(collections.Set):
+    """
+    A reloaded set - like frozenset but can fetch new data in the function reload.
+    To inheritance you need to make:
+     - _values
+     - reload
+    """
     @property
     def _values(self):
         raise NotImplemented()
@@ -83,8 +89,14 @@ class ReloadedSet(collections.Set):
 
 
 class ReloadedSetSingletonFactoryType(type(ReloadedSet), SingletonFactory.SingletonFactory):
+    """
+    A singleton factory ReloadedSet type.
+    """
     pass
 
 
 class ReloadedSetSingletonFactory(ReloadedSet, metaclass=ReloadedSetSingletonFactoryType):
+    """
+    A singleton factory ReloadedSet.
+    """
     pass
