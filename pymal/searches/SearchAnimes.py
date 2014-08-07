@@ -9,6 +9,9 @@ __all__ = ['SearchAnimes']
 
 
 class SearchAnimes(Search.Search):
+    """
+    Searching for animes.
+    """
     _SEARCH_NAME = 'anime'
     _SEARCHED_URL_SUFFIX = '/anime/'
 

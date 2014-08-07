@@ -33,9 +33,21 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         my_downloaded_chapters - int.
         my_times_reread - int.
         my_reread_value - int.
-        my_tags - string.
+        my_tags - frozenset.
         my_comments - string
         my_fan_sub_groups - string.
+        my_retail_volumes - int.
+
+    Functions:
+        my_reload
+        to_xml
+        add
+        update
+        delete
+        increase
+        increase_downloaded
+        set_completed
+        set_completed_download
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
                'my_start_date', 'my_end_date', 'my_priority',
@@ -77,7 +89,7 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         self.__my_storage_type = 0
         self.__my_comments = ''
         self.__my_fan_sub_groups = ''
-        self.__my_tags = []
+        self.__my_tags = frozenset()
         self.__my_retail_volumes = 0
 
         self.__my_is_rereading = None
@@ -88,158 +100,276 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         self.__my_reread_value = None
 
     @property
-    def my_id(self):
+    def my_id(self) -> int:
+        """
+        :return: the id in the account.
+        :rtype: int
+        """
         return self.__my_mal_id
 
     @property
     @decorators.my_load
-    def my_status(self):
+    def my_status(self) -> int:
+        """
+        :return: the status as number between 1 to 6.
+        :rtype: int
+        """
         return self.__my_status
 
     @my_status.setter
-    def my_status(self, value: int):
-        if not (1 <= value <= 6):
+    def my_status(self, status: int):
+        """
+        :param status: the value to put in status. must be between 1 to 6.
+        :type: int
+        """
+        if not (1 <= status <= 6):
             raise RuntimeError("value of my_statue can be 1 to 6")
-        self.__my_status = value
+        self.__my_status = status
 
     @property
     @decorators.my_load
-    def my_score(self):
+    def my_score(self) -> int:
+        """
+        :return: The score as int between 0 to 10.
+        :rtype: int
+        """
         return self.__my_score
 
     @my_score.setter
-    def my_score(self, value: int):
-        if not (0 <= value <= 10):
-            raise RuntimeError("value of my_score can be 0 to 10")
-        self.__my_score = value
+    def my_score(self, score: int):
+        """
+        :param score: The score. Must be between 0 to 10.
+        :type: int
+        """
+        if not (0 <= score <= 10):
+            raise RuntimeError("score must be between 0 to 10")
+        self.__my_score = score
 
     @property
     @decorators.my_load
-    def my_start_date(self):
+    def my_start_date(self) -> str:
+        """
+        :return: the start date of watching.
+        """
         return self.__my_start_date
 
     @my_start_date.setter
-    def my_start_date(self, value: str):
-        time.strptime(value, consts.MALAPI_FORMAT_TIME)
-        self.__my_start_date = value
+    def my_start_date(self, start_date_string: str):
+        """
+        :param start_date_string: An string that look like {@link consts.MALAPI_FORMAT_TIME}".
+        :type: str
+        """
+        time.strptime(start_date_string, consts.MALAPI_FORMAT_TIME)
+        self.__my_start_date = start_date_string
 
     @property
     @decorators.my_load
-    def my_end_date(self):
+    def my_end_date(self) -> str:
+        """
+        :return: the end date of watching.
+        :type: str
+        """
         return self.__my_end_date
 
     @my_end_date.setter
-    def my_end_date(self, value: str):
-        time.strptime(value, consts.MALAPI_FORMAT_TIME)
-        self.__my_end_date = value
+    def my_end_date(self, end_date_string: str):
+        """
+        :param end_date_string: An string that look like {@link consts.MALAPI_FORMAT_TIME}".
+        :type: str
+        """
+        time.strptime(end_date_string, consts.MALAPI_FORMAT_TIME)
+        self.__my_end_date = end_date_string
 
     @property
     @decorators.my_load
-    def my_priority(self):
+    def my_priority(self) -> int:
+        """
+        :return: The priority value as int between 0 to 3
+        :rtype: int
+        """
         return self.__my_priority
 
     @my_priority.setter
-    def my_priority(self, value: int):
-        if not (0 <= value <= 3):
-            raise RuntimeError("value of my_priority can be 0 to 3")
-        self.__my_priority = value
+    def my_priority(self, priority: int):
+        """
+        :param priority: priority must be between 0 to 3.
+        :type: int
+        """
+        if not (0 <= priority <= 3):
+            raise RuntimeError("priority can be 0 to 3")
+        self.__my_priority = priority
 
     @property
     @decorators.my_load
-    def my_storage_type(self):
+    def my_storage_type(self) -> int:
+        """
+        :return: The storage type of the downloaded episodes. Between 0 to 7.
+        :rtype: int
+        """
         return self.__my_storage_type
 
     @my_storage_type.setter
-    def my_storage_type(self, value: int):
-        if not (0 <= value <= 7):
+    def my_storage_type(self, storage_type: int):
+        """
+        :param storage_type: int between 0 to 7.
+        :type: int
+        """
+        if not (0 <= storage_type <= 7):
             raise RuntimeError("value of my_storage_type can be 0 to 7")
-        self.__my_storage_type = value
+        self.__my_storage_type = storage_type
 
     @property
     @decorators.my_load
-    def my_is_rereading(self):
+    def my_is_rereading(self) -> bool:
+        """
+        :return: a flag to know if rereading now.
+        :rtype: bool
+        """
         return self.__my_is_rereading
 
     @my_is_rereading.setter
-    def my_is_rereading(self, value: bool):
-        self.__my_is_rereading = value
+    def my_is_rereading(self, is_rereading: bool):
+        """
+        :param is_rereading: a flag to know if rereading now.
+        :type: bool
+        """
+        self.__my_is_rereading = is_rereading
 
     @property
     @decorators.my_load
-    def my_completed_chapters(self):
+    def my_completed_chapters(self) -> int:
+        """
+        :return: the number of completed chapters.
+        :rtype: int
+        """
         return self.__my_completed_chapters
 
     @my_completed_chapters.setter
-    def my_completed_chapters(self, value: int):
-        if not (0 <= value <= self.chapters):
+    def my_completed_chapters(self, completed_chapters: int):
+        """
+        :param completed_chapters: the number of completed chapters. Between 0 to number of chapters.
+        :type: int
+        """
+        if not (0 <= completed_chapters <= self.chapters):
             raise RuntimeError("value of my_completed_episodes can be 0 to self.chapters")
-        self.__my_completed_chapters = value
+        self.__my_completed_chapters = completed_chapters
 
     @property
     @decorators.my_load
-    def my_completed_volumes(self):
+    def my_completed_volumes(self) -> int:
+        """
+        :return: the number of completed volumes.
+        :rtype: int
+        """
         return self.__my_completed_volumes
 
     @my_completed_volumes.setter
-    def my_completed_volumes(self, value: int):
-        if not (0 <= value <= self.volumes):
+    def my_completed_volumes(self, completed_volumes: int):
+        """
+        :param completed_volumes: the number of completed volumes. Between 0 to number of volumes.
+        :type: int
+        """
+        if not (0 <= completed_volumes <= self.volumes):
             raise RuntimeError("value of my_completed_volumes can be 0 to self.volumes")
-        self.__my_completed_volumes = value
+        self.__my_completed_volumes = completed_volumes
 
     @property
     @decorators.my_load
-    def my_downloaded_chapters(self):
+    def my_downloaded_chapters(self) -> int:
+        """
+        :return: the number of downloaded chapters.
+        :rtype: int
+        """
         return self.__my_downloaded_chapters
 
     @my_downloaded_chapters.setter
-    def my_downloaded_chapters(self, value: int):
-        if not (0 <= value <= self.chapters):
+    def my_downloaded_chapters(self, downloaded_chapters: int):
+        """
+        :param downloaded_chapters: the number of downloaded episodes. Between 0 to number of episodes.
+        :type: int
+        """
+        if not (0 <= downloaded_chapters <= self.chapters):
             raise RuntimeError("value of my_downloaded_chapters can be 0 to self.episodes")
-        self.__my_downloaded_chapters = value
+        self.__my_downloaded_chapters = downloaded_chapters
 
     @property
     @decorators.my_load
-    def my_times_reread(self):
+    def my_times_reread(self) -> int:
+        """
+        :return: The times of rereading is a positive value.
+        :type: int
+        """
         return self.__my_times_reread
 
     @my_times_reread.setter
-    def my_times_reread(self, value: int):
-        if not (0 <= value):
+    def my_times_reread(self, times_reread: int):
+        """
+        :param times_reread: the times of rereading must be a positive value.
+        :type: int
+        """
+        if not (0 <= times_reread):
             raise RuntimeError("value of my_times_reread can be 0 or more")
-        self.__my_times_reread = value
+        self.__my_times_reread = times_reread
 
     @property
     @decorators.my_load
-    def my_reread_value(self):
+    def my_reread_value(self) -> int:
+        """
+        :return: The rereading is between 0 to 5.
+        :type: int
+        """
         return self.__my_reread_value
 
     @my_reread_value.setter
-    def my_reread_value(self, value: int):
-        if not (0 <= value <= 5):
+    def my_reread_value(self, reread_value: int):
+        """
+        :param reread_value: The rereading must be between 0 to 5.
+        :type: int
+        """
+        if not (0 <= reread_value <= 5):
             raise RuntimeError("value of my_reread_value can be 0 to 5")
-        self.__my_reread_value = value
+        self.__my_reread_value = reread_value
 
     @property
     @decorators.my_load
     def my_tags(self):
+        """
+        :return: the account tags.
+        :rtype: frozenset
+        """
         return self.__my_tags
 
     @property
     @decorators.my_load
     def my_comments(self):
+        """
+        :return: the comment of the account about the anime.
+        :rtype: str
+        """
         return self.__my_comments
 
     @property
     @decorators.my_load
     def my_fan_sub_groups(self):
+        """
+        :return: the fan sub groups
+        :rtype: str
+        """
         return self.__my_fan_sub_groups
 
     @property
     @decorators.my_load
-    def my_retail_volumes(self):
+    def my_retail_volumes(self) -> int:
+        """
+        :return: retail volumes
+        :rtype: int
+        """
         return self.__my_retail_volumes
 
     def my_reload(self):
+        """
+        Reloading data from MAL.
+        """
         from pymal import global_functions
 
         # Getting content wrapper <div>
@@ -248,19 +378,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
 
         bas_result = content_wrapper_div.find(name='div',
                                               attrs={'class': 'badresult'})
-        assert bas_result is None
+        if bas_result is not None:
+            raise exceptions.FailedToReloadError(bas_result)
 
         # Getting content <td>
         content_div = content_wrapper_div.find(
             name="div", attrs={"id": "content"}, recursive=False)
-        assert content_div is not None
-
+        if content_div is None:
+            raise exceptions.FailedToReloadError(content_wrapper_div)
         content_td = content_div.table.tr.td
-        assert content_td is not None
+        if content_td is None:
+            raise exceptions.FailedToReloadError(content_div)
 
         # Getting content rows <tr>
         content_form = content_td.find(name="form", attrs={'id': "mangaForm"})
-        assert content_form is not None
+        if content_form is None:
+            raise exceptions.FailedToReloadError(content_td)
         content_rows = content_form.table.tbody.findAll(
             name="tr", recursive=False)
 
@@ -269,18 +402,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting my_status
         status_select = content_rows[contents_divs_index].find(
             name="select", attrs={"id": "status", "name": "status"})
-        assert status_select is not None
+        if status_select is None:
+            raise exceptions.FailedToReloadError(content_rows)
+
         # TODO: make this look better
         status_selected_options = list(filter(
             lambda x: 'selected' in x.attrs,
             status_select.findAll(name="option")
         ))
-        assert 1 == len(status_selected_options)
+        if 1 != len(status_selected_options):
+            raise exceptions.FailedToReloadError(status_selected_options)
         self.__my_status = int(status_selected_options[0]['value'])
 
         is_reread_node = content_rows[contents_divs_index].find(
             name="input", attrs={"id": "rereadingBox"})
-        assert is_reread_node is not None
+        if is_reread_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_is_rereading = bool(is_reread_node['value'])
         contents_divs_index += 1
 
@@ -288,7 +425,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         read_input = content_rows[contents_divs_index].\
             find(name="input", attrs={"id": "vol_read",
                                       "name": "vol_read"})
-        assert read_input is not None
+        if read_input is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_completed_volumes = int(read_input['value'])
         contents_divs_index += 1
 
@@ -296,17 +434,20 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         read_input = content_rows[contents_divs_index].\
             find(name="input", attrs={"id": "chap_read",
                                       "name": "chap_read"})
-        assert read_input is not None
+        if read_input is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_completed_chapters = int(read_input['value'])
         contents_divs_index += 1
 
         # Getting my_score
         score_select = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "score"})
-        assert score_select is not None
+        if score_select is None:
+            raise exceptions.FailedToReloadError(content_rows)
         score_selected_option = score_select.find(
             name="option", attrs={"selected": ""})
-        assert score_selected_option is not None
+        if score_selected_option is  None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_score = int(float(score_selected_option['value']))
         contents_divs_index += 1
 
@@ -314,25 +455,28 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         tag_content = content_rows[contents_divs_index]
         tag_textarea = tag_content.find(
             name="textarea", attrs={"name": "tags"})
-        self.__my_tags = tag_textarea.text
+        self.__my_tags = frozenset(tag_textarea.text.split(self.__TAG_SEPARATOR))
         contents_divs_index += 1
 
         # Getting start date
         start_month_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "startMonth"})
-        assert start_month_date_node is not None
+        if start_month_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         start_month_date = start_month_date_node.find(
             name="option", attrs={"selected": ""})
 
         start_day_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "startDay"})
-        assert start_day_date_node is not None
+        if start_day_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         start_day_date = start_day_date_node.find(
             name="option", attrs={"selected": ""})
 
         start_year_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "startYear"})
-        assert start_year_date_node is not None
+        if start_year_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         start_year_date = start_year_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -346,19 +490,22 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting end date
         end_month_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "endMonth"})
-        assert end_month_date_node is not None
+        if end_month_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         end_month_date = end_month_date_node.find(
             name="option", attrs={"selected": ""})
 
         end_day_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "endDay"})
-        assert end_day_date_node is not None
+        if end_day_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         end_day_date = end_day_date_node.find(
             name="option", attrs={"selected": ""})
 
         end_year_date_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "endYear"})
-        assert end_year_date_node is not None
+        if end_year_date_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         end_year_date = end_year_date_node.find(
             name="option", attrs={"selected": ""})
 
@@ -371,17 +518,20 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting priority
         priority_node = content_rows[contents_divs_index].find(
             name="select", attrs={"name": "priority"})
-        assert priority_node is not None
+        if priority_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         selected_priority_node = priority_node.find(
             name="option", attrs={"selected": ""})
-        assert selected_priority_node is not None
+        if selected_priority_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_priority = int(selected_priority_node['value'])
         contents_divs_index += 1
 
         # Getting storage
         storage_type_node = content_rows[contents_divs_index].find(
             name="select", attrs={"id": "storageSel"})
-        assert storage_type_node is not None
+        if storage_type_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         selected_storage_type_node = storage_type_node.find(
             name="option", attrs={"selected": ""})
         if selected_storage_type_node is None:
@@ -394,7 +544,8 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         downloaded_chapters_node = content_rows[contents_divs_index].\
             find(name="input", attrs={'id': "dChap",
                                       'name': 'downloaded_chapters'})
-        assert downloaded_chapters_node is not None
+        if downloaded_chapters_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self.__my_downloaded_chapters == int(downloaded_chapters_node['value'])
         contents_divs_index += 1
 
@@ -402,13 +553,15 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         times_reread_node = content_rows[contents_divs_index].find(
             name="input", attrs={'name': 'times_read'})
         self.__my_times_reread == int(times_reread_node['value'])
-        assert times_reread_node is not None
+        if times_reread_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         contents_divs_index += 1
 
         # Getting reread value
         reread_value_node = content_rows[contents_divs_index].find(
             name="select", attrs={'name': 'reread_value'})
-        assert reread_value_node is not None
+        if reread_value_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         reread_value_option = reread_value_node.find(
             name='option', attrs={'selected': ''})
         if reread_value_option is None:
@@ -427,10 +580,15 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         # Getting discuss flag
         discuss_node = content_rows[contents_divs_index].find(
             name='input', attrs={"name": "discuss"})
-        assert discuss_node is not None
+        if discuss_node is None:
+            raise exceptions.FailedToReloadError(content_rows)
         self._is_my_loaded = True
 
     def to_xml(self):
+        """
+        :return: the anime as an xml string.
+        :rtype: str
+        """
         data = self.MY_MAL_XML_TEMPLATE.format(
             self.my_completed_chapters,
             self.my_completed_volumes,
@@ -446,18 +604,28 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
             self.my_enable_discussion,
             self.my_comments,
             self.my_fan_sub_groups,
-            self.my_tags,
+            self.__TAG_SEPARATOR.join(self.my_tags),
             self.my_retail_volumes
         )
         return data
 
     def add(self, account):
+        """
+        Adding the anime to an account.
+        If its the same account as this owner returning this.
+
+        :param account: account to connect to the anime.
+        :type: Account
+        :return: anime connected to the account
+        :rtype: MyAnime
+        """
         if account == self._account:
             return self
         return self.obj.add(account)
 
     def update(self):
         """
+        Updating the anime data.
         """
         xml = ''.join(map(lambda x: x.strip(), self.to_xml().splitlines()))
         update_url = self.__MY_MAL_UPDATE_URL.format(self.id)
@@ -471,6 +639,7 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
 
     def delete(self):
         """
+        Deleteing the anime from the list.
         """
         xml = ''.join(map(lambda x: x.strip(), self.to_xml().splitlines()))
         delete_url = self.__MY_MAL_DELETE_URL.format(self.id)
@@ -483,18 +652,42 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
             raise exceptions.MyAnimeListApiDeleteError(ret)
 
     def increase(self) -> bool:
-        if self.is_completed:
+        """
+        Increasing the read chapters.
+        If it is completed, setting the flag of rereading.
+
+        :return: True if succeed to set every.
+        :rtype: bool
+        """
+        if self.my_completed_chapters >= self.obj.chapters:
             return False
+        if 0 == self.my_completed_chapters and 2 != self.my_status:
+            self.my_is_rereading = True
+            self.my_times_reread += 1
+            self.my_completed_chapters = 0
         self.my_completed_chapters += 1
         return True
 
     def increase_volume(self) -> bool:
+        """
+        Increasing the read volumes.
+        If it is completed, setting the flag of rereading.
+
+        :return: True if succeed to set every.
+        :rtype: bool
+        """
         if self.__my_downloaded_volumes >= self.obj.volumes:
             return False
         self.my_completed_volumes += 1
         return True
 
     def increase_downloaded(self) -> bool:
+        """
+        Increasing the downloaded chapters.
+
+        :return: True if succeed to set every.
+        :rtype: bool
+        """
         if self.is_completed:
             return False
         self.my_downloaded_chapters += 1
@@ -502,17 +695,35 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
 
     @property
     def is_completed(self) -> bool:
+        """
+        :return: True if the number of completed chapters is equal to number of chapters in manga.
+        :rtype: bool
+        """
         return self.my_completed_chapters >= self.obj.chapters
 
     def set_completed(self) -> bool:
+        """
+        Setting the anime as completed.
+
+        :return: True if succeed
+        :rtype: bool
+        """
         if self.obj.chapters == float('inf'):
             return False
         self.my_completed_chapters = self.obj.chapters
         if self.obj.volumes != float('inf'):
             self.my_completed_volumes = self.obj.volumes
+        self.my_is_rereading = False
+        self.my_status = 2
         return True
 
     def set_completed_download(self) -> bool:
+        """
+        Setting the number of downloaded chapters as completed.
+
+        :return: True if succeed
+        :rtype: bool
+        """
         if self.obj.chapters == float('inf'):
             return False
         self.my_downloaded_chapters = self.obj.chapters
@@ -528,13 +739,7 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         return self.obj == other
 
     def __hash__(self):
-        import hashlib
-
-        hash_md5 = hashlib.md5()
-        hash_md5.update(str(self.id).encode())
-        hash_md5.update(str(hash(self._account)).encode())
-        hash_md5.update(b'MyManga')
-        return int(hash_md5.hexdigest(), 16)
+        return hash(self.obj)
 
     def __repr__(self):
         title = " '{0:s}'".format(self.title) if self.obj._is_loaded else ''

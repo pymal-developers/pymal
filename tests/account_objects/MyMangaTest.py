@@ -33,7 +33,7 @@ class ReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.my_completed_volumes, int)
 
     def test_my_tags(self):
-        self.assertIsInstance(self.manga.my_tags, str)
+        self.assertIsInstance(self.manga.my_tags, frozenset)
 
     def test_my_comments(self):
         self.assertIsInstance(self.manga.my_comments, str)
@@ -75,11 +75,7 @@ class ReloadTestCase(unittest.TestCase):
 
     def test_to_xml(self):
         xml = self.manga.to_xml()
-        try:
-            ElementTree.fromstring(xml)
-        except BaseException as err:
-            print(err)
-            self.assertTrue(False)
+        ElementTree.fromstring(xml)
 
     def test_str(self):
         repr(self.manga)
@@ -111,7 +107,7 @@ class NoReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.my_completed_volumes, int)
 
     def test_my_tags(self):
-        self.assertIsInstance(self.manga.my_tags, str)
+        self.assertIsInstance(self.manga.my_tags, frozenset)
 
     def test_my_start_date(self):
         self.assertIsInstance(self.manga.my_start_date, str)
