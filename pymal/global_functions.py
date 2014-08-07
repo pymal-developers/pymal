@@ -14,8 +14,9 @@ except ImportError:
 import bs4
 
 from pymal import consts
+from pymal import exceptions
 
-__all__ = ['connect', 'get_next_index', 'make_list', 'check_side_content_div', 'get_content_wrapper_div']
+__all__ = ['connect', 'get_next_index', 'make_set', 'check_side_content_div', 'get_content_wrapper_div']
 
 __SESSION = requests.session()
 if httpcache is not None:
@@ -76,44 +77,49 @@ def get_next_index(i: int, list_of_tags: list) -> int:
     return i + 1
 
 
-def make_list(self_list: list, i: int, list_of_tags: list) -> int:
+def make_set(self_set: set, i: int, list_of_tags: list) -> int:
     """
     return the index after the next <br/> and inserting all the link until it.
 
-    :type self_list: list
-    :param self_list: a list to append links to
+    :type self_set: set
+    :param self_set: a list to append links to
     :type i: int
     :param i: an index
     :type list_of_tags: list
     :param list_of_tags: list of tags to check the index on
     :rtype: int
     """
-    # TODO: find a way to put it out
-    from pymal.Anime import Anime
-    from pymal.Manga import Manga
+    from pymal import Anime
+    from pymal import Manga
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
-        assert 'a' == list_of_tags[i].name, list_of_tags[i].name
-        if '/anime/' in list_of_tags[i]['href']:
-            self_list.append(
-                Anime(int(
-                    list_of_tags[i]['href'].split('/anime/')[1].split('/')[0]
-                )))
-        elif '/manga/' in list_of_tags[i]['href']:
-            self_list.append(
-                Manga(int(
-                    list_of_tags[i]['href'].split('/manga/')[1].split('/')[0]
-                )))
+        if 'a' != list_of_tags[i].name:
+            exceptions.FailedToParseError(list_of_tags[i].name)
+        tag_href = list_of_tags[i]['href']
+        if '/anime/' in tag_href:
+            obj = Anime.Anime
+            splitter = '/anime/'
+        elif '/manga/' in tag_href:
+            obj = Manga.Manga
+            splitter = '/manga/'
         else:
-            self_list.append(
+            print('unknown tag', tag_href)
+            self_set.add(
                 request.urljoin(consts.HOST_NAME, list_of_tags[i]['href']))
+            continue
+        obj_id = tag_href.split(splitter)[1].split('/')[0]
+        if not obj_id.isdigit():
+            print('unknown tag', tag_href)
+            continue
+        self_set.add(obj(int(obj_id)))
     return n_i
 
 
 def check_side_content_div(expected_text: str, div_node: bs4.element.Tag):
     span_node = div_node.span
-    assert span_node is not None, div_node
+    if span_node is None:
+        raise exceptions.FailedToParseError(div_node)
     expected_text += ":"
     if ['dark_text'] != span_node['class']:
         return False
@@ -132,8 +138,9 @@ def __get_myanimelist_div(url: str, connection_function) -> bs4.element.Tag:
         div = html.body.find(name="div", attrs={"id": 'myanimelist'})
         if div is not None:
             return div
-    assert not got_robot, "Got robot."
-    assert False, "my anime list div wasnt found"
+    if got_robot:
+        raise exceptions.GotRobotError()
+    raise exceptions.FailedToParseError("my anime list div wasn't found")
 
 
 def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
@@ -142,7 +149,8 @@ def get_content_wrapper_div(url: str, connection_function) -> bs4.element.Tag:
     # Getting content wrapper <div>
     content_wrapper_div = myanimelist_div.find(
         name="div", attrs={"id": "contentWrapper"}, recursive=False)
-    assert content_wrapper_div is not None
+    if content_wrapper_div is None:
+        raise exceptions.FailedToParseError(myanimelist_div)
     return content_wrapper_div
 
 

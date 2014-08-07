@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 # Dynamically calculate the version based on pymal.VERSION.
@@ -7,15 +7,20 @@ version = __import__('pymal').get_version()
 
 setup(
     name='pymal',
-    packages=['pymal'],
+    packages=find_packages(exclude=['tests*']),
     version=version,
     description='A python api for the website MyAnimeList (or MAL).',
     author='pymal-developers',
     license="BSD",
     url='https://bitbucket.org/pymal-developers/pymal/',
-    keywords=["MyAnimeList", "MAL", "pymal"],
+    keywords=[
+        "MyAnimeList", "myanimelist",
+        "MAL", "mal",
+        "pymal",
+        "my anime list", "anime list", "anime"
+    ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
@@ -46,6 +51,7 @@ setup(
         'beautifulsoup4>=4.3.2',
         'httpcache>=0.1.3',
         'html5lib>=0.999',
+        'six>=1.1,<1.4',
+        'pillow>=2.4.0',
     ],
-
 )

@@ -1,11 +1,13 @@
-import json
 from os import path
 
+ACCOUNT_TEST_MAIL = "pymal-developer@mailinator.com"
+ACCOUNT_TEST_USERNAME = "pymal-developr"
+ACCOUNT_TEST_PASSWORD = "a0ataqett"
 
-TEST_SETTINGS = path.join(path.dirname(__file__), "account_settings.json")
-__settings_dict = json.load(open(TEST_SETTINGS, "r"))
-ACCOUNT_TEST_USERNAME = __settings_dict['username']
-ACCOUNT_TEST_PASSWORD = __settings_dict['password']
+ANIME_ID = 1887
+MANGA_ID = 587
 
-ANIME_ID = __settings_dict['ANIME_ID']
-MANGA_ID = __settings_dict['MANGA_ID']
+ADD_ANIME_ID = 20707
+ADD_MANGA_ID = 11
+
+SOURCES_DIRECTORY = path.join(path.dirname(__file__), 'sources')

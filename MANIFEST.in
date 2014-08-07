@@ -1,2 +1,2 @@
 include README.markdown
-recursive-include pymal *.markdown
+recursive-include pymal *.md
