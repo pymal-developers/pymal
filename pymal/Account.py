@@ -5,7 +5,10 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 from urllib import request
 
+import requests
+
 from pymal import global_functions
+from pymal.decorators import load
 from pymal.types import SingletonFactory
 from pymal.consts import HOST_NAME
 
@@ -59,6 +62,9 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         self.__animes = AccountAnimes.AccountAnimes(self)
         self.__mangas = AccountMangas.AccountMangas(self)
         self.__friends = None
+        self.__image_url = ""
+
+        self._is_loaded = False
 
         if password is not None:
             self.change_password(password)
@@ -210,6 +216,29 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
             raise exceptions.UnauthenticatedAccountError(self.username)
         return global_functions._connect(url, data=data, headers=headers,
                                          auth=self.__auth_object).text.strip()
+
+    @property
+    @load
+    def image_url(self):
+        """
+        :return: path for the image of the avatar of the account.
+        :rtype: str
+        """
+        return self.__image_url
+
+    def get_image(self):
+        import io
+
+        from PIL import Image
+
+        sock = requests.get(self.image_url)
+        data = io.BytesIO(sock.content)
+        return Image.open(data)
+
+    def reload(self):
+        div = global_functions.get_content_wrapper_div(self.__main_profile_url, self.connect)
+        profile_leftcell = div.table.tbody.tr.find(name="td", attrs={"class": "profile_leftcell"}, recursive=False)
+        self.__image_url = profile_leftcell.div.img['src']
 
     @property
     def is_auth(self) -> bool:
