@@ -1,5 +1,3 @@
-[TOC]
-
 Usage
 =====
 All accounts connected object are placed here.

@@ -1,5 +1,3 @@
-[TOC]
-
 Usage
 =====
 All kinds of inner objects of the globals (As writing in the main) are placed here.

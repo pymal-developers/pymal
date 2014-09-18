@@ -1,5 +1,3 @@
-[TOC]
-
 Usage
 =====
 All kinds of generic objects and types are placed here.

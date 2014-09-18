@@ -1,5 +1,3 @@
-[TOC]
-
 Usage
 =====
 All searches object are placed here.
