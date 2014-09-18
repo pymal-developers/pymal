@@ -1,5 +1,3 @@
-[TOC]
-
 pymal
 ==========
 If you read this that mean that you want to do something with the code (read or add).
