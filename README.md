@@ -1,10 +1,12 @@
 [![Build Status](https://travis-ci.org/tomerghelber/pymal.svg)](https://travis-ci.org/tomerghelber/pymal)
 [![Coverage Status](https://coveralls.io/repos/tomerghelber/pymal/badge.png)](https://coveralls.io/r/tomerghelber/pymal)
-[![Downloads](https://pypip.in/download/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
-[![Latest Version](https://pypip.in/version/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Development Status](https://pypip.in/status/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+
 [![Supported Python versions](https://pypip.in/py_versions/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
 [![Supported Python implementations](https://pypip.in/implementation/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
-[![Development Status](https://pypip.in/status/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+
+[![Downloads](https://pypip.in/download/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Latest Version](https://pypip.in/version/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
 [![License](https://pypip.in/license/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
 
 pymal
@@ -14,20 +16,12 @@ Objects in pymal are lazy-loading: they won't go out and fetch MAL info until yo
 
 Dependencies
 ===========
-* `python`
-Wasn't tried on other python 3, but i believe it will work on all types of python 3.
-Won't work on python 2 (known problem is the headers of functions).
-I don't believe it should be even discussed. (python 2 was announced as deprecated).
-    * `3.2`
-    * `3.3`
-    * `3.4`
-    * `pypi3`
 * `BeautifulSoup4`
     * `html5lib` for BeautifulSoup4 to read html pages better.
 * `requests`
     * `httpcache` for requests to have cache (might be removed because no cache can be created with mal right now).
 * pillows
-To show users' avatars and mangas/animes icon.
+ To show users' avatars and mangas/animes icon.
 
 Installation
 ============
