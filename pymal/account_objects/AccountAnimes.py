@@ -144,14 +144,15 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         tables = main_div.findAll(name='table', reucrsive=False)
         if 4 >= len(tables):
             return frozenset()
-        rows = tables[3: -1]
+        main_table = tables[3]
+        rows = main_table.tbody.findAll(name='tr', recursive=False)
 
-        return frozenset(map(self.__parse_obj_table, rows))
+        return frozenset(map(self.__parse_manga_div, rows))
 
-    def __parse_obj_table(self, div):
+    def __parse_manga_div(self, div):
         from urllib import parse
 
-        from pymal.account_objects.MyAnime import MyAnime as obj
+        from pymal.account_objects import MyAnime
 
         links_div = div.findAll(name='td', recorsive=False)[1]
 
@@ -165,7 +166,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         else:
             my_link_id = 0
 
-        return obj(link_id, my_link_id, self.__account)
+        return MyAnime.MyAnime(link_id, my_link_id, self.__account)
 
     def __repr__(self):
         return "<User animes' number is {0:d}>".format(len(self))
