@@ -6,6 +6,5 @@ html5lib>=0.999
 httpcache>=0.1.3
 nose2>=0.4.7
 six>=1.1,<1.4
-nose2-cov>=1.0a4
 requests>=2.3.0
 pillow>=2.4.0
