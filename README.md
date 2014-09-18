@@ -1,5 +1,11 @@
 [![Build Status](https://travis-ci.org/tomerghelber/pymal.svg)](https://travis-ci.org/tomerghelber/pymal)
 [![Coverage Status](https://coveralls.io/repos/tomerghelber/pymal/badge.png)](https://coveralls.io/r/tomerghelber/pymal)
+[![Downloads](https://pypip.in/download/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Latest Version](https://pypip.in/version/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Supported Python versions](https://pypip.in/py_versions/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Supported Python implementations](https://pypip.in/implementation/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Development Status](https://pypip.in/status/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![License](https://pypip.in/license/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
 
 pymal
 ==========
