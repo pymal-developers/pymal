@@ -7,12 +7,6 @@ This README will try to explain how all the tests are organized and how it shoul
 
 Dependencies
 ===========
-pymal global dependencies
--------------------------
-* python 3.4.*
-* BeautifulSoup
-* requests
-
 test dependencies
 -----------------
  * we are using the basic unittest that python gives us.
