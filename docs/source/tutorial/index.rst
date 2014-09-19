@@ -8,6 +8,8 @@ Contents:
 
    account
    anime
+   my_anime
    manga
+   my_manga
    seasons
-   exceptions/index.rst
+   exceptions/index
