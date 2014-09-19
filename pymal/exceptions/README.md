@@ -1,5 +1,3 @@
-[TOC]
-
 Usage
 =====
 All the exceptions in pymal are placed here.

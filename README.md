@@ -1,21 +1,27 @@
-[TOC]
+[![Build Status](https://travis-ci.org/tomerghelber/pymal.svg)](https://travis-ci.org/tomerghelber/pymal)
+[![Coverage Status](https://coveralls.io/repos/tomerghelber/pymal/badge.png)](https://coveralls.io/r/tomerghelber/pymal)
+[![Development Status](https://pypip.in/status/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+
+[![Supported Python versions](https://pypip.in/py_versions/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Supported Python implementations](https://pypip.in/implementation/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+
+[![Downloads](https://pypip.in/download/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![Latest Version](https://pypip.in/version/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
+[![License](https://pypip.in/license/pymal/badge.svg)](https://pypi.python.org/pypi/pymal/)
 
 pymal
 ==========
 Provides programmatic access to MyAnimeList data with python.
 Objects in pymal are lazy-loading: they won't go out and fetch MAL info until you first-request it.
 
-[![Build Status](https://drone.io/bitbucket.org/pymal-developers/pymal/status.png)](https://drone.io/bitbucket.org/pymal-developers/pymal/latest)
-
 Dependencies
 ===========
-* python 3.4.*
-    - Wasn't tried on other python 3, but i believe it will work on all python 3.
-    - Won't work on python 2 (known problem is the headers of functions). I don't believe it should be even discussed. (python 2 was announced as deprecated).
-* BeautifulSoup4
-    - html5lib for BeautifulSoup4 to read html pages better.
-* requests
-    - httpcache for requests to have cache (might be removed because no cache can be created with mal right now).
+* `BeautifulSoup4`
+    * `html5lib` for BeautifulSoup4 to read html pages better.
+* `requests`
+    * `httpcache` for requests to have cache (might be removed because no cache can be created with mal right now).
+* pillows
+ To show users' avatars and mangas/animes icon.
 
 Installation
 ============
@@ -25,9 +31,9 @@ Testing
 =======
 To run the tests that come with MAL Client:
 1. Install nose2 (A really good package for running tests - `pip install nose2`). For more data look on [nose2](https://github.com/nose-devs/nose2 "nose2").
-  If you decided to install nose 2, i recommend on the plugin nose2-cov for code statistics - `pip install nose2-cov`.
-2. Navigate to the python-mal directory
-3. Run `nose2` or `python -m unittest` with a lot of parameters that i don't know.
+  If you decided to install nose 2, I recommend on the plugin nose2-cov for code statistics - `pip install nose2-cov`.
+2. Navigate to the pymal directory
+3. Run `nose2` or `python -m unittest` with a lot of parameters that I don't know.
 
 Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
 
