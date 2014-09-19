@@ -6,7 +6,7 @@ pymal
 Provides programmatic access to MyAnimeList data with python.
 Objects in pymal are lazy-loading: they won't go out and fetch MAL info until you first-request it.
 
-This [our doc](http://pymal.readthedocs.org/en/latest/).
+This [our doc](http://pymal.rtfd.org).
 
 Dependencies
 ===========
