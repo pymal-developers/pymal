@@ -10,3 +10,4 @@ Contents:
    anime
    manga
    seasons
+   exceptions/index.rst
