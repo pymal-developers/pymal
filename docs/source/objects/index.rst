@@ -12,6 +12,7 @@ Contents:
    manga
    seasons
    exceptions/index
+   other
 
 Usage
 =====
