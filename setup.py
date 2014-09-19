@@ -56,5 +56,6 @@ setup(
         'html5lib>=0.999',
         'six>=1.1,<1.4',
         'pillow>=2.4.0',
+        'singleton>=0.1.0',
     ],
 )
