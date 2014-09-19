@@ -17,8 +17,7 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
     Attributes:
         animes - a frozenset of animes.
         year - the season year.
-        season_name - The season name.
-          Can be 'Winter', 'Spring', 'Summer' or 'Fall'.
+        season_name - The season name. Can be 'Winter', 'Spring', 'Summer' or 'Fall'.
     """
     __all__ = ['animes', 'reload']
 

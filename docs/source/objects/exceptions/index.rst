@@ -27,7 +27,7 @@ MyAnimeListApiError
 .. autoclass:: MyAnimeListApiDeleteError
    :show-inheritance:
 
-.. autoclass:: MyAnimeListApiDeleteError
+.. autoclass:: MyAnimeListApiAddError
    :show-inheritance:
 
 Others
