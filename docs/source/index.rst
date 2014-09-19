@@ -6,19 +6,12 @@
 Welcome to pymal's documentation!
 =================================
 
-|BuildStatus|_ |CoverageStatus|_ |DevelopmentStatus|_
-
-|SupportedPythonversions|_ |SupportedPythonimplementations|_
+|DevelopmentStatus|_ |SupportedPythonversions|_ |SupportedPythonimplementations|_
 
 |Downloads|_ |LatestVersion|_ |License|_
 
-.. |BuildStatus| image:: https://travis-ci.org/tomerghelber/pymal.svg
-.. _BuildStatus: https://travis-ci.org/tomerghelber/pymal/
-.. |CoverageStatus| image:: https://coveralls.io/repos/tomerghelber/pymal/badge.png
-.. _CoverageStatus: https://coveralls.io/r/tomerghelber/pymal/
 .. |DevelopmentStatus| image:: https://pypip.in/status/pymal/badge.svg
 .. _DevelopmentStatus: https://pypi.python.org/pypi/pymal/
-
 .. |SupportedPythonversions| image:: https://pypip.in/py_versions/pymal/badge.svg
 .. _SupportedPythonversions: https://pypi.python.org/pypi/pymal/
 .. |SupportedPythonimplementations| image:: https://pypip.in/implementation/pymal/badge.svg
