@@ -18,7 +18,7 @@ __all__ = ['Manga']
 
 class Manga(object, metaclass=SingletonFactory.SingletonFactory):
     """
-    Anime object that keeps all the anime data in MAL.
+    Object that keeps all the anime data in MAL.
 
     Properties:
      - id - int
