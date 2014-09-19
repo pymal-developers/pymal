@@ -582,7 +582,7 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
 
         :exception exceptions.MyAnimeListApiAddError: when failed.
 
-        :rtype: MyAnime
+        :rtype: :class:`account_objects.MyAnime`
         """
         from pymal import exceptions
 
