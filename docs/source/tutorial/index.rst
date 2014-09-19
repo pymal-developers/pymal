@@ -7,9 +7,8 @@ Contents:
    :maxdepth: 2
 
    account
+   account_objects/index
    anime
-   my_anime
    manga
-   my_manga
    seasons
    exceptions/index
