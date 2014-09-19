@@ -607,7 +607,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         If its the same account as this owner returning this.
 
         :param account: account to connect to the anime.
-        :type account: Account
+        :type account: :class:`Account.Account`
         :return: anime connected to the account
         :rtype: MyAnime
         """

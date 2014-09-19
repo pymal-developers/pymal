@@ -35,7 +35,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     def __init__(self, account):
         """
         :param account: Which account this anime list is connected to.
-        :type account: Account
+        :type account: :class:`Account.Account`
         """
         self.__account = account
         self.__url = self.__URL.format(account.username)

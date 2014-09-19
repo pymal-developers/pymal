@@ -578,7 +578,7 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
     def add(self, account):
         """
         :param account: the account to add him self anime.
-        :type Account: Account
+        :type account: :class:`Account.Account`
 
         :exception exceptions.MyAnimeListApiAddError: when failed.
 

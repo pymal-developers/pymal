@@ -17,7 +17,7 @@ __all__ = ['Account']
 
 class Account(object, metaclass=SingletonFactory.SingletonFactory):
     """
-    Account object that keeps all the account data in MAL.
+    Object that keeps all the account data in MAL.
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',
                'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
