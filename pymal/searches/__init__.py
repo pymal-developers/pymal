@@ -15,7 +15,7 @@ __SearchMangas = SearchMangas.SearchMangas()
 def search_accounts(search_string: str) -> frozenset:
     """
     :param search_string: a name of an account
-    :type: str
+    :type search_string: str
     :return: the found accounts that match the searched one
     :rtype: map.
     """
@@ -25,7 +25,7 @@ def search_accounts(search_string: str) -> frozenset:
 def search_animes(search_string: str) -> frozenset:
     """
     :param search_string: a name of an anime
-    :type: str
+    :type search_string: str
     :return: the found animes that match the searched one
     :rtype: map.
     """
@@ -35,7 +35,7 @@ def search_animes(search_string: str) -> frozenset:
 def search_mangas(search_string: str) -> frozenset:
     """
     :param search_string: a name of a manga
-    :type: str
+    :type search_string: str
     :return: the found mangas that match the searched one
     :rtype: map.
     """

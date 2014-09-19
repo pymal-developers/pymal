@@ -20,7 +20,7 @@ class Review(object):
     def __init__(self, div):
         """
         :param div: The div of the review to parse all the data from it.
-        :type: bs4.element.Tag
+        :type div: bs4.element.Tag
         """
         from pymal import Account
 

@@ -33,9 +33,9 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
     def __init__(self, season_name: str, year: int or str):
         """
         :param season_name: the name of the season. see __SEAONS_NAME_TO_START_MONTH keys.
-        :type: str
+        :type season_name: str
         :param year: the year of the season
-        :type: int or str
+        :type year: int or str
         """
         import time
         from pymal import exceptions

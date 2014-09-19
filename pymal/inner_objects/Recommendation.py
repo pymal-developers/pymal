@@ -17,7 +17,7 @@ class Recommendation(object):
     def __init__(self, div):
         """
         :param div: The dic of the recommendation to parse all the data from it.
-        :type: bs4.element.Tag
+        :type div: bs4.element.Tag
         """
         from pymal import Account, Anime
 

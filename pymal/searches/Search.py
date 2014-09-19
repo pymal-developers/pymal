@@ -56,7 +56,7 @@ class Search(object, metaclass=Singleton):
     def search(self, search_line: str) -> frozenset:
         """
         :param search_line: the search line to find
-        :type: str
+        :type search_line: str
         :return: the found results
         :rtype: frozenset
         """

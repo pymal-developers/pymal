@@ -18,19 +18,6 @@ __all__ = ['Account']
 class Account(object, metaclass=SingletonFactory.SingletonFactory):
     """
     Account object that keeps all the account data in MAL.
-
-    Properties:
-     - username - str
-     - user_id - int
-     - mangas - AccountMangas
-     - animes - AccountAnimes
-     - friends - AccountFriedns
-     - is_auth - bool
-
-     Functions:
-      - search
-      - change_password
-      - auth_connect
     """
     __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',
                'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
@@ -44,9 +31,9 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def __init__(self, username: str, password: str or None=None):
         """
         :param username: The account username.
-        :type: str
+        :type username: str
         :param password: Required for quick connection, instead of calling later change_password.
-        :type: str or None
+        :type password: str or None
         """
         from pymal.account_objects import AccountAnimes, AccountMangas
 
@@ -72,8 +59,8 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     @property
     def username(self) -> str:
         """
-        Returns the user name.
 
+        :returns: the user name.
         :rtype: str
         """
         return self.__username
@@ -81,8 +68,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     @property
     def user_id(self) -> int:
         """
-        Returns the user id. If unknown loading it.
-
+        :returns: the user id. If unknown loading it.
         :rtype: int
         """
         if self.__user_id is None:
@@ -97,27 +83,24 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     @property
     def mangas(self):
         """
-        Return list of account's mangas.
-
-        :rtype: AccountMangas
+        :returns: list of account's mangas.
+        :rtype: :class:`account_objects.AccountMangas.AccountMangas`
         """
         return self.__mangas
 
     @property
     def animes(self):
         """
-        Return list of account's animes.
-
-        :rtype: AccountAnimes
+        :returns: list of account's animes.
+        :rtype: :class:`account_objects.AccountAnimes.AccountAnimes`
         """
         return self.__animes
 
     @property
     def friends(self) -> set:
         """
-        Return list of account's friends.
-
-        :rtype: AccountFriends
+        :returns: list of account's friends.
+        :rtype: :class:`account_objects.AccountFriends.AccountFriends`
         """
         from pymal.account_objects import AccountFriends
 
@@ -127,12 +110,14 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
 
     def search(self, search_line: str, is_anime: bool=True) -> map:
         """
-        Searching like reagular search but switching all the object in "my" lists to the "my" objects.
+        Searching like regular search but switching all the object in "my" lists to the "my" objects.
 
         :param search_line: the search line.
-        :type: str
+        :type search_line: str
         :param is_anime: True is searching for anime, False for manga.
-        :type: bool
+        :type is_anime: bool
+        :returns: searched objects
+        :rtype: map
         """
         from pymal import searches
 
@@ -158,9 +143,10 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         """
         Checking if the new password is valid
 
-        :param password
-        :type: str
-
+        :param password: password
+        :type password: str
+        :returns: True if password is right.
+        :rtype: bool
         :exception exceptions.FailedToParseError: when failed
         """
         from xml.etree import ElementTree
@@ -200,14 +186,13 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def auth_connect(self, url: str, data: str or None=None,
                      headers: dict or None=None) -> str:
         """
-        Returns data after using the account authenticate to get the data.
-
         :param url: The url to get.
-        :type: str
+        :type url: str
         :param data: The data to pass (will change the request to "POST")
-        :type: str or None
+        :type data: str or None
         :param headers: Headers for the request.
-        :type: dict or None
+        :type headers: dict or None
+        :returns: data after using the account authenticate to get the data.
         :rtype: str
         """
         from pymal import exceptions
@@ -243,8 +228,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     @property
     def is_auth(self) -> bool:
         """
-        Return True if the password is right (and able to authenticate).
-
+        :returns: True if the password is right (and able to authenticate).
         :rtype: bool
         """
         return self.__auth_object is not None

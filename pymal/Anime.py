@@ -73,7 +73,7 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
     def __init__(self, mal_id: int):
         """
         :param mal_id: the anime id in mal.
-        :type: int
+        :type mal_id: int
         """
         self.__id = mal_id
         self._is_loaded = False
@@ -578,7 +578,7 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
     def add(self, account):
         """
         :param account: the account to add him self anime.
-        :type: Account
+        :type Account: Account
 
         :exception exceptions.MyAnimeListApiAddError: when failed.
 

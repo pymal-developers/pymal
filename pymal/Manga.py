@@ -544,7 +544,7 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
     def add(self, account):
         """
         :param account: the account to add him self manga.
-        :type: Account
+        :type account: Account
 
         :exception exceptions.MyAnimeListApiAddError: when failed.
 

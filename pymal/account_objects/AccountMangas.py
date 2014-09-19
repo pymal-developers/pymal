@@ -35,7 +35,7 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
     def __init__(self, account):
         """
         :param account: Which account this manga list is connected to.
-        :type: Account
+        :type account: Account
         """
         self.__account = account
         self.__url = self.__URL.format(account.username)
