@@ -579,10 +579,8 @@ class Anime(object, metaclass=SingletonFactory.SingletonFactory):
         """
         :param account: the account to add him self anime.
         :type account: :class:`Account.Account`
-
+        :rtype: :class:`account_objects.MyAnime.MyAnime`
         :exception exceptions.MyAnimeListApiAddError: when failed.
-
-        :rtype: :class:`account_objects.MyAnime`
         """
         from pymal import exceptions
 

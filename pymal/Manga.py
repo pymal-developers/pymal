@@ -548,7 +548,7 @@ class Manga(object, metaclass=SingletonFactory.SingletonFactory):
 
         :exception exceptions.MyAnimeListApiAddError: when failed.
 
-        :rtype: :class:`account_objects.MyManga`
+        :rtype: :class:`account_objects.MyManga.MyManga`
         """
         from pymal import exceptions
 

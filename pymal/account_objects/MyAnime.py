@@ -609,7 +609,7 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
         :param account: account to connect to the anime.
         :type account: :class:`Account.Account`
         :return: anime connected to the account
-        :rtype: :class:`account_objects.MyAnime`
+        :rtype: :class:`account_objects.MyAnime.MyAnime`
         """
         if account == self._account:
             return self

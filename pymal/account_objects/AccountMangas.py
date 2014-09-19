@@ -14,7 +14,7 @@ __all__ = ['AccountMangas']
 
 class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
     """
-    AccountAnimes is a slow loading of an account anime list.
+    A slow loading of an account anime list.
 
     Properties:
      - map_of_lists

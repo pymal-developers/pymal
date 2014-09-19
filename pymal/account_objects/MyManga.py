@@ -617,7 +617,7 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
         :param account: account to connect to the anime.
         :type account: :class:`Account.Account`
         :return: anime connected to the account
-        :rtype: :class:`accounts_objects.MyManga`
+        :rtype: :class:`accounts_objects.MyManga.MyManga`
         """
         if account == self._account:
             return self
