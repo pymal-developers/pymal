@@ -68,11 +68,11 @@ class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
     def __init__(self, mal_id: int, my_mal_id, account):
         """
         """
-        from pymal import Manga
-        if isinstance(mal_id, Manga.Manga):
+        from pymal import manga
+        if isinstance(mal_id, manga.Manga):
             self.obj = mal_id
         else:
-            self.obj = Manga.Manga(mal_id)
+            self.obj = manga.Manga(mal_id)
 
         self.__my_mal_url = self.__MY_MAL_URL.format(my_mal_id)
 

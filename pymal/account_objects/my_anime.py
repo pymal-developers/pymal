@@ -67,11 +67,11 @@ class MyAnime(object, metaclass=SingletonFactory.SingletonFactory):
     def __init__(self, mal_id: int, my_mal_id, account):
         """
         """
-        from pymal import Anime
-        if isinstance(mal_id, Anime.Anime):
+        from pymal import anime
+        if isinstance(mal_id, anime.Anime):
             self.obj = mal_id
         else:
-            self.obj = Anime.Anime(mal_id)
+            self.obj = anime.Anime(mal_id)
 
         self.__my_mal_url = self.__MY_MAL_URL.format(self.obj.id)
 
