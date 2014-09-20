@@ -22,7 +22,7 @@ class Review(object):
         :param div: The div of the review to parse all the data from it.
         :type div: bs4.element.Tag
         """
-        from pymal import Account
+        from pymal import account
 
         time_div, general_data_div, text_div, _ = div.findAll(name="div", recursive=False)
 
@@ -31,7 +31,7 @@ class Review(object):
         general_data_row = general_data_div.table.tbody.tr
         _, user_cell, general_data_cell = general_data_row.findAll(name="td", recursive=False)
 
-        self.account = Account.Account(user_cell.a.text)
+        self.account = account.Account(user_cell.a.text)
         helpful_span, watched_span = user_cell.find(name="div", attrs={"class": "lightLink spaceit"}).findAll(name="span")
 
         self.helpful = int(helpful_span.text)

@@ -19,11 +19,11 @@ class Recommendation(object):
         :param div: The dic of the recommendation to parse all the data from it.
         :type div: bs4.element.Tag
         """
-        from pymal import Account, Anime
+        from pymal import account, anime
 
         recommended, recommends_divs = div.table.tbody.tr.findAll(name="td", recursive=False)
 
-        self.recommended_anime = Anime.Anime(int(recommended.div.a["href"].split('/')[2]))
+        self.recommended_anime = anime.Anime(int(recommended.div.a["href"].split('/')[2]))
 
         data = recommends_divs.findAll(name="div", recursive=False)
         if 3 == len(data):
@@ -39,7 +39,7 @@ class Recommendation(object):
         for recommend in recommends:
             recommend_data, user_data = recommend.findAll(name="div", recursive=False)
             username = user_data.find(name='a', recursive=False)["href"].split('/')[2]
-            self.recommends[Account.Account(username)] = recommend_data.text
+            self.recommends[account.Account(username)] = recommend_data.text
 
     def __repr__(self):
         return "<{0:s} for {1:s} by {2:d} users>".format(

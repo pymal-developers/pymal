@@ -16,6 +16,6 @@ class SearchAccountsProvider(search_provider.SearchProvider):
     _SEARCHED_URL_SUFFIX = '/profile/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import Account
+        from pymal import account
 
         return Account.Account(mal_url)

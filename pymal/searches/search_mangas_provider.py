@@ -16,7 +16,7 @@ class SearchMangasProvider(search_provider.SearchProvider):
     _SEARCHED_URL_SUFFIX = '/manga/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import Manga
+        from pymal import manga
 
         mal_id = int(mal_url.split('/')[0])
-        return Manga.Manga(int(mal_id))
+        return manga.Manga(int(mal_id))

@@ -16,7 +16,7 @@ class SearchAnimesProvider(search_provider.SearchProvider):
     _SEARCHED_URL_SUFFIX = '/anime/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import Anime
+        from pymal import anime
 
         mal_id = int(mal_url.split('/')[0])
-        return Anime.Anime(int(mal_id))
+        return anime.Anime(int(mal_id))
