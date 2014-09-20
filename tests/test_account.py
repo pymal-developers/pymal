@@ -29,7 +29,7 @@ class InitTestCase(unittest.TestCase):
         accnt = account.Account(ACCOUNT_TEST_USERNAME)
         self.assertFalse(accnt.is_auth)
 
-        account.change_password(ACCOUNT_TEST_PASSWORD)
+        accnt.change_password(ACCOUNT_TEST_PASSWORD)
         self.assertTrue(accnt.is_auth)
         account.Account._unregiter(accnt)
 

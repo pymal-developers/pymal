@@ -13,30 +13,30 @@ class TestCase(unittest.TestCase):
     def test_seasons(self):
         self.assertIsInstance(self.seasons.seasons, frozenset)
 
-        for season in self.seasons.seasons:
-            self.assertIsInstance(season, season.Season)
+        for ssn in self.seasons.seasons:
+            self.assertIsInstance(ssn, season.Season)
 
     def test_seasons_animes(self):
         ssn = list(self.seasons.seasons)[0]
         self.assertIsInstance(ssn.animes, frozenset)
 
-        for anime in ssn.animes:
-            self.assertIsInstance(anime, anime.Anime)
+        for anm in ssn.animes:
+            self.assertIsInstance(anm, anime.Anime)
 
     def test_seasons_contains(self):
-        season = list(self.seasons.seasons)[0]
-        anime = list(season.animes)[0]
+        ssn = list(self.seasons.seasons)[0]
+        anime = list(ssn.animes)[0]
         self.assertIn(anime, self.seasons)
 
     def test_season_contains(self):
-        season = list(self.seasons.seasons)[0]
-        anime = list(season.animes)[0]
-        self.assertIn(anime, season)
+        ssn = list(self.seasons.seasons)[0]
+        anime = list(ssn.animes)[0]
+        self.assertIn(anime, ssn)
 
     def test_str(self):
         repr(self.seasons)
-        for season in self.seasons.seasons:
-            repr(season)
+        for ssn in self.seasons.seasons:
+            repr(ssn)
 
 
 def main():

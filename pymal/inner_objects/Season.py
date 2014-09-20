@@ -68,7 +68,7 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
         import requests
         import bs4
 
-        from pymal import Anime
+        from pymal import anime
 
         sock = requests.get(self.url)
         xml = bs4.BeautifulSoup(sock.text)
@@ -77,7 +77,7 @@ class Season(object, metaclass=SingletonFactory.SingletonFactory):
         if consts.DEBUG and 0 != len(animes_xml - animes_xml_with_id):
             print("animes with no id:", animes_xml - animes_xml_with_id)
         animes_ids = map(lambda x: int(x.malid.text), animes_xml_with_id)
-        self.__animes = frozenset(map(lambda x: Anime.Anime(x), animes_ids))
+        self.__animes = frozenset(map(lambda x: anime.Anime(x), animes_ids))
 
     def __iter__(self):
         return iter(self.animes)
