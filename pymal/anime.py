@@ -7,16 +7,16 @@ from urllib import request
 
 import requests
 import bs4
+import singleton_factory
 
 from pymal import decorators
-from pymal.types import SingletonFactory
 from pymal import consts
 from pymal import global_functions
 
 __all__ = ['Anime']
 
 
-class Anime(object, metaclass=SingletonFactory.SingletonFactory):
+class Anime(object, metaclass=singleton_factory.SingletonFactory):
     """
     Object that keeps all the anime data in MAL.
 

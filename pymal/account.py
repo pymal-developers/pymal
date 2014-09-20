@@ -6,16 +6,16 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 from urllib import request
 
 import requests
+import singleton_factory
 
 from pymal import global_functions
 from pymal.decorators import load
-from pymal.types import SingletonFactory
 from pymal.consts import HOST_NAME
 
 __all__ = ['Account']
 
 
-class Account(object, metaclass=SingletonFactory.SingletonFactory):
+class Account(object, metaclass=singleton_factory.SingletonFactory):
     """
     Object that keeps all the account data in MAL.
     """
