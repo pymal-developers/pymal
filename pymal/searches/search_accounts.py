@@ -3,12 +3,12 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-from pymal.searches import Search
+from pymal.searches import search
 
 __all__ = ['SearchAccounts']
 
 
-class SearchAccounts(Search.Search):
+class SearchAccounts(search.Search):
     """
     Searching for accounts.
     """
