@@ -1,14 +1,14 @@
 import unittest
 
-from pymal import Anime
-from pymal import Seasons
+from pymal import anime
+from pymal import seasons
 from pymal.inner_objects import season
 
 
 class TestCase(unittest.TestCase):
 
     def setUp(self):
-        self.seasons = Seasons.Seasons()
+        self.seasons = seasons.Seasons()
 
     def test_seasons(self):
         self.assertIsInstance(self.seasons.seasons, frozenset)
@@ -17,11 +17,11 @@ class TestCase(unittest.TestCase):
             self.assertIsInstance(season, season.Season)
 
     def test_seasons_animes(self):
-        season = list(self.seasons.seasons)[0]
-        self.assertIsInstance(season.animes, frozenset)
+        ssn = list(self.seasons.seasons)[0]
+        self.assertIsInstance(ssn.animes, frozenset)
 
-        for anime in season.animes:
-            self.assertIsInstance(anime, Anime.Anime)
+        for anime in ssn.animes:
+            self.assertIsInstance(anime, anime.Anime)
 
     def test_seasons_contains(self):
         season = list(self.seasons.seasons)[0]

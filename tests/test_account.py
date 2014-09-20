@@ -1,6 +1,6 @@
 import unittest
 
-from pymal import Account
+from pymal import account
 from pymal.account_objects import account_mangas
 from pymal.account_objects import account_animes
 from pymal.account_objects import account_friends
@@ -11,60 +11,60 @@ from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASS
 class InitTestCase(unittest.TestCase):
 
     def test_init_not_auth(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertFalse(account.is_auth)
-        Account.Account._unregiter(account)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME)
+        self.assertFalse(accnt.is_auth)
+        account.Account._unregiter(accnt)
 
     def test_account_init_auth(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        self.assertTrue(account.is_auth)
-        Account.Account._unregiter(account)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        self.assertTrue(accnt.is_auth)
+        account.Account._unregiter(accnt)
 
     def test_init_auth_bad_password(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD * 2)
-        self.assertFalse(account.is_auth)
-        Account.Account._unregiter(account)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD * 2)
+        self.assertFalse(accnt.is_auth)
+        account.Account._unregiter(accnt)
 
     def test_init_later_auth(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertFalse(account.is_auth)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME)
+        self.assertFalse(accnt.is_auth)
 
         account.change_password(ACCOUNT_TEST_PASSWORD)
-        self.assertTrue(account.is_auth)
-        Account.Account._unregiter(account)
+        self.assertTrue(accnt.is_auth)
+        account.Account._unregiter(accnt)
 
     def test_init_later_auth_bad_password(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertFalse(account.is_auth)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME)
+        self.assertFalse(accnt.is_auth)
 
-        self.assertFalse(account.change_password(ACCOUNT_TEST_PASSWORD * 2))
-        self.assertFalse(account.is_auth)
-        Account.Account._unregiter(account)
+        self.assertFalse(accnt.change_password(ACCOUNT_TEST_PASSWORD * 2))
+        self.assertFalse(accnt.is_auth)
+        account.Account._unregiter(accnt)
 
     def test_str_no_password(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertEqual(str(account), "<Account username: pymal-developr>")
-        Account.Account._unregiter(account)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME)
+        self.assertEqual(str(accnt), "<Account username: pymal-developr>")
+        account.Account._unregiter(accnt)
 
     def test_str_with_password(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        self.assertEqual(str(account), "<Account username: pymal-developr>")
-        Account.Account._unregiter(account)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        self.assertEqual(str(accnt), "<Account username: pymal-developr>")
+        account.Account._unregiter(accnt)
 
     def test_user_id(self):
-        account = Account.Account(ACCOUNT_TEST_USERNAME)
-        self.assertEqual(account.user_id, 3854655)
-        Account.Account._unregiter(account)
+        accnt = account.Account(ACCOUNT_TEST_USERNAME)
+        self.assertEqual(accnt.user_id, 3854655)
+        account.Account._unregiter(accnt)
 
 
 class FunctionsTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
 
     @classmethod
     def tearDownClass(cls):
-        Account.Account._unregiter(cls.account)
+        account.Account._unregiter(cls.account)
 
     def test_reload(self):
         self.assertIsInstance(self.account.animes, account_animes.AccountAnimes)

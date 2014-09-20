@@ -2,8 +2,8 @@ import unittest
 import time
 from xml.etree import ElementTree
 
-from pymal import Account
-from pymal import Manga
+from pymal import account
+from pymal import manga
 from pymal import consts
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
@@ -13,7 +13,7 @@ class ReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.manga = list(cls.account.mangas)[0]
         cls.manga.my_reload()
 
@@ -88,7 +88,7 @@ class NoReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.manga = list(cls.account.mangas)[0]
 
     def test_my_id(self):
@@ -130,8 +130,8 @@ class NoReloadTestCase(unittest.TestCase):
         self.assertIsInstance(self.manga.my_reread_value, int)
 
     def test_equal(self):
-        anime = Manga.Manga(self.manga.id)
-        self.assertEqual(anime, self.manga)
+        mng = manga.Manga(self.manga.id)
+        self.assertEqual(mng, self.manga)
 
     def test_str(self):
         repr(self.manga)
