@@ -50,11 +50,12 @@ setup(
         'Topic :: Software Development :: User Interfaces',
     ],
     install_requires=[
-        'requests>=2.4.0',
+        'requests>=2.4.1',
         'beautifulsoup4>=4.3.2',
         'httpcache>=0.1.3',
         'html5lib>=0.999',
         'six==1.3',
         'pillow>=2.5.3',
+        'singleton3>=1.0',
     ],
 )
