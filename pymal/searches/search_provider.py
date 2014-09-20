@@ -11,7 +11,7 @@ from singleton3 import Singleton
 from pymal import global_functions, consts
 
 
-class SearchProvider(object, metclass=Singleton):
+class SearchProvider(object, metaclass=Singleton):
     """
     A search engine.
     Change the following properties and it will search for you:
