@@ -10,8 +10,6 @@ import bs4
 from pymal import global_functions, consts
 from pymal.types import Singleton
 
-__all__ = ['SearchUsers', 'SearchAnimes', 'SearchMangas']
-
 
 class Search(object, metaclass=Singleton):
     """
