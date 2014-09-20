@@ -54,7 +54,7 @@ class AccountFriends(ReloadedSet.ReloadedSetSingletonFactory):
         :return:
         :rtype:
         """
-        from pymal import Account
+        from pymal import account
 
         div_pic = div_friend.find(name="div", attrs={'class': 'picSurround'})
         if div_pic is None:
@@ -64,7 +64,7 @@ class AccountFriends(ReloadedSet.ReloadedSetSingletonFactory):
         if 2 != len(splited_friend_url):
             raise exceptions.FailedToParseError()
 
-        return Account.Account(splited_friend_url[1])
+        return account.Account(splited_friend_url[1])
 
     def __repr__(self):
         return "<User friends' number is {0:d}>".format(len(self))

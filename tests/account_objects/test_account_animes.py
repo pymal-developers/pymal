@@ -25,12 +25,12 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertEqual(len(self.animes), self.EXPECTED_LENGTH)
 
     def test_contains(self):
-        anime = anime.Anime(ANIME_ID)
-        self.assertIn(anime, self.animes)
+        anm = anime.Anime(ANIME_ID)
+        self.assertIn(anm, self.animes)
 
     def test_contains_my_manga(self):
-        my_anime = my_anime.MyAnime(ANIME_ID, 0, self.account)
-        self.assertIn(my_anime, self.animes)
+        my_anm = my_anime.MyAnime(ANIME_ID, 0, self.account)
+        self.assertIn(my_anm, self.animes)
 
     def test_contains_id(self):
         self.assertIn(ANIME_ID, self.animes)
