@@ -8,4 +8,4 @@ nose2>=0.4.7
 six>=1.1,<1.4
 requests>=2.3.0
 pillow>=2.4.0
-singleton>=0.1.0
+singleton3>=1.0

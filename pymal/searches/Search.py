@@ -6,15 +6,14 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 from urllib import parse
 
 import bs4
-from singleton import singleton
+from singleton3 import Singleton
 
 from pymal import global_functions, consts
 
 __all__ = ['SearchUsers', 'SearchAnimes', 'SearchMangas']
 
 
-@singleton.Singleton
-class Search(object):
+class Search(object, metclass=Singleton):
     """
     A search engine.
     Change the following properties and it will search for you:
