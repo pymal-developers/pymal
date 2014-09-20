@@ -7,7 +7,7 @@ from pymal import Account
 from pymal import Anime
 from pymal import Manga
 from pymal import global_functions
-from pymal.account_objects import MyAnime
+from pymal.account_objects import my_anime
 import bs4
 
 from tests.constants_for_testing import ADD_ANIME_ID, ANIME_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD,\
@@ -206,7 +206,7 @@ class NoReloadTestCase(unittest.TestCase):
         anime = Anime.Anime(ADD_ANIME_ID)
         my_anime = anime.add(self.account)
 
-        self.assertIsInstance(my_anime, MyAnime.MyAnime)
+        self.assertIsInstance(my_anime, my_anime.MyAnime)
         self.account.animes.reload()
         self.assertIn(my_anime, self.account.animes)
 

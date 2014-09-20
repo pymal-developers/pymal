@@ -1,9 +1,9 @@
 import unittest
 
 from pymal import Account
-from pymal.account_objects import AccountAnimes
+from pymal.account_objects import account_animes
 from pymal import Anime
-from pymal.account_objects import MyAnime
+from pymal.account_objects import my_anime
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, ANIME_ID
 
@@ -18,7 +18,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        AccountAnimes.AccountAnimes._unregiter(cls.animes)
+        account_animes.AccountAnimes._unregiter(cls.animes)
         Account.Account._unregiter(cls.account)
 
     def test_len(self):
@@ -29,7 +29,7 @@ class AccountAnimeListTestCase(unittest.TestCase):
         self.assertIn(anime, self.animes)
 
     def test_contains_my_manga(self):
-        my_anime = MyAnime.MyAnime(ANIME_ID, 0, self.account)
+        my_anime = my_anime.MyAnime(ANIME_ID, 0, self.account)
         self.assertIn(my_anime, self.animes)
 
     def test_contains_id(self):
@@ -49,8 +49,8 @@ class AccountAnimeListInteraction(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        AccountAnimes.AccountAnimes._unregiter(cls.friend_animes)
-        AccountAnimes.AccountAnimes._unregiter(cls.animes)
+        account_animes.AccountAnimes._unregiter(cls.friend_animes)
+        account_animes.AccountAnimes._unregiter(cls.animes)
         Account.Account._unregiter(cls.friend)
         Account.Account._unregiter(cls.account)
 

@@ -21,5 +21,5 @@ class GotRobotError(RuntimeError):
     pass
 
 
-from pymal.exceptions.FailedToParseError import *
-from pymal.exceptions.MyAnimeListApiError import *
+from pymal.exceptions.failed_to_parse_error import *
+from pymal.exceptions.my_anime_list_api_error import *

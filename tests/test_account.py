@@ -1,9 +1,9 @@
 import unittest
 
 from pymal import Account
-from pymal.account_objects import AccountMangas
-from pymal.account_objects import AccountAnimes
-from pymal.account_objects import AccountFriends
+from pymal.account_objects import account_mangas
+from pymal.account_objects import account_animes
+from pymal.account_objects import account_friends
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -67,9 +67,9 @@ class FunctionsTestCase(unittest.TestCase):
         Account.Account._unregiter(cls.account)
 
     def test_reload(self):
-        self.assertIsInstance(self.account.animes, AccountAnimes.AccountAnimes)
-        self.assertIsInstance(self.account.mangas, AccountMangas.AccountMangas)
-        self.assertIsInstance(self.account.friends, AccountFriends.AccountFriends)
+        self.assertIsInstance(self.account.animes, account_animes.AccountAnimes)
+        self.assertIsInstance(self.account.mangas, account_mangas.AccountMangas)
+        self.assertIsInstance(self.account.friends, account_friends.AccountFriends)
 
     def test_username(self):
         self.assertEqual(self.account.username, ACCOUNT_TEST_USERNAME)

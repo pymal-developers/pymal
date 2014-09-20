@@ -3,7 +3,7 @@ import unittest
 from pymal import Account
 from pymal import Anime
 from pymal import Manga
-from pymal.account_objects import MyManga
+from pymal.account_objects import my_manga
 
 from tests.constants_for_testing import ADD_MANGA_ID, MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -175,7 +175,7 @@ class NoReloadTestCase(unittest.TestCase):
         manga = Manga.Manga(ADD_MANGA_ID)
         my_manga = manga.add(self.account)
 
-        self.assertIsInstance(my_manga, MyManga.MyManga)
+        self.assertIsInstance(my_manga, my_manga.MyManga)
         self.account.mangas.reload()
         self.assertIn(my_manga, self.account.mangas)
 

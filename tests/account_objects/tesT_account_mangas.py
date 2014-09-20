@@ -1,7 +1,7 @@
 import unittest
 
 from pymal import Account
-from pymal.account_objects import AccountMangas
+from pymal.account_objects import account_mangas
 from pymal import Manga
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, MANGA_ID
@@ -17,7 +17,7 @@ class AccountMangaListTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        AccountMangas.AccountMangas._unregiter(cls.mangas)
+        account_mangas.AccountMangas._unregiter(cls.mangas)
         Account.Account._unregiter(cls.account)
 
     def test_len(self):
@@ -49,8 +49,8 @@ class AccountMangaListInteraction(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        AccountMangas.AccountMangas._unregiter(cls.friend_mangas)
-        AccountMangas.AccountMangas._unregiter(cls.mangas)
+        account_mangas.AccountMangas._unregiter(cls.friend_mangas)
+        account_mangas.AccountMangas._unregiter(cls.mangas)
         Account.Account._unregiter(cls.friend)
         Account.Account._unregiter(cls.account)
 

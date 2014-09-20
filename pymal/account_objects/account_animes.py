@@ -151,7 +151,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     def __parse_obj_table(self, div):
         from urllib import parse
 
-        from pymal.account_objects.MyAnime import MyAnime as obj
+        from pymal.account_objects.my_anime import MyAnime as obj
 
         links_div = div.findAll(name='td', recorsive=False)[1]
 

@@ -3,13 +3,13 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-from pymal.searches import SearchAccounts, SearchAnimes, SearchMangas
+from pymal.searches import search_accounts, search_animes, search_mangas
 
 __all__ = ['search_animes', 'search_mangas', 'search_accounts']
 
-__SearchAccounts = SearchAccounts.SearchAccounts()
-__SearchAnimes = SearchAnimes.SearchAnimes()
-__SearchMangas = SearchMangas.SearchMangas()
+__SearchAccounts = search_accounts.SearchAccounts()
+__SearchAnimes = search_animes.SearchAnimes()
+__SearchMangas = search_mangas.SearchMangas()
 
 
 def search_accounts(search_string: str) -> frozenset:

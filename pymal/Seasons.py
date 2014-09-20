@@ -34,14 +34,14 @@ class Seasons(object, metaclass=Singleton):
         import requests
         import bs4
 
-        from pymal.inner_objects import Season
+        from pymal.inner_objects import season
 
         sock = requests.get(self.__SEASONS_URL)
         body = bs4.BeautifulSoup(sock.text).body
 
         seasons_lines = body.text.splitlines()
         splitted_lines = map(lambda x: reversed(x.split('_')), seasons_lines)
-        seasons = map(lambda x: Season.Season(*tuple(x)), splitted_lines)
+        seasons = map(lambda x: season.Season(*tuple(x)), splitted_lines)
         self.__seasons = frozenset(seasons)
 
         self._is_loaded = True
