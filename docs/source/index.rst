@@ -30,6 +30,8 @@ Contents:
    :maxdepth: 2
 
    objects/index
+   tutorial
+   tests
 
 The idea
 --------
@@ -37,42 +39,8 @@ The idea
 Provides programmatic access to MyAnimeList data with python.
 Objects in pymal are lazy-loading: they won't go out and fetch MAL info until you first-request it.
 
-Dependencies
-------------
-
-* `BeautifulSoup4`
-
-  * `html5lib` for BeautifulSoup4 to read html pages better.
-
-* `requests`
-
-  * `httpcache` for requests to have cache (might be removed because no cache can be created with mal right now).
-
-* `pillows`
-  To show users' avatars and mangas/animes icon.
-
-
-Installation
-------------
-
-After cloning the repository, navigate to the directory and run `python setup.py install`.
-
-Testing
--------
-
-To run the tests that come with MAL Client:
-
-1. Install nose2 (A really good package for running tests - `pip install nose2`). For more data look on [nose2](https://github.com/nose-devs/nose2 "nose2").
-2. Navigate to the pymal directory
-3. Run `nose2` or `python -m unittest` with a lot of parameters that I don't know.
-
-Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
-
-[More about tests for developers for pymal.](/tests/readme.md "pymal tests readme")
-
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

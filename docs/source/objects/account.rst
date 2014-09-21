@@ -1,5 +1,5 @@
 Account
-=================================
-.. automodule:: Account
+=======
+.. automodule:: account
 .. autoclass:: Account
     :members:

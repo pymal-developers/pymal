@@ -3,17 +3,17 @@
 Review
 ======
 
-Holds data about a Review of :class:`Anime.Anime` or :class:`Manga.Manga`.
+Holds data about a Review of :class:`anime.Anime` or :class:`manga.Manga`.
 
-.. automodule:: inner_objects.Review
+.. automodule:: inner_objects.review
 .. autoclass:: Review
     :members:
 
 Recommendation
 ==============
 
-holds data from an :class:`Anime.Anime` or :class:`Manga.Manga`.
+holds data from an :class:`anime.Anime` or :class:`manga.Manga`.
 
-.. automodule:: inner_objects.Recommendation
+.. automodule:: inner_objects.recommendation
 .. autoclass:: Recommendation
     :members:

@@ -1,5 +1,5 @@
 Manga
-=================================
-.. automodule:: Manga
+=====
+.. automodule:: manga
 .. autoclass:: Manga
     :members:

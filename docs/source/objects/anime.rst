@@ -1,5 +1,5 @@
 Anime
-=================================
-.. automodule:: Anime
+=====
+.. automodule:: anime
 .. autoclass:: Anime
     :members:

@@ -3,10 +3,9 @@ Exceptions
 All the exceptions in pymal are placed here.
 Create a new file for each large exception - if it got inheritance or some exception that walking together.
 
-.. automodule:: exceptions
-
 FailedToParseError
 ------------------
+.. automodule:: exceptions.failed_to_parse_error
 .. autoclass:: FailedToParseError
    :show-inheritance:
 
@@ -18,6 +17,7 @@ FailedToParseError
 
 MyAnimeListApiError
 -------------------
+.. automodule:: exceptions.my_anime_list_api_error
 .. autoclass:: MyAnimeListApiError
    :show-inheritance:
 
@@ -32,6 +32,7 @@ MyAnimeListApiError
 
 Others
 ------
+.. automodule:: exceptions
 .. autoclass:: UnauthenticatedAccountError
    :show-inheritance:
 
