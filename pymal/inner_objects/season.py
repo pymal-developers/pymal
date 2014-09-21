@@ -3,14 +3,15 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
+import singleton_factory
+
 from pymal import consts
 from pymal import decorators
-from pymal.types import SingletonFactory
 
 __all__ = ['Season']
 
 
-class Season(object, metaclass=SingletonFactory.SingletonFactory):
+class Season(object, metaclass=singleton_factory.SingletonFactory):
     """
     Lazy load of season data.
     

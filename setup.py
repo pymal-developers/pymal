@@ -57,5 +57,6 @@ setup(
         'six==1.3',
         'pillow>=2.5.3',
         'singleton3>=1.0',
+        'singleton-factory>=0.1',
     ],
 )

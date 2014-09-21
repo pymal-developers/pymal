@@ -6,15 +6,16 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 from urllib import request
 import time
 
+import singleton_factory
+
 from pymal import consts
 from pymal import decorators
-from pymal.types import SingletonFactory
 from pymal import exceptions
 
 __all__ = ['MyManga']
 
 
-class MyManga(object, metaclass=SingletonFactory.SingletonFactory):
+class MyManga(object, metaclass=singleton_factory.SingletonFactory):
     """
     Saves an account data about manga.
     
