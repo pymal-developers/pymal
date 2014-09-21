@@ -11,14 +11,26 @@ To run the tests that come with pyMAL:
 2. Navigate to the pymal directory
 3. Run `nosetests`.
 
-Make sure you don't spam the tests too quickly! You're likely to be IP-banned if you do this too much in too short a span of time.
-
 Guide lines
 -----------
-* we are using the basic unittest that python gives us.
-  Please don't add anything else like pytest and his friends. If it is really needed ask.
-* For every file in pymal should be a test (if it's look smart to check it).
-* Every object needs to be tested with all his function.
-* Tests the returned types, with mocks and with connection to MAL.
-* Any thing that it's constant should be place in `constants_for_testing.py`.
-* Make assert informative by code or by message.
+Questions about our testing and their answers.
+
+**Q:** What framework we are using?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**A:** We are using the basic unittest that python gives us.
+Please don't add anything else like `py.test` and his friends.
+
+**Q:** What do we check?
+^^^^^^^^^^^^^^^^^^^^^^^^
+**A:** Every object in pymal should be tested with all his function and flows.
+Check the returned types and their data.
+Tests with mocks and with connection to MAL.
+
+**Q:** Where to put my consts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**A:** If they are only for your test put them in your TestCase class.
+Otherwise, it should be place in `constants_for_testing.py`.
+
+**Q:** And that's all?
+^^^^^^^^^^^^^^^^^^^^^^
+**A:** Pretty much yes, but remember to make asserts informative by code or by message.

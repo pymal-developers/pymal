@@ -3,7 +3,6 @@ Tutorial
 
 Installation
 ------------
-
 If you want to checkout a repository, navigate to the directory and run `python setup.py install`.
 The recommended way is to run `pip install pymal`.
 
