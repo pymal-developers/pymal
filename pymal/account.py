@@ -35,7 +35,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         :param password: Required for quick connection, instead of calling later change_password.
         :type password: str or None
         """
-        from pymal.account_objects import AccountAnimes, AccountMangas
+        from pymal.account_objects import account_animes, account_mangas
 
         self.__username = username
         self.__password = password
@@ -46,8 +46,8 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
         self.__main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
         self.__friends_url = self.__main_profile_url + '/friends'
 
-        self.__animes = AccountAnimes.AccountAnimes(self)
-        self.__mangas = AccountMangas.AccountMangas(self)
+        self.__animes = account_animes.AccountAnimes(self)
+        self.__mangas = account_mangas.AccountMangas(self)
         self.__friends = None
         self.__image_url = ""
 
@@ -84,7 +84,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def mangas(self):
         """
         :returns: list of account's mangas.
-        :rtype: :class:`account_objects.AccountMangas.AccountMangas`
+        :rtype: :class:`account_objects.account_mangas.AccountMangas`
         """
         return self.__mangas
 
@@ -92,7 +92,7 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def animes(self):
         """
         :returns: list of account's animes.
-        :rtype: :class:`account_objects.AccountAnimes.AccountAnimes`
+        :rtype: :class:`account_objects.account_animes.AccountAnimes`
         """
         return self.__animes
 
@@ -100,12 +100,12 @@ class Account(object, metaclass=SingletonFactory.SingletonFactory):
     def friends(self) -> set:
         """
         :returns: list of account's friends.
-        :rtype: :class:`account_objects.AccountFriends.AccountFriends`
+        :rtype: :class:`account_objects.account_friends.AccountFriends`
         """
-        from pymal.account_objects import AccountFriends
+        from pymal.account_objects import account_friends
 
         if self.__friends is None:
-            self.__friends = AccountFriends.AccountFriends(self.__friends_url, self)
+            self.__friends = account_friends.AccountFriends(self.__friends_url, self)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> map:

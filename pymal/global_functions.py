@@ -89,8 +89,8 @@ def make_set(self_set: set, i: int, list_of_tags: list) -> int:
     :param list_of_tags: list of tags to check the index on
     :rtype: int
     """
-    from pymal import Anime
-    from pymal import Manga
+    from pymal import anime
+    from pymal import manga
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
@@ -98,10 +98,10 @@ def make_set(self_set: set, i: int, list_of_tags: list) -> int:
             exceptions.FailedToParseError(list_of_tags[i].name)
         tag_href = list_of_tags[i]['href']
         if '/anime/' in tag_href:
-            obj = Anime.Anime
+            obj = anime.Anime
             splitter = '/anime/'
         elif '/manga/' in tag_href:
-            obj = Manga.Manga
+            obj = manga.Manga
             splitter = '/manga/'
         else:
             print('unknown tag', tag_href)

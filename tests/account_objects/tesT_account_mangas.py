@@ -1,8 +1,8 @@
 import unittest
 
-from pymal import Account
-from pymal.account_objects import AccountMangas
-from pymal import Manga
+from pymal import account
+from pymal.account_objects import account_mangas
+from pymal import manga
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, MANGA_ID
 
@@ -12,21 +12,21 @@ class AccountMangaListTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.mangas = cls.account.mangas
 
     @classmethod
     def tearDownClass(cls):
-        AccountMangas.AccountMangas._unregiter(cls.mangas)
-        Account.Account._unregiter(cls.account)
+        account_mangas.AccountMangas._unregiter(cls.mangas)
+        account.Account._unregiter(cls.account)
 
     def test_len(self):
         self.assertEqual(len(self.mangas), self.EXPECTED_LENGTH)
 
     def test_contains_manga(self):
         my_manga = list(self.mangas)[0]
-        manga = Manga.Manga(my_manga.id)
-        self.assertIn(manga, self.mangas)
+        mng = manga.Manga(my_manga.id)
+        self.assertIn(mng, self.mangas)
 
     def test_contains_my_manga(self):
         my_manga = list(self.mangas)[0]
@@ -42,17 +42,17 @@ class AccountMangaListTestCase(unittest.TestCase):
 class AccountMangaListInteraction(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.friend = list(cls.account.friends)[0]
         cls.mangas = cls.account.mangas
         cls.friend_mangas = cls.friend.mangas
 
     @classmethod
     def tearDownClass(cls):
-        AccountMangas.AccountMangas._unregiter(cls.friend_mangas)
-        AccountMangas.AccountMangas._unregiter(cls.mangas)
-        Account.Account._unregiter(cls.friend)
-        Account.Account._unregiter(cls.account)
+        account_mangas.AccountMangas._unregiter(cls.friend_mangas)
+        account_mangas.AccountMangas._unregiter(cls.mangas)
+        account.Account._unregiter(cls.friend)
+        account.Account._unregiter(cls.account)
 
     def test_union(self):
         regular = self.mangas.union(self.friend_mangas)

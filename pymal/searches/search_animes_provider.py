@@ -3,12 +3,12 @@ __copyright__ = "(c) 2014, pymal"
 __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
-from pymal.searches import Search
+from pymal.searches import search_provider
 
-__all__ = ['SearchAnimes']
+__all__ = ['SearchAnimesProvider']
 
 
-class SearchAnimes(Search.Search):
+class SearchAnimesProvider(search_provider.SearchProvider):
     """
     Searching for animes.
     """
@@ -16,7 +16,7 @@ class SearchAnimes(Search.Search):
     _SEARCHED_URL_SUFFIX = '/anime/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import Anime
+        from pymal import anime
 
         mal_id = int(mal_url.split('/')[0])
-        return Anime.Anime(int(mal_id))
+        return anime.Anime(int(mal_id))

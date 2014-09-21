@@ -1,9 +1,9 @@
 import unittest
 
-from pymal import Account
-from pymal import Anime
-from pymal import Manga
-from pymal.account_objects import MyManga
+from pymal import account
+from pymal import anime
+from pymal import manga
+from pymal.account_objects import my_manga
 
 from tests.constants_for_testing import ADD_MANGA_ID, MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
 
@@ -12,7 +12,7 @@ class ReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.manga = Manga.Manga(MANGA_ID)
+        cls.manga = manga.Manga(MANGA_ID)
         cls.manga.reload()
 
     def test_manga_id(self):
@@ -70,57 +70,57 @@ class ReloadTestCase(unittest.TestCase):
     def test_manga_spinoff(self):
         self.assertIsInstance(self.manga.spin_offs, frozenset)
         for spin_off in self.manga.spin_offs:
-            self.assertIsInstance(spin_off, Manga.Manga)
+            self.assertIsInstance(spin_off, manga.Manga)
 
     def test_manga_adaptations(self):
         self.assertIsInstance(self.manga.adaptations, frozenset)
         for adaptation in self.manga.adaptations:
-            self.assertIsInstance(adaptation, Anime.Anime)
+            self.assertIsInstance(adaptation, anime.Anime)
 
     def test_manga_characters(self):
         self.assertIsInstance(self.manga.characters, frozenset)
         for character in self.manga.characters:
-            self.assertIsInstance(character, Manga.Manga)
+            self.assertIsInstance(character, manga.Manga)
 
     def test_manga_sequals(self):
         self.assertIsInstance(self.manga.sequels, frozenset)
         for sequal in self.manga.sequels:
-            self.assertIsInstance(sequal, Manga.Manga)
+            self.assertIsInstance(sequal, manga.Manga)
 
     def test_manga_prequel(self):
         self.assertIsInstance(self.manga.prequels, frozenset)
         for prequel in self.manga.prequels:
-            self.assertIsInstance(prequel, Manga.Manga)
+            self.assertIsInstance(prequel, manga.Manga)
 
     def test_manga_alternative_versions(self):
         self.assertIsInstance(self.manga.alternative_versions, frozenset)
         for alternative_version in self.manga.alternative_versions:
-            self.assertIsInstance(alternative_version, Manga.Manga)
+            self.assertIsInstance(alternative_version, manga.Manga)
 
     def test_manga_side_story(self):
         self.assertIsInstance(self.manga.side_stories, frozenset)
         for side_story in self.manga.side_stories:
-            self.assertIsInstance(side_story, Manga.Manga)
+            self.assertIsInstance(side_story, manga.Manga)
 
     def test_manga_summaries(self):
         self.assertIsInstance(self.manga.summaries, frozenset)
         for summary in self.manga.summaries:
-            self.assertIsInstance(summary, Manga.Manga)
+            self.assertIsInstance(summary, manga.Manga)
 
     def test_manga_other(self):
         self.assertIsInstance(self.manga.others, frozenset)
         for other in self.manga.others:
-            self.assertIsInstance(other, Manga.Manga)
+            self.assertIsInstance(other, manga.Manga)
 
     def test_manga_parent_stories(self):
         self.assertIsInstance(self.manga.parent_stories, frozenset)
         for parent_story in self.manga.parent_stories:
-            self.assertIsInstance(parent_story, Manga.Manga)
+            self.assertIsInstance(parent_story, manga.Manga)
 
     def test_manga_alternative_settings(self):
         self.assertIsInstance(self.manga.alternative_settings, frozenset)
         for alternative_setting in self.manga.alternative_settings:
-            self.assertIsInstance(alternative_setting, Manga.Manga)
+            self.assertIsInstance(alternative_setting, manga.Manga)
 
     def test_str(self):
         repr(self.manga)
@@ -130,7 +130,7 @@ class NoReloadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.manga = list(cls.account.mangas)[0]
 
     def test_id(self):
@@ -172,16 +172,16 @@ class NoReloadTestCase(unittest.TestCase):
 
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
-        manga = Manga.Manga(ADD_MANGA_ID)
-        my_manga = manga.add(self.account)
+        mng = manga.Manga(ADD_MANGA_ID)
+        my_mng = mng.add(self.account)
 
-        self.assertIsInstance(my_manga, MyManga.MyManga)
+        self.assertIsInstance(my_mng, my_manga.MyManga)
         self.account.mangas.reload()
-        self.assertIn(my_manga, self.account.mangas)
+        self.assertIn(my_mng, self.account.mangas)
 
-        my_manga.delete()
+        my_mng.delete()
         self.account.mangas.reload()
-        self.assertNotIn(my_manga, self.account.mangas)
+        self.assertNotIn(my_mng, self.account.mangas)
 
 
 def main():

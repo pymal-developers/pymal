@@ -1,9 +1,9 @@
 import unittest
 
-from pymal import Account
-from pymal.account_objects import AccountAnimes
-from pymal import Anime
-from pymal.account_objects import MyAnime
+from pymal import account
+from pymal.account_objects import account_animes
+from pymal import anime
+from pymal.account_objects import my_anime
 
 from tests.constants_for_testing import ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD, ANIME_ID
 
@@ -13,24 +13,24 @@ class AccountAnimeListTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.animes = cls.account.animes
 
     @classmethod
     def tearDownClass(cls):
-        AccountAnimes.AccountAnimes._unregiter(cls.animes)
-        Account.Account._unregiter(cls.account)
+        account_animes.AccountAnimes._unregiter(cls.animes)
+        account.Account._unregiter(cls.account)
 
     def test_len(self):
         self.assertEqual(len(self.animes), self.EXPECTED_LENGTH)
 
     def test_contains(self):
-        anime = Anime.Anime(ANIME_ID)
-        self.assertIn(anime, self.animes)
+        anm = anime.Anime(ANIME_ID)
+        self.assertIn(anm, self.animes)
 
     def test_contains_my_manga(self):
-        my_anime = MyAnime.MyAnime(ANIME_ID, 0, self.account)
-        self.assertIn(my_anime, self.animes)
+        my_anm = my_anime.MyAnime(ANIME_ID, 0, self.account)
+        self.assertIn(my_anm, self.animes)
 
     def test_contains_id(self):
         self.assertIn(ANIME_ID, self.animes)
@@ -42,17 +42,17 @@ class AccountAnimeListTestCase(unittest.TestCase):
 class AccountAnimeListInteraction(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.account = Account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.friend = list(cls.account.friends)[0]
         cls.animes = cls.account.animes
         cls.friend_animes = cls.friend.animes
 
     @classmethod
     def tearDownClass(cls):
-        AccountAnimes.AccountAnimes._unregiter(cls.friend_animes)
-        AccountAnimes.AccountAnimes._unregiter(cls.animes)
-        Account.Account._unregiter(cls.friend)
-        Account.Account._unregiter(cls.account)
+        account_animes.AccountAnimes._unregiter(cls.friend_animes)
+        account_animes.AccountAnimes._unregiter(cls.animes)
+        account.Account._unregiter(cls.friend)
+        account.Account._unregiter(cls.account)
 
     def test_union(self):
         regular = self.animes.union(self.friend_animes)

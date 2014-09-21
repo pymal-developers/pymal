@@ -35,7 +35,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     def __init__(self, account):
         """
         :param account: Which account this anime list is connected to.
-        :type account: :class:`Account.Account`
+        :type account: :class:`account.Account`
         """
         self.__account = account
         self.__url = self.__URL.format(account.username)
@@ -151,7 +151,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     def __parse_obj_table(self, div):
         from urllib import parse
 
-        from pymal.account_objects.MyAnime import MyAnime as obj
+        from pymal.account_objects.my_anime import MyAnime as obj
 
         links_div = div.findAll(name='td', recorsive=False)[1]
 
