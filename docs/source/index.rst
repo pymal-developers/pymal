@@ -29,8 +29,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   objects/index
    tutorial
+   objects/index
    tests
 
 The idea

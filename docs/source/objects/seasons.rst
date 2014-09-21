@@ -1,5 +1,6 @@
 Seasons
 =======
+This object is loaded from a different db.
 
 .. automodule:: seasons
 .. autoclass:: Seasons
