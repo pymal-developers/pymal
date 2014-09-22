@@ -6,7 +6,6 @@ Review
 Holds data about a Review of :class:`anime.Anime` or :class:`manga.Manga`.
 
 .. automodule:: inner_objects.review
-.. autoclass:: Review
     :members:
 
 Recommendation
@@ -15,5 +14,4 @@ Recommendation
 holds data from an :class:`anime.Anime` or :class:`manga.Manga`.
 
 .. automodule:: inner_objects.recommendation
-.. autoclass:: Recommendation
     :members:

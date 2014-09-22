@@ -13,5 +13,4 @@ You can find there:
 * :class:`my_manga.MyManga`
 
 .. automodule:: account
-.. autoclass:: Account
     :members:

@@ -5,5 +5,4 @@ A basic object to obtain account specific data about a manga.
 Can manipulate the manga data in the account's list.
 
 .. automodule:: account_objects.my_manga
-.. autoclass:: MyManga
     :members:

@@ -5,5 +5,4 @@ A basic object to obtain account specific data about an anime.
 Can manipulate the anime data in the account's list.
 
 .. automodule:: account_objects.my_anime
-.. autoclass:: MyAnime
     :members:

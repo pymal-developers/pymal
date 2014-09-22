@@ -7,5 +7,4 @@ It shouldn't be used out side of context of account
 In the package it only a package for list(MyAnime).
 
 .. automodule:: account_objects.account_animes
-.. autoclass:: AccountAnimes
     :members:
