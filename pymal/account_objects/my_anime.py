@@ -37,17 +37,6 @@ class MyAnime(object, metaclass=singleton_factory.SingletonFactory):
         my_tags - frozenset.
         my_comments - string
         my_fan_sub_groups - string.
-
-    Functions:
-        my_reload
-        to_xml
-        add
-        update
-        delete
-        increase
-        increase_downloaded
-        set_completed
-        set_completed_download
     """
     __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
                'my_start_date', 'my_end_date', 'my_priority',

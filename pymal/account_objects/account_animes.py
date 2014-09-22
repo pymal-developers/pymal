@@ -23,9 +23,6 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
      - on_hold - frozenset
      - dropped - frozenset
      - plan_to_watch - frozenset
-
-    Functions:
-     - reload
     """
     __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
                'reload']

@@ -53,10 +53,6 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
      - others - frozenset
      - parent_stories - frozenset
      - alternative_settings - frozenset
-
-     Functions:
-      - reload
-      - add
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
                'type', 'status', 'start_time', 'end_time', 'creators',

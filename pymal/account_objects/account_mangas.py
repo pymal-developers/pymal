@@ -23,9 +23,6 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
      - on_hold - frozenset
      - dropped - frozenset
      - plan_to_read - frozenset
-
-    Functions:
-     - reload
     """
     __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
                'reload']

@@ -53,10 +53,6 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
      - parent_stories - frozenset
      - alternative_settings - frozenset
      - full_stories - frozenset
-
-     Functions:
-      - reload
-      - add
     """
     __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
                'type', 'status', 'start_time', 'end_time', 'creators',
