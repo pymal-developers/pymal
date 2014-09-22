@@ -7,9 +7,9 @@ Running
 -------
 To run the tests that come with pyMAL:
 
-1. Install nose (A package for running tests - `pip install nose`).
+1. Install nose (A package for running tests - :command:`pip install nose`).
 2. Navigate to the pymal directory
-3. Run `nosetests`.
+3. Run :command:`nosetests`.
 
 Guide lines
 -----------
@@ -18,7 +18,7 @@ Questions about our testing and their answers.
 **Q:** What framework we are using?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **A:** We are using the basic unittest that python gives us.
-Please don't add anything else like `py.test` and his friends.
+Please don't add anything else like :program:`py.test` and his friends.
 
 **Q:** What do we check?
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,7 +29,7 @@ Tests with mocks and with connection to MAL.
 **Q:** Where to put my consts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **A:** If they are only for your test put them in your TestCase class.
-Otherwise, it should be place in `constants_for_testing.py`.
+Otherwise, it should be place in :file:`constants_for_testing.py`.
 
 **Q:** And that's all?
 ^^^^^^^^^^^^^^^^^^^^^^
