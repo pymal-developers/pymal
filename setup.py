@@ -58,5 +58,6 @@ setup(
         'pillow>=2.5.3',
         'singleton3>=1.0',
         'singleton-factory>=0.1',
+        'reloaded_set>=0.1',
     ],
 )

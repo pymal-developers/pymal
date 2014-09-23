@@ -4,24 +4,23 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 
+from reloaded_set import load
+from pymal.types.reloaded_set_singleton_factory import ReloadedSetSingletonFactory
+
 from pymal import global_functions
-from pymal.types import ReloadedSet
-from pymal.decorators import load
 from pymal import exceptions
 
 
-class AccountFriends(ReloadedSet.ReloadedSetSingletonFactory):
+class AccountFriends(ReloadedSetSingletonFactory):
     def __init__(self, url: str, account):
+        super().__init__()
         self.account = account
         self.__url = url
 
         self.__friends = frozenset()
-        self.reload()
-
-        self._is_loaded = False
 
     @property
-    @load
+    @load()
     def __friends_list(self):
         return self.__friends
 
@@ -29,7 +28,7 @@ class AccountFriends(ReloadedSet.ReloadedSetSingletonFactory):
     def _values(self):
         return self.__friends_list
 
-    def reload(self):
+    def _reload(self):
         """
         :exception FailedToParseError
         """

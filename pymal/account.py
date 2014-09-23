@@ -7,9 +7,9 @@ from urllib import request
 
 import requests
 import singleton_factory
+from reloaded_set import load
 
 from pymal import global_functions
-from pymal.decorators import load
 from pymal.consts import HOST_NAME
 
 __all__ = ['Account']
@@ -203,7 +203,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
                                          auth=self.__auth_object).text.strip()
 
     @property
-    @load
+    @load()
     def image_url(self):
         """
         :return: path for the image of the avatar of the account.
