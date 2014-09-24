@@ -18,7 +18,7 @@ __all__ = ['MyAnime']
 class MyAnime(object, metaclass=singleton_factory.SingletonFactory):
     """
     Saves an account data about anime.
-    
+
     :ivar my_enable_discussion: boolean
     :ivar my_id: int
     :ivar my_status: int.  #TODO: put the dictionary here.

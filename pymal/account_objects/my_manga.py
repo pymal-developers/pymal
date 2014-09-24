@@ -18,34 +18,26 @@ __all__ = ['MyManga']
 class MyManga(object, metaclass=singleton_factory.SingletonFactory):
     """
     Saves an account data about manga.
-    
-    Attributes:
-        my_enable_discussion - boolean
-        my_id - int
-        my_status - int.  #TODO: put the dictanary here.
-        my_score - int.
-        my_start_date - string as mmddyyyy.
-        my_end_date - string as mmddyyyy.
-        my_priority - int.
-        my_storage_type - int.  #TODO: put the dictnary here.
-        my_is_rereading - boolean.
-        my_completed_chapters - int.
-        my_completed_volumes - int.
-        my_downloaded_chapters - int.
-        my_times_reread - int.
-        my_reread_value - int.
-        my_tags - frozenset.
-        my_comments - string
-        my_fan_sub_groups - string.
-        my_retail_volumes - int.
+
+    :ivar my_enable_discussion: boolean
+    :ivar my_id: int
+    :ivar my_status: int.  #TODO: put the dictanary here.
+    :ivar my_score: int.
+    :ivar my_start_date: string as mmddyyyy.
+    :ivar my_end_date: string as mmddyyyy.
+    :ivar my_priority: int.
+    :ivar my_storage_type: int.  #TODO: put the dictnary here.
+    :ivar my_is_rereading: boolean.
+    :ivar my_completed_chapters: int.
+    :ivar my_completed_volumes: int.
+    :ivar my_downloaded_chapters: int.
+    :ivar my_times_reread: int.
+    :ivar my_reread_value: int.
+    :ivar my_tags: frozenset.
+    :ivar my_comments: string
+    :ivar my_fan_sub_groups: string.
+    :ivar my_retail_volumes: int.
     """
-    __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
-               'my_start_date', 'my_end_date', 'my_priority',
-               'my_storage_type', 'my_is_rereading',
-               'my_completed_chapters', 'my_completed_volumes',
-               'my_downloaded_chapters', 'my_times_reread', 'my_reread_value',
-               'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
-               'update', 'delete']
 
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(
