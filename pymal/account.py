@@ -41,8 +41,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         self.__user_id = None
         self.__auth_object = None
 
-        self.__main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
-        self.__friends_url = self.__main_profile_url + '/friends'
+        self._main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
 
         self.__animes = account_animes.AccountAnimes(self)
         self.__mangas = account_mangas.AccountMangas(self)
@@ -72,7 +71,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         if self.__user_id is None:
             import bs4
 
-            ret = self.connect(self.__main_profile_url)
+            ret = self.connect(self._main_profile_url)
             html = bs4.BeautifulSoup(ret)
             bla = html.find(name='input', attrs={'name': 'profileMemId'})
             self.__user_id = int(bla['value'])
@@ -103,7 +102,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         from pymal.account_objects import account_friends
 
         if self.__friends is None:
-            self.__friends = account_friends.AccountFriends(self.__friends_url, self)
+            self.__friends = account_friends.AccountFriends(self)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> map:
@@ -226,7 +225,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         """
         reloading account image (all the other things are already lazy load!
         """
-        div = global_functions.get_content_wrapper_div(self.__main_profile_url, self.connect)
+        div = global_functions.get_content_wrapper_div(self._main_profile_url, self.connect)
         profile_leftcell = div.table.tbody.tr.find(name="td", attrs={"class": "profile_leftcell"}, recursive=False)
         self.__image_url = profile_leftcell.div.img['src']
 
