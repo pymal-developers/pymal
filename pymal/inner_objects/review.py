@@ -8,14 +8,13 @@ class Review(object):
     """
     Review holds all the data from a review in MAL about an anime.
 
-    Properties:
-        date - string
-        account - Account
-        helpful - int
-        watched - int
-        when_written - string
-        rating - int
-        data - string
+    :ivar date: :class:`string`
+    :ivar account: :class:`account.Account`
+    :ivar helpful: :class:`int`
+    :ivar watched: :class:`int`
+    :ivar when_written: :class:`string`
+    :ivar rating: :class:`int`
+    :ivar data: :class:`string`
     """
     def __init__(self, div):
         """
