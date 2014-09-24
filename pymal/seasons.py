@@ -14,10 +14,8 @@ class Seasons(object, metaclass=Singleton):
     """
     Lazy making of Season from online db.
     
-    Attributes:
-        seasons: frozenset of Season.
+    :ivar seasons: :class:`frozenset` of :class:`inner_objects..season.Season`.
     """
-    __all__ = ['seasons', 'reload']
 
     __SEASONS_URL = 'http://malupdater.com/MalUpdater/Seasons/index.txt'
 
@@ -31,6 +29,9 @@ class Seasons(object, metaclass=Singleton):
         return self.__seasons
 
     def reload(self):
+        """
+        reloading all the known seasons.
+        """
         import requests
         import bs4
 
