@@ -20,48 +20,39 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     """
     Object that keeps all the anime data in MAL.
 
-    Properties:
-     - id - int
-     - title - str
-     - image_url - str
-     - english - str
-     - synonyms - str
-     - japanese - str
-     - type - str
-     - status - int
-     - start_time - int
-     - end_time - int
-     - creators - dict
-     - genres - dict
-     - duration - int
-     - score - float
-     - rank - int
-     - popularity - int
-     - rating - str
-     - episodes - int
-     - synopsis - str
+    :ivar image_url: :class:`str`
+    :ivar title: :class:`str`
+    :ivar english: :class:`str`
+    :ivar synonyms: :class:`str`
+    :ivar japanese: :class:`str`
+    :ivar type: :class:`str`
+    :ivar status: :class:`int`
+    :ivar start_time: :class:`int`
+    :ivar end_time: :class:`int`
+    :ivar creators: :class:`dict`
+    :ivar genres: :class:`dict`
+    :ivar duration: :class:`int`
+    :ivar score: :class:`float`
+    :ivar rank: :class:`int`
+    :ivar popularity: :class:`int`
+    :ivar rating: :class:`str`
+    :ivar episodes: :class:`int`
+    :ivar synopsis: :class:`str`
 
-     - adaptations - frozenset
-     - characters - frozenset
-     - sequels - frozenset
-     - prequels - frozenset
-     - spin_offs - frozenset
-     - alternative_versions - frozenset
-     - side_stories - frozenset
-     - summaries - frozenset
-     - others - frozenset
-     - parent_stories - frozenset
-     - alternative_settings - frozenset
-     - full_stories - frozenset
+    :ivar adaptations: :class:`frozenset`
+    :ivar characters: :class:`frozenset`
+    :ivar sequels: :class:`frozenset`
+    :ivar prequels: :class:`frozenset`
+    :ivar spin_offs: :class:`frozenset`
+    :ivar alternative_versions: :class:`frozenset`
+    :ivar side_stories: :class:`frozenset`
+    :ivar summaries: :class:`frozenset`
+    :ivar others: :class:`frozenset`
+    :ivar parent_stories: :class:`frozenset`
+    :ivar alternative_settings: :class:`frozenset`
+    :ivar full_stories: :class:`frozenset`
     """
-    __all__ = ['id', 'title', 'image_url', 'english', 'synonyms', 'japanese',
-               'type', 'status', 'start_time', 'end_time', 'creators',
-               'genres', 'score', 'rank', 'popularity', 'synopsis',
-               'adaptations', 'characters', 'sequels', 'prequel', 'spin_offs',
-               'alternative_versions', 'side_stories', 'summaries', 'others',
-               'parent_stories', 'alternative_settings', 'rating', 'episodes',
-               'reload', 'add']
-    
+
     __GLOBAL_MAL_URL = request.urljoin(consts.HOST_NAME, "anime/{0:d}")
     __MY_MAL_ADD_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/add/{0:d}.xml')
@@ -132,6 +123,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
 
     @property
     def id(self) -> int:
+        """
+        :return: The id of the anime.
+        :rtype: :class:`int`
+        """
         return self.__id
 
     @property
@@ -145,6 +140,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         return self.__image_url
 
     def get_image(self):
+        """
+        :return: The image of the anime
+        :rtype: :class:`PIL.Image.Image`
+        """
         import io
 
         from PIL import Image
