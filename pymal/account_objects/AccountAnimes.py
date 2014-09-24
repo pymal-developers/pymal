@@ -137,7 +137,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     def __get_my_animes(self, status: int) -> frozenset:
         import bs4
 
-        data = self.__account.connect(self.__url + str(status))
+        data = self.__account.auth_connect(self.__url + str(status))
         body = bs4.BeautifulSoup(data).body
 
         main_div = body.find(name='div', attrs={'id': 'list_surround'})
@@ -158,12 +158,9 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         link = links_div.find(name='a', attrs={'class': 'animetitle'})
         link_id = int(link['href'].split('/')[2])
 
-        if self.__account.is_auth:
-            my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
-            _, query = parse.splitquery(my_link['href'])
-            my_link_id = int(parse.parse_qs(query)['id'][0])
-        else:
-            my_link_id = 0
+        my_link = links_div.find(name='a', attrs={'class': 'List_LightBox'})
+        _, query = parse.splitquery(my_link['href'])
+        my_link_id = int(parse.parse_qs(query)['id'][0])
 
         return obj(link_id, my_link_id, self.__account)
 
