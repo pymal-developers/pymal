@@ -19,32 +19,24 @@ class MyAnime(object, metaclass=singleton_factory.SingletonFactory):
     """
     Saves an account data about anime.
     
-    Attributes:
-        my_enable_discussion - boolean
-        my_id - int
-        my_status - int.  #TODO: put the dictanary here.
-        my_score - int.
-        my_start_date - string as mmddyyyy.
-        my_end_date - string as mmddyyyy.
-        my_priority - int.
-        my_storage_type - int.  #TODO: put the dictanary here.
-        my_storage_value - float.
-        my_is_rereading - boolean.
-        my_completed_episodes - int.
-        my_download_episodes - int.
-        my_times_reread - int.
-        my_reread_value - int.
-        my_tags - frozenset.
-        my_comments - string
-        my_fan_sub_groups - string.
+    :ivar my_enable_discussion: boolean
+    :ivar my_id: int
+    :ivar my_status: int.  #TODO: put the dictionary here.
+    :ivar my_score: int.
+    :ivar my_start_date: string as mmddyyyy.
+    :ivar my_end_date: string as mmddyyyy.
+    :ivar my_priority: int.
+    :ivar my_storage_type: int.  #TODO: put the dictanary here.
+    :ivar my_storage_value: float.
+    :ivar my_is_rewatching: boolean.
+    :ivar my_completed_episodes: int.
+    :ivar my_download_episodes: int.
+    :ivar my_times_rewatched: int.
+    :ivar my_rewatch_value: int.
+    :ivar my_tags: frozenset.
+    :ivar my_comments: string
+    :ivar my_fan_sub_groups: string.
     """
-    __all__ = ['my_enable_discussion', 'my_id', 'my_status', 'my_score',
-               'my_start_date', 'my_end_date', 'my_priority',
-               'my_storage_type', 'my_storage_value', 'my_is_rewatching',
-               'my_completed_episodes', 'my_score', 'my_download_episodes',
-               'my_times_rewatched', 'my_rewatch_value',
-               'my_tags', 'my_comments', 'my_fan_sub_groups', 'my_reload',
-               'update', 'delete']
 
     __TAG_SEPARATOR = ';'
     __MY_MAL_URL = request.urljoin(
