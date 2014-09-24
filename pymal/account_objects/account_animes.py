@@ -16,16 +16,12 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     """
     A slow loading of an account anime list.
 
-    Properties:
-     - map_of_lists
-     - watching - frozenset
-     - completed - frozenset
-     - on_hold - frozenset
-     - dropped - frozenset
-     - plan_to_watch - frozenset
+    :ivar watching: :class:`frozenset` of the watching animes.
+    :ivar completed: :class:`frozenset` of the completed animes.
+    :ivar on_hold: :class:`frozenset` of the "on hold" animes.
+    :ivar dropped: :class:`frozenset` of the dropped animes.
+    :ivar plan_to_watch: :class:`frozenset` of th "plan to watch" animes.
     """
-    __all__ = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch',
-               'reload']
 
     __URL = request.urljoin(HOST_NAME, "animelist/{0:s}&status=")
 
