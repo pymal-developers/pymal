@@ -16,16 +16,12 @@ class AccountMangas(ReloadedSet.ReloadedSetSingletonFactory):
     """
     A slow loading of an account anime list.
 
-    Properties:
-     - map_of_lists
-     - reading - frozenset
-     - completed - frozenset
-     - on_hold - frozenset
-     - dropped - frozenset
-     - plan_to_read - frozenset
+    :ivar reading: :class:`frozenset`
+    :ivar completed: :class:`frozenset`
+    :ivar on_hold: :class:`frozenset`
+    :ivar dropped: :class:`frozenset`
+    :ivar plan_to_read: :class:`frozenset`
     """
-    __all__ = ['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read',
-               'reload']
 
     __URL = request.urljoin(HOST_NAME, "mangalist/{0:s}&status=")
 
