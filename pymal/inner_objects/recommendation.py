@@ -10,9 +10,8 @@ class Recommendation(object):
     """
     Recommendation holds all the data from a recommendation in MAL about an anime.
 
-    Properties:
-        recommended_anime - Anime.Anime
-        recommends - dict
+    :ivar recommended_anime: :class:`anime.Anime`
+    :ivar recommends: :class:`dict`
     """
     def __init__(self, div):
         """

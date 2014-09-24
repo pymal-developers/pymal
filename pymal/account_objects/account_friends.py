@@ -12,7 +12,18 @@ from pymal import exceptions
 
 
 class AccountFriends(ReloadedSetSingletonFactory):
+    """
+    A slow load of friend list.
+
+    :ivar account: the account to load his friends.
+    """
     def __init__(self, url: str, account):
+        """
+        :param url: the url o get the data about the account.
+        :type url: str
+        :param account: the account to get the friends.
+        :type account: :class:`account.Account`
+        """
         super().__init__()
         self.account = account
         self.__url = url

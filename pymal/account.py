@@ -19,9 +19,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
     """
     Object that keeps all the account data in MAL.
     """
-    __all__ = ['animes', 'mangas', 'reload', 'search', 'auth_connect',
-               'connect', 'is_user_by_name', 'is_user_by_id', 'is_auth']
-    
+
     __AUTH_CHECKER_URL =\
         request.urljoin(HOST_NAME, r'api/account/verify_credentials.xml')
 
@@ -212,6 +210,10 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         return self.__image_url
 
     def get_image(self):
+        """
+        :return: image of the account's avatar
+        :rtype: :class:`PIL.Image.Image`
+        """
         import io
 
         from PIL import Image
@@ -221,6 +223,9 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         return Image.open(data)
 
     def reload(self):
+        """
+        reloading account image (all the other things are already lazy load!
+        """
         div = global_functions.get_content_wrapper_div(self.__main_profile_url, self.connect)
         profile_leftcell = div.table.tbody.tr.find(name="td", attrs={"class": "profile_leftcell"}, recursive=False)
         self.__image_url = profile_leftcell.div.img['src']
