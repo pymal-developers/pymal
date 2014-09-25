@@ -178,8 +178,13 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         self.__password = password
 
         data_form = self.__DATA_FORM.format(self.username, password).encode('utf-8')
-        self.connect(self.__MY_LOGIN_URL, data=data_form)
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded',
+            'name': 'loginForm',
+        }
 
+        self.connect(self.__MY_LOGIN_URL, data=data_form, headers=headers)
+        
         return True
 
     def auth_connect(self, url: str, data: str or None=None,
