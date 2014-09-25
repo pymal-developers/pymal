@@ -18,9 +18,14 @@ from pymal import exceptions
 
 __all__ = ['connect', 'get_next_index', 'make_set', 'check_side_content_div', 'get_content_wrapper_div']
 
-__SESSION = requests.session()
-if httpcache is not None:
-    __SESSION.mount('http://', httpcache.CachingHTTPAdapter())
+
+def generate_session():
+    session = requests.session()
+    if httpcache is not None:
+        session.mount('http://', httpcache.CachingHTTPAdapter())
+    return session
+
+__SESSION = generate_session()
 
 
 def url_fixer(url: str) -> str:
@@ -31,12 +36,21 @@ def url_fixer(url: str) -> str:
 
 
 def _connect(url: str, data: str=None, headers: dict or None=None,
-             auth=None) -> requests.Response:
+             auth=None, session: requests.session=__SESSION) -> requests.Response:
     """
     :param url: url
+    :type url: :class:`str`
     :param data: data to post
+    :type data: :class:`str`
     :param headers: headers to send
-    :rtype : responded sock
+    :type headers: :class:`dict` or :class:`None`
+    :param auth: the authenticate for the session.
+    :type auth: :class:`requests.auth.HTTPBasicAuth`
+    :param session: the session to connect to, otherwise using the default ones.
+    :type session: :class:`requests.Session`
+
+    :return: the respond of the connection
+    :rtype: :class:`requests.Response`
     """
     if headers is None:
         headers = dict()
@@ -45,9 +59,9 @@ def _connect(url: str, data: str=None, headers: dict or None=None,
 
     headers['User-Agent'] = consts.USER_AGENT
     if data is not None:
-        sock = __SESSION.post(url, data=data, headers=headers, auth=auth)
+        sock = session.post(url, data=data, headers=headers, auth=auth)
     else:
-        sock = __SESSION.get(url, headers=headers, auth=auth)
+        sock = session.get(url, headers=headers, auth=auth)
     return sock
 
 

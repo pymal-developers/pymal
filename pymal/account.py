@@ -48,6 +48,8 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         self.__friends = None
         self.__image_url = ""
 
+        self.__session = global_functions.generate_session()
+
         self._is_loaded = False
 
         if password is not None:
@@ -197,7 +199,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         if not self.is_auth:
             raise exceptions.UnauthenticatedAccountError(self.username)
         return global_functions._connect(url, data=data, headers=headers,
-                                         auth=self.__auth_object).text.strip()
+                                         auth=self.__auth_object, session=self.__session).text.strip()
 
     @property
     @load
