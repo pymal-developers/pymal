@@ -17,16 +17,15 @@ class AccountFriends(ReloadedSetSingletonFactory):
 
     :ivar account: the account to load his friends.
     """
-    def __init__(self, url: str, account):
+
+    def __init__(self, account):
         """
-        :param url: the url o get the data about the account.
-        :type url: str
         :param account: the account to get the friends.
         :type account: :class:`account.Account`
         """
         super().__init__()
         self.account = account
-        self.__url = url
+        self.__url = account._main_profile_url + '/friends'
 
         self.__friends = frozenset()
 
