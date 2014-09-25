@@ -18,9 +18,14 @@ from pymal import exceptions
 
 __all__ = ['connect', 'get_next_index', 'make_set', 'check_side_content_div', 'get_content_wrapper_div']
 
-__SESSION = requests.session()
-if httpcache is not None:
-    __SESSION.mount('http://', httpcache.CachingHTTPAdapter())
+
+def generate_session():
+    session = requests.session()
+    if httpcache is not None:
+        session.mount('http://', httpcache.CachingHTTPAdapter())
+    return session
+
+__SESSION = generate_session()
 
 
 def url_fixer(url: str) -> str:
@@ -31,12 +36,21 @@ def url_fixer(url: str) -> str:
 
 
 def _connect(url: str, data: str=None, headers: dict or None=None,
-             auth=None) -> requests.Response:
+             auth=None, session: requests.session=__SESSION) -> requests.Response:
     """
     :param url: url
+    :type url: :class:`str`
     :param data: data to post
+    :type data: :class:`str`
     :param headers: headers to send
-    :rtype : responded sock
+    :type headers: :class:`dict` or :class:`None`
+    :param auth: the authenticate for the session.
+    :type auth: :class:`requests.auth.HTTPBasicAuth`
+    :param session: the session to connect to, otherwise using the default ones.
+    :type session: :class:`requests.Session`
+
+    :return: the respond of the connection
+    :rtype: :class:`requests.Response`
     """
     if headers is None:
         headers = dict()
@@ -45,9 +59,9 @@ def _connect(url: str, data: str=None, headers: dict or None=None,
 
     headers['User-Agent'] = consts.USER_AGENT
     if data is not None:
-        sock = __SESSION.post(url, data=data, headers=headers, auth=auth)
+        sock = session.post(url, data=data, headers=headers, auth=auth)
     else:
-        sock = __SESSION.get(url, headers=headers, auth=auth)
+        sock = session.get(url, headers=headers, auth=auth)
     return sock
 
 
@@ -89,8 +103,8 @@ def make_set(self_set: set, i: int, list_of_tags: list) -> int:
     :param list_of_tags: list of tags to check the index on
     :rtype: int
     """
-    from pymal import Anime
-    from pymal import Manga
+    from pymal import anime
+    from pymal import manga
 
     n_i = get_next_index(i, list_of_tags)
     for i in range(i + 1, n_i, 2):
@@ -98,10 +112,10 @@ def make_set(self_set: set, i: int, list_of_tags: list) -> int:
             exceptions.FailedToParseError(list_of_tags[i].name)
         tag_href = list_of_tags[i]['href']
         if '/anime/' in tag_href:
-            obj = Anime.Anime
+            obj = anime.Anime
             splitter = '/anime/'
         elif '/manga/' in tag_href:
-            obj = Manga.Manga
+            obj = manga.Manga
             splitter = '/manga/'
         else:
             print('unknown tag', tag_href)
