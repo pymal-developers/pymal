@@ -278,17 +278,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def chapters(self) -> int:
         return self.__chapters
 
-    def _main_bar(self, main_content):
-        main_content_inner_divs = main_content.findAll(
-            name='div', recursive=False)
-        if 2 != len(main_content_inner_divs):
-            raise exceptions.FailedToReloadError(
-                "Got len(main_content_inner_divs) == {0:d}".format(
-                    len(main_content_inner_divs)))
-        main_content_datas = main_content_inner_divs[
-            1].table.tbody.findAll(name="tr", recursive=False)
-        synopsis_cell = main_content_datas[0]
-        main_content_other_data = main_content_datas[1]
+    def _synopsis_bar(self, synopsis_cell):
         # Getting synopsis
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
@@ -299,6 +289,20 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
             if isinstance(synopsis_cell_content, bs4.element.NavigableString)
         ])
+
+    def _main_bar(self, main_content):
+        main_content_inner_divs = main_content.findAll(
+            name='div', recursive=False)
+        if 2 != len(main_content_inner_divs):
+            raise exceptions.FailedToReloadError(
+                "Got len(main_content_inner_divs) == {0:d}".format(
+                    len(main_content_inner_divs)))
+        main_content_datas = main_content_inner_divs[
+            1].table.tbody.findAll(name="tr", recursive=False)
+
+        self._synopsis_bar(main_content_datas[0])
+
+        main_content_other_data = main_content_datas[1]
         # Getting other data
         main_content_other_data = main_content_other_data.td
         other_data_kids = [i for i in main_content_other_data.children]

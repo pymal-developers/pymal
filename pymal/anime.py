@@ -429,6 +429,18 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(self_popularity)
         self.__popularity = int(self_popularity[1:])
 
+    def _synopsis_bar(self, synopsis_cell):
+        # Getting synopsis
+        synopsis_cell = synopsis_cell.td
+        synopsis_cell_contents = synopsis_cell.contents
+        if 'Synopsis' != synopsis_cell.h2.text.strip():
+            raise exceptions.FailedToReloadError(synopsis_cell.h2.text.strip())
+        self.__synopsis = os.linesep.join([
+            synopsis_cell_content.strip()
+            for synopsis_cell_content in synopsis_cell_contents[1:-1]
+            if isinstance(synopsis_cell_content, bs4.element.NavigableString)
+        ])
+
     def _main_bar(self, main_content):
         """
         :param main_content: The main content.
@@ -443,18 +455,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
                     len(main_content_inner_divs)))
         main_content_datas = main_content_inner_divs[
             1].table.tbody.findAll(name="tr", recursive=False)
-        synopsis_cell = main_content_datas[0]
+
+        self._synopsis_bar(main_content_datas[0])
+
         main_content_other_data = main_content_datas[1]
-        # Getting synopsis
-        synopsis_cell = synopsis_cell.td
-        synopsis_cell_contents = synopsis_cell.contents
-        if 'Synopsis' != synopsis_cell.h2.text.strip():
-            raise exceptions.FailedToReloadError(synopsis_cell.h2.text.strip())
-        self.__synopsis = os.linesep.join([
-            synopsis_cell_content.strip()
-            for synopsis_cell_content in synopsis_cell_contents[1:-1]
-            if isinstance(synopsis_cell_content, bs4.element.NavigableString)
-        ])
         # Getting other data
         main_content_other_data = main_content_other_data.td
         other_data_kids = [i for i in main_content_other_data.children]
