@@ -4,7 +4,10 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 from urllib import request
+import os
+import io
 
+from PIL import Image
 import requests
 import bs4
 import singleton_factory
@@ -12,6 +15,7 @@ import singleton_factory
 from pymal import decorators
 from pymal import consts
 from pymal import global_functions
+from pymal import exceptions
 
 __all__ = ['Anime']
 
@@ -144,9 +148,6 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         :return: The image of the anime
         :rtype: :class:`PIL.Image.Image`
         """
-        import io
-
-        from PIL import Image
 
         sock = requests.get(self.image_url)
         data = io.BytesIO(sock.content)
@@ -194,7 +195,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
 
     @property
     @decorators.load
-    def genres(self) ->dict:
+    def genres(self) -> dict:
         return self.__genres
 
     @property
@@ -293,43 +294,20 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     def episodes(self) -> int:
         return self.__episodes
 
-    def reload(self):
+    def _side_bar(self, side_content):
         """
+        :param side_content: The side bar content
+        :type side_content: bs4.elements.Tag
         :exception exceptions.FailedToReloadError: when failed.
         """
-        import os
-        from pymal import exceptions
-
-        # Getting content wrapper <div>
-        content_wrapper_div = global_functions.get_content_wrapper_div(self.__mal_url, global_functions.connect)
-
-        # Getting title <div>
-        self.__title = content_wrapper_div.h1.contents[1].strip()
-
-        # Getting content <div>
-        content_div = content_wrapper_div.find(
-            name="div", attrs={"id": "content"}, recursive=False)
-
-        if content_div is None:
-            raise exceptions.FailedToReloadError(content_wrapper_div)
-
-        content_table = content_div.table
-
-        contents = content_table.tbody.tr.findAll(name="td", recursive=False)
-
-        # Data from side content
-        side_content = contents[0]
         side_contents_divs = side_content.findAll(name="div", recursive=False)
-
         # Getting anime image url <img>
         img_div = side_contents_divs[0]
         img_link = img_div.find(name="a")
         if img_link is None:
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         self.__image_url = img_link.img['src']
-
         side_contents_divs_index = 4
-
         # english <div>
         english_div = side_contents_divs[side_contents_divs_index]
         if global_functions.check_side_content_div('English', english_div):
@@ -360,57 +338,49 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         # type <div>
         type_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Type', type_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         type_span, self_type = type_div.contents
         self.__type = self_type.strip()
         side_contents_divs_index += 1
-
         # episodes <div>
         episodes_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Episodes', episodes_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         episodes_span, self_episodes = episodes_div.contents
         self.__episodes = global_functions.make_counter(self_episodes.strip())
-
         side_contents_divs_index += 1
-
         # status <div>
         status_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Status', status_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         status_span, self.__status = status_div.contents
         self.__status = self.__status.strip()
         side_contents_divs_index += 1
-
         # aired <div>
         aired_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Aired', aired_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         aired_span, aired = aired_div.contents
         self.__start_time, self.__end_time = global_functions.make_start_and_end_time(aired)
         side_contents_divs_index += 1
-
         # producers <div>
         producers_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Producers', producers_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         for producer_link in producers_div.findAll(name='a'):
             self.__creators[producer_link.text.strip()] = producer_link['href']
         side_contents_divs_index += 1
-
         # genres <div>
         genres_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Genres', genres_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         for genre_link in genres_div.findAll(name='a'):
             self.__genres[genre_link.text.strip()] = genre_link['href']
         side_contents_divs_index += 1
-
         # duration <div>
         duration_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Duration', duration_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
-
+            raise exceptions.FailedToReloadError(side_content)
         duration_span, duration_string = duration_div.contents
         self.__duration = 0
         duration_parts = duration_string.strip().split('.')
@@ -425,58 +395,56 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             else:
                 raise exceptions.FailedToReloadError('scale {0:s} is unknown'.format(scale))
         side_contents_divs_index += 1
-
         # rating <div>
         rating_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Rating', rating_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         rating_span, self.__rating = rating_div.contents
         self.__rating = self.__rating.strip()
         side_contents_divs_index += 1
-
         # score <div>
         score_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Score', score_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         score_span, self_score = score_div.contents[:2]
         self.__score = float(self_score)
         side_contents_divs_index += 1
-
         # rank <div>
         rank_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Ranked', rank_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         rank_span, self_rank = rank_div.contents[:2]
         self_rank = self_rank.strip()
         if not self_rank.startswith("#"):
             raise exceptions.FailedToReloadError(self_rank)
         self.__rank = int(self_rank[1:])
         side_contents_divs_index += 1
-
         # popularity <div>
         popularity_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Popularity', popularity_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         popularity_span, self_popularity = popularity_div.contents[:2]
         self_popularity = self_popularity.strip()
         if not self_popularity.startswith("#"):
             raise exceptions.FailedToReloadError(self_popularity)
         self.__popularity = int(self_popularity[1:])
 
-        # Data from main content
-        main_content = contents[1]
+    def _main_bar(self, main_content):
+        """
+        :param main_content: The main content.
+        :type main_content: bs4.elements.Tag
+        :exception exceptions.FailedToReloadError: when failed.
+        """
         main_content_inner_divs = main_content.findAll(
             name='div', recursive=False)
         if 2 != len(main_content_inner_divs):
             raise exceptions.FailedToReloadError(
-            "Got len(main_content_inner_divs) == {0:d}".format(
-                len(main_content_inner_divs)))
+                "Got len(main_content_inner_divs) == {0:d}".format(
+                    len(main_content_inner_divs)))
         main_content_datas = main_content_inner_divs[
             1].table.tbody.findAll(name="tr", recursive=False)
-
         synopsis_cell = main_content_datas[0]
         main_content_other_data = main_content_datas[1]
-
         # Getting synopsis
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
@@ -487,16 +455,13 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             for synopsis_cell_content in synopsis_cell_contents[1:-1]
             if isinstance(synopsis_cell_content, bs4.element.NavigableString)
         ])
-
         # Getting other data
         main_content_other_data = main_content_other_data.td
         other_data_kids = [i for i in main_content_other_data.children]
-
         # Getting all the data under 'Related Anime'
         index = 0
         index = global_functions.get_next_index(index, other_data_kids)
-        if 'h2' == other_data_kids[index].name and\
-           'Related Anime' == other_data_kids[index].text.strip():
+        if 'h2' == other_data_kids[index].name and 'Related Anime' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
                 index = global_functions.make_set(
@@ -506,7 +471,6 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         else:
             index -= 2
         next_index = global_functions.get_next_index(index, other_data_kids)
-
         if consts.DEBUG:
             if next_index - index != 2:
                 raise exceptions.FailedToReloadError("{0:d} - {1:d}".format(next_index, index))
@@ -517,14 +481,37 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
                 raise exceptions.FailedToReloadError('h2 == {0:s}'.format(other_data_kids[index].name))
             if 'Characters & Voice Actors' != other_data_kids[index].contents[-1]:
                 raise exceptions.FailedToReloadError(other_data_kids[index].contents[-1])
-
         tag_for_reviews = main_content_other_data.find(text='More reviews').parent
         link_for_reviews = request.urljoin(consts.HOST_NAME, tag_for_reviews['href'])
         self.__parse_reviews(link_for_reviews)
-
         tag_for_recommendations = main_content_other_data.find(text='More recommendations').parent
         link_for_recommendations = request.urljoin(consts.HOST_NAME, tag_for_recommendations['href'])
         self.__parse_recommendations(link_for_recommendations)
+
+    def reload(self):
+        """
+        :exception exceptions.FailedToReloadError: when failed.
+        """
+        # Getting content wrapper <div>
+        content_wrapper_div = global_functions.get_content_wrapper_div(self.__mal_url, global_functions.connect)
+
+        # Getting title <div>
+        self.__title = content_wrapper_div.h1.contents[1].strip()
+
+        # Getting content <div>
+        content_div = content_wrapper_div.find(
+            name="div", attrs={"id": "content"}, recursive=False)
+
+        if content_div is None:
+            raise exceptions.FailedToReloadError(content_wrapper_div)
+
+        content_table = content_div.table
+
+        contents = content_table.tbody.tr.findAll(name="td", recursive=False)
+
+        self._side_bar(contents[0])
+
+        self._main_bar(contents[1])
 
         self._is_loaded = True
 
@@ -533,7 +520,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
 
         content_wrapper_div = global_functions.get_content_wrapper_div(link_for_reviews, global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
         _, reviews_data_div = main_cell.findAll(name='div', recursive=False)
         reviews_data = reviews_data_div.findAll(name='div', recursive=False)[2:-2]
         self.reviews = frozenset(map(review.Review, reviews_data))
@@ -541,9 +528,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     def __parse_recommendations(self, link_for_recommendations: str):
         from pymal.inner_objects import recommendation
 
-        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations, global_functions.connect)
+        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations,
+                                                                       global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
         _, recommendations_data_div = main_cell.findAll(name='div', recursive=False)
         recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:-1]
         self.recommendations = frozenset(map(recommendation.Recommendation, recommendations_data))
@@ -577,8 +565,6 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         :rtype: :class:`account_objects.my_anime.MyAnime`
         :exception exceptions.MyAnimeListApiAddError: when failed.
         """
-        from pymal import exceptions
-
         data = self.MY_MAL_XML_TEMPLATE.format(
             0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
             consts.MALAPI_NONE_TIME, 0, False, False, '', '', ''
@@ -616,6 +602,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.MyAnimeListApiAddError(ret)
 
         from pymal.account_objects import my_anime
+
         return my_anime.MyAnime(self, my_id, account)
 
     def __eq__(self, other):
