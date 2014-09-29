@@ -278,8 +278,12 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def chapters(self) -> int:
         return self.__chapters
 
-    def _synopsis_bar(self, synopsis_cell):
-        # Getting synopsis
+    def _synopsis_bar(self, synopsis_cell: bs4.element.Tag):
+        """
+        :param synopsis_cell: synopsis tag
+        :type synopsis_cell: bs4.elements.Tag
+        :exception exceptions.FailedToReloadError: If failed to parse.
+        """
         synopsis_cell = synopsis_cell.td
         synopsis_cell_contents = synopsis_cell.contents
         if 'Synopsis' != synopsis_cell.h2.text.strip():
@@ -290,15 +294,19 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             if isinstance(synopsis_cell_content, bs4.element.NavigableString)
         ])
 
-    def _main_bar(self, main_content):
+    def _main_bar(self, main_content: bs4.element.Tag):
+        """
+        :param main_content: synopsis tag
+        :type main_content: bs4.elements.Tag
+        :exception exceptions.FailedToReloadError: If failed to parse.
+        """
         main_content_inner_divs = main_content.findAll(
             name='div', recursive=False)
         if 2 != len(main_content_inner_divs):
             raise exceptions.FailedToReloadError(
                 "Got len(main_content_inner_divs) == {0:d}".format(
                     len(main_content_inner_divs)))
-        main_content_datas = main_content_inner_divs[
-            1].table.tbody.findAll(name="tr", recursive=False)
+        main_content_datas = main_content_inner_divs[1].table.tbody.findAll(name="tr", recursive=False)
 
         self._synopsis_bar(main_content_datas[0])
 
@@ -309,8 +317,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         # Getting all the data under 'Related Manga'
         index = 0
         index = global_functions.get_next_index(index, other_data_kids)
-        if 'h2' == other_data_kids[index].name and \
-                        'Related Manga' == other_data_kids[index].text.strip():
+        if 'h2' == other_data_kids[index].name and 'Related Manga' == other_data_kids[index].text.strip():
             index += 1
             while other_data_kids[index + 1].name != 'br':
                 index = global_functions.make_set(
@@ -337,13 +344,18 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         link_for_recommendations = request.urljoin(consts.HOST_NAME, tag_for_recommendations['href'])
         self.__parse_recommendations(link_for_recommendations)
 
-    def _side_bar(self, content_wrapper_div, side_content):
+    def _side_bar(self, side_content: bs4.element.Tag):
+        """
+        :param side_content: synopsis tag
+        :type side_content: bs4.elements.Tag
+        :exception exceptions.FailedToReloadError: If failed to parse.
+        """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
         # Getting manga image url <img>
         img_div = side_contents_divs[0]
         img_link = img_div.find(name="a")
         if img_link is None:
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         self.__image_url = img_link.img['src']
         side_contents_divs_index = 3
         # english <div>
@@ -376,49 +388,49 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         # type <div>
         type_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Type', type_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         type_span, self_type = type_div.contents
         self.__type = self_type.strip()
         side_contents_divs_index += 1
         # volumes <div>
         volumes_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Volumes', volumes_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         volumes_span, self_volumes = volumes_div.contents
         self.__volumes = global_functions.make_counter(self_volumes.strip())
         side_contents_divs_index += 1
         # chapters <div>
         chapters_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Chapters', chapters_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         chapters_span, self_chapters = chapters_div.contents
         self.__chapters = global_functions.make_counter(self_chapters.strip())
         side_contents_divs_index += 1
         # status <div>
         status_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Status', status_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         status_span, self.__status = status_div.contents
         self.__status = self.__status.strip()
         side_contents_divs_index += 1
         # published <div>
         published_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Published', published_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         published_span, published = published_div.contents
         self.__start_time, self.__end_time = global_functions.make_start_and_end_time(published)
         side_contents_divs_index += 1
         # genres <div>
         genres_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Genres', genres_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         for genre_link in genres_div.findAll(name='a'):
             self.__genres[genre_link.text.strip()] = genre_link['href']
         side_contents_divs_index += 1
         # authors <div>
         authors_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Authors', authors_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         for authors_link in authors_div.findAll(name='a'):
             self.__creators[authors_link.text.strip()] = authors_link['href']
         side_contents_divs_index += 1
@@ -426,14 +438,14 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         # score <div>
         score_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Score', score_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         score_span, self_score = score_div.contents[:2]
         self.__score = float(self_score)
         side_contents_divs_index += 1
         # rank <div>
         rank_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Ranked', rank_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         rank_span, self_rank = rank_div.contents[:2]
         self_rank = self_rank.strip()
         if not self_rank.startswith("#"):
@@ -443,7 +455,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         # popularity <div>
         popularity_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Popularity', popularity_div):
-            raise exceptions.FailedToReloadError(content_wrapper_div)
+            raise exceptions.FailedToReloadError(side_content)
         popularity_span, self_popularity = popularity_div.contents[:2]
         self_popularity = self_popularity.strip()
         if not self_popularity.startswith("#"):
@@ -472,12 +484,10 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         contents = content_table.tbody.tr.findAll(name="td", recursive=False)
 
         # Data from side content
-        side_content = contents[0]
-        self._side_bar(content_wrapper_div, side_content)
+        self._side_bar(contents[0])
 
         # Data from main content
-        main_content = contents[1]
-        self._main_bar(main_content)
+        self._main_bar(contents[1])
 
         self._is_loaded = True
 
