@@ -24,7 +24,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         request.urljoin(HOST_NAME, r'api/account/verify_credentials.xml')
 
     __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
-    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
+    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=+Login+'
 
     def __init__(self, username: str, password: str or None=None):
         """
@@ -183,8 +183,8 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
             'name': 'loginForm',
         }
 
-        self.connect(self.__MY_LOGIN_URL, data=data_form, headers=headers)
-        
+        self.auth_connect(self.__MY_LOGIN_URL, data=data_form, headers=headers)
+
         return True
 
     def auth_connect(self, url: str, data: str or None=None,
