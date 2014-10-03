@@ -23,7 +23,7 @@ setup(
     long_description=description,
     author=authors,
     license=license,
-    url='https://bitbucket.org/pymal-developers/pymal/',
+    url='https://github.com/tomerghelber/pymal',
     keywords=[
         "MyAnimeList", "myanimelist",
         "MAL", "mal",
