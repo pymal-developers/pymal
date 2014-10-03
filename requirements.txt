@@ -10,6 +10,7 @@ requests>=2.4.1
 pillow>=2.5.3
 singleton3>=1.0
 singleton-factory>=0.1
+reloaded-set>=0.3
 
 # This is needed for tests
 coveralls>=0.4.2
