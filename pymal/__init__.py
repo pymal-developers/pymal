@@ -6,5 +6,4 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 __all__ = ['account', 'anime', 'manga', 'seasons']
 
 
-def get_version():
-    return '0.6'
+__version__ = '0.6'
