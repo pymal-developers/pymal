@@ -1,7 +1,8 @@
 import unittest
-from unittest.mock import Mock
 import os
 from os import path
+
+from mock import Mock
 
 from pymal import account
 from pymal import anime
