@@ -5,14 +5,15 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 from urllib import request
 
+from reloaded_set import load
+from pymal.types.reloaded_set_singleton_factory import ReloadedSetSingletonFactory
+
 from pymal.consts import HOST_NAME
-from pymal import decorators
-from pymal.types import ReloadedSet
 
 __all__ = ['AccountAnimes']
 
 
-class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
+class AccountAnimes(ReloadedSetSingletonFactory):
     """
     A slow loading of an account anime list.
 
@@ -30,6 +31,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         :param account: Which account this anime list is connected to.
         :type account: :class:`account.Account`
         """
+        super().__init__()
         self.__account = account
         self.__url = self.__URL.format(account.username)
 
@@ -59,10 +61,8 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
             'plantowatch': self.__plan_to_watch,
         }
 
-        self._is_loaded = False
-
     @property
-    @decorators.load
+    @load()
     def watching(self) -> frozenset:
         """
         :return: The watching list
@@ -71,7 +71,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         return self.__watching
 
     @property
-    @decorators.load
+    @load()
     def completed(self) -> frozenset:
         """
         :return: The completed list
@@ -80,7 +80,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         return self.__completed
 
     @property
-    @decorators.load
+    @load()
     def on_hold(self) -> frozenset:
         """
         :return: The on hold list
@@ -89,7 +89,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         return self.__on_hold
 
     @property
-    @decorators.load
+    @load()
     def dropped(self) -> frozenset:
         """
         :return: The dropped list
@@ -98,7 +98,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         return self.__dropped
 
     @property
-    @decorators.load
+    @load()
     def plan_to_watch(self) -> frozenset:
         """
         :return: The plan to watch list
@@ -115,7 +115,7 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
         return self.watching | self.completed | self.on_hold | self.dropped |\
                self.plan_to_watch
 
-    def reload(self):
+    def _reload(self):
         """
         reloading data from MAL.
         """
