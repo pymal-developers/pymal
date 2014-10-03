@@ -32,9 +32,6 @@ class AccountAnimeListTestCase(unittest.TestCase):
         my_anm = my_anime.MyAnime(ANIME_ID, 0, self.account)
         self.assertIn(my_anm, self.animes)
 
-    def test_contains_id(self):
-        self.assertIn(ANIME_ID, self.animes)
-
     def test_str(self):
         self.assertEqual(str(self.animes), "<User animes' number is {0:d}>".format(self.EXPECTED_LENGTH))
 
