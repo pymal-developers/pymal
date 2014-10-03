@@ -7,4 +7,4 @@ __all__ = ['account', 'anime', 'manga', 'seasons']
 
 
 def get_version():
-    return '0.5b4'
+    return '0.6'
