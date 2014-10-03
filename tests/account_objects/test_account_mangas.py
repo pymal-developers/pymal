@@ -32,9 +32,6 @@ class AccountMangaListTestCase(unittest.TestCase):
         my_manga = list(self.mangas)[0]
         self.assertIn(my_manga, self.mangas)
 
-    def test_contains_id(self):
-        self.assertIn(MANGA_ID, self.mangas)
-
     def test_str(self):
         self.assertEqual(str(self.mangas), "<User mangas' number is {0:d}>".format(self.EXPECTED_LENGTH))
 
