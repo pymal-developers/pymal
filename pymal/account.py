@@ -24,7 +24,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         request.urljoin(HOST_NAME, r'api/account/verify_credentials.xml')
 
     __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
-    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
+    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=+Login+'
 
     def __init__(self, username: str, password: str or None=None):
         """
@@ -41,13 +41,14 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         self.__user_id = None
         self.__auth_object = None
 
-        self.__main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
-        self.__friends_url = self.__main_profile_url + '/friends'
+        self._main_profile_url = request.urljoin(HOST_NAME, 'profile/{0:s}'.format(self.username))
 
         self.__animes = account_animes.AccountAnimes(self)
         self.__mangas = account_mangas.AccountMangas(self)
         self.__friends = None
         self.__image_url = ""
+
+        self.__session = global_functions.generate_session()
 
         self._is_loaded = False
 
@@ -72,7 +73,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         if self.__user_id is None:
             import bs4
 
-            ret = self.connect(self.__main_profile_url)
+            ret = self.connect(self._main_profile_url)
             html = bs4.BeautifulSoup(ret)
             bla = html.find(name='input', attrs={'name': 'profileMemId'})
             self.__user_id = int(bla['value'])
@@ -103,7 +104,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         from pymal.account_objects import account_friends
 
         if self.__friends is None:
-            self.__friends = account_friends.AccountFriends(self.__friends_url, self)
+            self.__friends = account_friends.AccountFriends(self)
         return self.__friends
 
     def search(self, search_line: str, is_anime: bool=True) -> map:
@@ -177,7 +178,12 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         self.__password = password
 
         data_form = self.__DATA_FORM.format(self.username, password).encode('utf-8')
-        self.connect(self.__MY_LOGIN_URL, data=data_form)
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded',
+            'name': 'loginForm',
+        }
+
+        self.auth_connect(self.__MY_LOGIN_URL, data=data_form, headers=headers)
 
         return True
 
@@ -198,7 +204,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         if not self.is_auth:
             raise exceptions.UnauthenticatedAccountError(self.username)
         return global_functions._connect(url, data=data, headers=headers,
-                                         auth=self.__auth_object).text.strip()
+                                         auth=self.__auth_object, session=self.__session).text.strip()
 
     @property
     @load
@@ -226,7 +232,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         """
         reloading account image (all the other things are already lazy load!
         """
-        div = global_functions.get_content_wrapper_div(self.__main_profile_url, self.connect)
+        div = global_functions.get_content_wrapper_div(self._main_profile_url, self.connect)
         profile_leftcell = div.table.tbody.tr.find(name="td", attrs={"class": "profile_leftcell"}, recursive=False)
         self.__image_url = profile_leftcell.div.img['src']
 

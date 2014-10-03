@@ -130,7 +130,10 @@ class AccountAnimes(ReloadedSet.ReloadedSetSingletonFactory):
     def __get_my_animes(self, status: int) -> frozenset:
         import bs4
 
-        data = self.__account.connect(self.__url + str(status))
+        if self.__account.is_auth:
+            data = self.__account.auth_connect(self.__url + str(status))
+        else:
+            data = self.__account.connect(self.__url + str(status))
         body = bs4.BeautifulSoup(data).body
 
         main_div = body.find(name='div', attrs={'id': 'list_surround'})
