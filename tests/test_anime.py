@@ -172,36 +172,51 @@ class NoReloadTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         cls.anime = list(cls.account.animes)[0]
+        cls.__reload = cls.anime.reload
+        cls.anime.reload = Mock(wraps=cls.__reload)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.anime.reload = cls.__reload
 
     def test_id(self):
         self.assertIsInstance(self.anime.id, int)
+        self.assertFalse(self.anime.reload.called)
 
     def test_title(self):
         self.assertIsInstance(self.anime.english, str)
+        self.assertFalse(self.anime.reload.called)
 
     def test_image_url(self):
         self.assertIsInstance(self.anime.image_url, str)
+        self.assertFalse(self.anime.reload.called)
 
     def test_synonyms(self):
         self.assertIsInstance(self.anime.synonyms, str)
+        self.assertFalse(self.anime.reload.called)
 
     def test_type(self):
         self.assertIsInstance(self.anime.type, str)
+        self.assertFalse(self.anime.reload.called)
 
     def test_episodes(self):
         try:
             self.assertIsInstance(self.anime.episodes, int)
         except AssertionError:
             self.assertEqual(self.anime.episodes, float('inf'))
+        self.assertFalse(self.anime.reload.called)
 
     def test_start_time(self):
         self.assertIsInstance(self.anime.start_time, float)
+        self.assertFalse(self.anime.reload.called)
 
     def test_end_time(self):
         self.assertIsInstance(self.anime.end_time, float)
+        self.assertFalse(self.anime.reload.called)
 
     def test_str(self):
         repr(self.anime)
+        self.assertFalse(self.anime.reload.called)
 
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
