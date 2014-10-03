@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 
-# Dynamically calculate the version based on pymal.VERSION.
-version = __import__('pymal').get_version()
+# Dynamically calculate the version based on pymal.__version__.
+version = __import__('pymal').__version__
 
 
 setup(

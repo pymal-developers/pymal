@@ -1,13 +1,17 @@
 # This is an implicit value, here for clarity
 --index-url https://pypi.python.org/simple/
 
+# Those are like in setup.py
 beautifulsoup4>=4.3.2
 html5lib>=0.999
 httpcache>=0.1.3
-coveralls>=0.4.2
 six==1.3
 requests>=2.4.1
 pillow>=2.5.3
 singleton3>=1.0
 singleton-factory>=0.1
 reloaded-set>=0.3
+
+# This is needed for tests
+coveralls>=0.4.2
+mock==1.0.1
