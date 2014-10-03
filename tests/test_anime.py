@@ -15,6 +15,14 @@ from tests.constants_for_testing import ADD_ANIME_ID, ANIME_ID, ACCOUNT_TEST_USE
     SOURCES_DIRECTORY
 
 
+class FetchWebTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.anime = anime.Anime(ANIME_ID)
+
+    def test_fetch_web(self):
+        self.anime.reload()
+
 class ReloadTestCase(unittest.TestCase):
 
     @classmethod
