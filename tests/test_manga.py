@@ -1,19 +1,24 @@
 import unittest
+from mock import Mock
 
-from pymal import account
 from pymal import anime
 from pymal import manga
 from pymal.account_objects import my_manga
 
-from tests.constants_for_testing import ADD_MANGA_ID, MANGA_ID, ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD
+from tests.constants_for_testing import ADD_MANGA_ID, MANGA_ID
 
 
 class ReloadTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.manga = manga.Manga(MANGA_ID)
-        cls.manga.reload()
+    def setUp(self):
+        self.manga = manga.Manga(MANGA_ID)
+        self.__reload = self.manga.reload
+        self.manga.reload = Mock(wraps=self.__reload)
+
+    def tearDown(self):
+        self.manga.reload.assert_called_once_with()
+        self.manga.reload = self.__reload
+        manga.Manga._unregiter(self.manga)
 
     def test_manga_id(self):
         self.assertEqual(self.manga.id, MANGA_ID)
@@ -123,52 +128,26 @@ class ReloadTestCase(unittest.TestCase):
             self.assertIsInstance(alternative_setting, manga.Manga)
 
     def test_str(self):
-        repr(self.manga)
+        self.manga.reload()
+        self.assertEqual(str(self.manga), '<Manga Lucky☆Star id=587>')
 
 
 class NoReloadTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        cls.manga = list(cls.account.mangas)[0]
+    def setUp(self):
+        self.manga = manga.Manga(MANGA_ID)
+        self.__reload = self.manga.reload
+        self.manga.reload = Mock(wraps=self.__reload)
+
+    def tearDown(self):
+        self.assertFalse(self.manga.reload.called)
+        self.manga.reload = self.__reload
 
     def test_id(self):
         self.assertIsInstance(self.manga.id, int)
 
-    def test_title(self):
-        self.assertIsInstance(self.manga.english, str)
-
-    def test_image_url(self):
-        self.assertIsInstance(self.manga.image_url, str)
-
-    def test_synonyms(self):
-        self.assertIsInstance(self.manga.synonyms, str)
-
-    def test_type(self):
-        self.assertIsInstance(self.manga.type, str)
-
-    def test_manga_chapters(self):
-        try:
-            self.assertIsInstance(self.manga.chapters, int)
-        except AssertionError:
-            self.assertEqual(self.manga.chapters, float('inf'))
-            self.assertEqual(self.manga.chapters, self.manga.volumes)
-
-    def test_manga_volumes(self):
-        try:
-            self.assertIsInstance(self.manga.volumes, int)
-        except AssertionError:
-            self.assertEqual(self.manga.volumes, float('inf'))
-
-    def test_start_time(self):
-        self.assertIsInstance(self.manga.start_time, float)
-
-    def test_end_time(self):
-        self.assertIsInstance(self.manga.end_time, float)
-
     def test_str(self):
-        repr(self.manga)
+        self.assertEqual(str(self.manga), '<Manga  id=587>')
 
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
