@@ -1,14 +1,41 @@
 import unittest
 from mock import Mock
+from os import path
 
+import bs4
 from pymal import anime
 from pymal import manga
 from pymal.account_objects import my_manga
+from pymal import global_functions
 
-from tests.constants_for_testing import ADD_MANGA_ID, MANGA_ID
+from tests.constants_for_testing import ADD_MANGA_ID, MANGA_ID, SOURCES_DIRECTORY
+
+
+class FetchWebTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.manga = manga.Manga(MANGA_ID)
+
+    def test_fetch_web(self):
+        self.manga.reload()
 
 
 class ReloadTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.__global_functions_get_content_wrapper_div = global_functions.get_content_wrapper_div
+
+        with open(path.join(SOURCES_DIRECTORY, 'Lucky☆Star manga - MyAnimeList.net.html'), "rb") as f:
+            data = f.read().decode()
+        html = bs4.BeautifulSoup(data, "html5lib")
+        myanimelist_div = html.body.find(name="div", attrs={"id": 'myanimelist'})
+        content_wrapper_div = myanimelist_div.find(name="div", attrs={"id": "contentWrapper"}, recursive=False)
+        global_functions.get_content_wrapper_div = Mock(return_value=content_wrapper_div)
+
+    @classmethod
+    def tearDownClass(cls):
+        global_functions.get_content_wrapper_div = cls.__global_functions_get_content_wrapper_div
 
     def setUp(self):
         self.manga = manga.Manga(MANGA_ID)
@@ -19,9 +46,6 @@ class ReloadTestCase(unittest.TestCase):
         self.manga.reload.assert_called_once_with()
         self.manga.reload = self.__reload
         manga.Manga._unregiter(self.manga)
-
-    def test_manga_id(self):
-        self.assertEqual(self.manga.id, MANGA_ID)
 
     def test_manga_title(self):
         self.assertEqual(self.manga.english, 'Lucky ☆ Star')
@@ -142,6 +166,7 @@ class NoReloadTestCase(unittest.TestCase):
     def tearDown(self):
         self.assertFalse(self.manga.reload.called)
         self.manga.reload = self.__reload
+        manga.Manga._unregiter(self.manga)
 
     def test_id(self):
         self.assertIsInstance(self.manga.id, int)
