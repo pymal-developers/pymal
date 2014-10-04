@@ -13,14 +13,17 @@ authors = __import__('pymal').__authors__
 
 requirements_path = 'requirements.txt'
 
+description = 'A python api for the website MyAnimeList (or MAL).'
+
 setup(
     name='pymal',
     packages=find_packages(exclude=['tests*']),
     version=version,
-    description='A python api for the website MyAnimeList (or MAL).',
+    description=description,
+    long_description=description,
     author=authors,
     license=license,
-    url='https://bitbucket.org/pymal-developers/pymal/',
+    url='https://github.com/tomerghelber/pymal',
     keywords=[
         "MyAnimeList", "myanimelist",
         "MAL", "mal",
