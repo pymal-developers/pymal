@@ -11,8 +11,8 @@ from PIL import Image
 import requests
 import bs4
 import singleton_factory
+from reloaded_set import load
 
-from pymal import decorators
 from pymal import consts
 from pymal import global_functions
 from pymal import exceptions
@@ -129,12 +129,12 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         return self.__id
 
     @property
-    @decorators.load
+    @load()
     def title(self) -> str:
         return self.__title
 
     @property
-    @decorators.load
+    @load()
     def image_url(self) -> str:
         return self.__image_url
 
@@ -148,133 +148,133 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         return Image.open(data)
 
     @property
-    @decorators.load
+    @load()
     def english(self) -> str:
         return self.__english
 
     @property
-    @decorators.load
+    @load()
     def synonyms(self) -> str:
         return self.__synonyms
 
     @property
-    @decorators.load
+    @load()
     def japanese(self) -> str:
         return self.__japanese
 
     @property
-    @decorators.load
+    @load()
     def type(self) -> str:
         return self.__type
 
     @property
-    @decorators.load
+    @load()
     def status(self) -> int:
         return self.__status
 
     @property
-    @decorators.load
+    @load()
     def start_time(self) -> int:
         return self.__start_time
 
     @property
-    @decorators.load
+    @load()
     def end_time(self) -> int:
         return self.__end_time
 
     @property
-    @decorators.load
+    @load()
     def creators(self) -> dict:
         return self.__creators
 
     @property
-    @decorators.load
+    @load()
     def genres(self) ->dict:
         return self.__genres
 
     @property
-    @decorators.load
+    @load()
     def score(self) -> float:
         return self.__score
 
     @property
-    @decorators.load
+    @load()
     def rank(self) -> int:
         return self.__rank
 
     @property
-    @decorators.load
+    @load()
     def popularity(self) -> int:
         return self.__popularity
 
     @property
-    @decorators.load
+    @load()
     def synopsis(self) -> str:
         return self.__synopsis
 
     # staff from main content
     @property
-    @decorators.load
+    @load()
     def adaptations(self) -> frozenset:
         return frozenset(self.__adaptations)
 
     @property
-    @decorators.load
+    @load()
     def characters(self) -> frozenset:
         return frozenset(self.__characters)
 
     @property
-    @decorators.load
+    @load()
     def sequels(self) -> frozenset:
         return frozenset(self.__sequels)
 
     @property
-    @decorators.load
+    @load()
     def prequels(self) -> frozenset:
         return frozenset(self.__prequels)
 
     @property
-    @decorators.load
+    @load()
     def spin_offs(self) -> frozenset:
         return frozenset(self.__spin_offs)
 
     @property
-    @decorators.load
+    @load()
     def alternative_versions(self) -> frozenset:
         return frozenset(self.__alternative_versions)
 
     @property
-    @decorators.load
+    @load()
     def side_stories(self) -> frozenset:
         return frozenset(self.__side_stories)
 
     @property
-    @decorators.load
+    @load()
     def summaries(self) -> frozenset:
         return frozenset(self.__summaries)
 
     @property
-    @decorators.load
+    @load()
     def others(self) -> frozenset:
         return frozenset(self.__others)
 
     @property
-    @decorators.load
+    @load()
     def parent_stories(self) -> frozenset:
         return frozenset(self.__parent_stories)
 
     @property
-    @decorators.load
+    @load()
     def alternative_settings(self) -> frozenset:
         return frozenset(self.__alternative_settings)
 
     @property
-    @decorators.load
+    @load()
     def volumes(self) -> int:
         return self.__volumes
 
     @property
-    @decorators.load
+    @load()
     def chapters(self) -> int:
         return self.__chapters
 

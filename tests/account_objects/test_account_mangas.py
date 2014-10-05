@@ -1,5 +1,7 @@
 import unittest
 
+from singleton_factory import SingletonFactory
+
 from pymal import account
 from pymal.account_objects import account_mangas
 from pymal import manga
@@ -32,9 +34,6 @@ class AccountMangaListTestCase(unittest.TestCase):
         my_manga = list(self.mangas)[0]
         self.assertIn(my_manga, self.mangas)
 
-    def test_contains_id(self):
-        self.assertIn(MANGA_ID, self.mangas)
-
     def test_str(self):
         self.assertEqual(str(self.mangas), "<User mangas' number is {0:d}>".format(self.EXPECTED_LENGTH))
 
@@ -49,10 +48,7 @@ class AccountMangaListInteraction(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        account_mangas.AccountMangas._unregiter(cls.friend_mangas)
-        account_mangas.AccountMangas._unregiter(cls.mangas)
-        account.Account._unregiter(cls.friend)
-        account.Account._unregiter(cls.account)
+        SingletonFactory.__SingletonFactory_instances = dict()
 
     def test_union(self):
         regular = self.mangas.union(self.friend_mangas)

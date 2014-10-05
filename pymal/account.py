@@ -7,9 +7,9 @@ from urllib import request
 
 import requests
 import singleton_factory
+from reloaded_set import load
 
 from pymal import global_functions
-from pymal.decorators import load
 from pymal.consts import HOST_NAME
 
 __all__ = ['Account']
@@ -24,7 +24,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         request.urljoin(HOST_NAME, r'api/account/verify_credentials.xml')
 
     __MY_LOGIN_URL = request.urljoin(HOST_NAME, 'login.php')
-    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=Login'
+    __DATA_FORM = 'username={0:s}&password={1:s}&cookie=1&sublogin=+Login+'
 
     def __init__(self, username: str, password: str or None=None):
         """
@@ -178,7 +178,12 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
         self.__password = password
 
         data_form = self.__DATA_FORM.format(self.username, password).encode('utf-8')
-        self.connect(self.__MY_LOGIN_URL, data=data_form)
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded',
+            'name': 'loginForm',
+        }
+
+        self.auth_connect(self.__MY_LOGIN_URL, data=data_form, headers=headers)
 
         return True
 
@@ -202,7 +207,7 @@ class Account(object, metaclass=singleton_factory.SingletonFactory):
                                          auth=self.__auth_object, session=self.__session).text.strip()
 
     @property
-    @load
+    @load()
     def image_url(self):
         """
         :return: path for the image of the avatar of the account.
