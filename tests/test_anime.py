@@ -48,7 +48,7 @@ class ReloadTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.anime.reload.assert_called_once_with()
-        self.anime.reload = self.__reload
+        anime.Anime._unregiter(self.anime)
 
     def test_title(self):
         self.assertEqual(self.anime.title, 'Lucky☆Star')
@@ -186,37 +186,13 @@ class NoReloadTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.assertFalse(self.anime.reload.called)
-        self.anime.reload = self.__reload
+        anime.Anime._unregiter(self.anime)
 
     def test_id(self):
-        self.assertIsInstance(self.anime.id, int)
-
-    def test_title(self):
-        self.assertIsInstance(self.anime.english, str)
-
-    def test_image_url(self):
-        self.assertIsInstance(self.anime.image_url, str)
-
-    def test_synonyms(self):
-        self.assertIsInstance(self.anime.synonyms, str)
-
-    def test_type(self):
-        self.assertIsInstance(self.anime.type, str)
-
-    def test_episodes(self):
-        try:
-            self.assertIsInstance(self.anime.episodes, int)
-        except AssertionError:
-            self.assertEqual(self.anime.episodes, float('inf'))
-
-    def test_start_time(self):
-        self.assertIsInstance(self.anime.start_time, float)
-
-    def test_end_time(self):
-        self.assertIsInstance(self.anime.end_time, float)
+        self.assertEqual(self.anime.id, ANIME_ID)
 
     def test_str(self):
-        self.assertEqual(self.anime, '<Anime id=1887>')
+        self.assertEqual(str(self.anime), '<Anime  id={0:d}>'.format(ANIME_ID))
 
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
