@@ -294,10 +294,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     def episodes(self) -> int:
         return self.__episodes
 
-    def _side_bar(self, side_content: bs4.elements.Tag):
+    def _side_bar(self, side_content: bs4.element.Tag):
         """
         :param side_content: The side bar content
-        :type side_content: bs4.elements.Tag
+        :type side_content: bs4.element.Tag
         :exception exceptions.FailedToReloadError: when failed.
         """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
@@ -429,10 +429,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(self_popularity)
         self.__popularity = int(self_popularity[1:])
 
-    def _synopsis_bar(self, synopsis_cell: bs4.elements.Tag):
+    def _synopsis_bar(self, synopsis_cell: bs4.element.Tag):
         """
         :param synopsis_cell: synopsis tag
-        :type synopsis_cell: bs4.elements.Tag
+        :type synopsis_cell: bs4.element.Tag
         :exception exceptions.FailedToReloadError: If failed to parse.
         """
         # Getting synopsis
@@ -446,10 +446,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             if isinstance(synopsis_cell_content, bs4.element.NavigableString)
         ])
 
-    def _main_bar(self, main_content: bs4.elements.Tag):
+    def _main_bar(self, main_content: bs4.element.Tag):
         """
         :param main_content: The main content.
-        :type main_content: bs4.elements.Tag
+        :type main_content: bs4.element.Tag
         :exception exceptions.FailedToReloadError: when failed.
         """
         main_content_inner_divs = main_content.findAll(

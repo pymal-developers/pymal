@@ -281,7 +281,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def _synopsis_bar(self, synopsis_cell: bs4.element.Tag):
         """
         :param synopsis_cell: synopsis tag
-        :type synopsis_cell: bs4.elements.Tag
+        :type synopsis_cell: bs4.element.Tag
         :exception exceptions.FailedToReloadError: If failed to parse.
         """
         synopsis_cell = synopsis_cell.td
@@ -297,7 +297,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def _main_bar(self, main_content: bs4.element.Tag):
         """
         :param main_content: synopsis tag
-        :type main_content: bs4.elements.Tag
+        :type main_content: bs4.element.Tag
         :exception exceptions.FailedToReloadError: If failed to parse.
         """
         main_content_inner_divs = main_content.findAll(
@@ -347,7 +347,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def _side_bar(self, side_content: bs4.element.Tag):
         """
         :param side_content: synopsis tag
-        :type side_content: bs4.elements.Tag
+        :type side_content: bs4.element.Tag
         :exception exceptions.FailedToReloadError: If failed to parse.
         """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
