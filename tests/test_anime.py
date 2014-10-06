@@ -4,7 +4,7 @@ from os import path
 
 from mock import Mock
 
-from pymal import account
+from pymal.account import Account
 from pymal import anime
 from pymal import manga
 from pymal import global_functions
@@ -23,13 +23,10 @@ class FetchWebTestCase(unittest.TestCase):
     def test_fetch_web(self):
         self.anime.reload()
 
-class ReloadTestCase(unittest.TestCase):
 
+class ReloadTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.anime = anime.Anime(ANIME_ID)
-        cls.__reload = cls.anime.reload
-        cls.anime.reload = Mock(wraps=cls.__reload)
         cls.__global_functions_get_content_wrapper_div = global_functions.get_content_wrapper_div
 
         with open(path.join(SOURCES_DIRECTORY, "Lucky☆Star - MyAnimeList.net.html"), "rb") as f:
@@ -39,75 +36,66 @@ class ReloadTestCase(unittest.TestCase):
         content_wrapper_div = myanimelist_div.find(name="div", attrs={"id": "contentWrapper"}, recursive=False)
         global_functions.get_content_wrapper_div = Mock(return_value=content_wrapper_div)
 
-        cls.anime.reload()
+    def setUp(self):
+        self.anime = anime.Anime(ANIME_ID)
+        self.__reload = self.anime.reload
+        self.anime.reload = Mock(wraps=self.__reload)
+        self.anime.reload()
 
     @classmethod
     def tearDownClass(cls):
         global_functions.get_content_wrapper_div = cls.__global_functions_get_content_wrapper_div
-        cls.anime.reload = cls.__reload
+
+    def tearDown(self):
+        self.anime.reload.assert_called_once_with()
+        self.anime.reload = self.__reload
 
     def test_title(self):
         self.assertEqual(self.anime.title, 'Lucky☆Star')
-        print(dir(self.anime.reload))
-        self.anime.reload.assert_called_once_with()
 
     def test_image_url(self):
         self.assertEqual(self.anime.image_url, 'Lucky%E2%98%86Star%20-%20MyAnimeList.net_files/15010.jpg')
-        self.anime.reload.assert_called_once_with()
 
     def test_english(self):
         self.assertEqual(self.anime.english, 'Lucky☆Star')
-        self.anime.reload.assert_called_once_with()
 
     def test_synonyms(self):
         self.assertEqual(self.anime.synonyms, 'Lucky Star')
-        self.anime.reload.assert_called_once_with()
 
     def test_japanese(self):
         self.assertEqual(self.anime.japanese, 'らき☆すた')
-        self.anime.reload.assert_called_once_with()
 
     def test_type(self):
         self.assertEqual(self.anime.type, 'TV')
-        self.anime.reload.assert_called_once_with()
 
     def test_episodes(self):
         self.assertEqual(self.anime.episodes, 24)
-        # need to take something with no number
-        #self.assertEqual(self.anime.episodes, float('inf'))
-        self.anime.reload.assert_called_once_with()
+        # TODO: need to take something with no number
+        # self.assertEqual(self.anime.episodes, float('inf'))
 
     def test_start_time(self):
         self.assertEqual(self.anime.start_time, 1175990400)
-        self.anime.reload.assert_called_once_with()
 
     def test_end_time(self):
         self.assertEqual(self.anime.end_time, 1189987200)
-        self.anime.reload.assert_called_once_with()
 
     def test_rating(self):
         self.assertEqual(self.anime.rating, 'PG-13 - Teens 13 or older')
-        self.anime.reload.assert_called_once_with()
 
     def test_duration(self):
         self.assertEqual(self.anime.duration, 24)
-        self.anime.reload.assert_called_once_with()
 
     def test_score(self):
         self.assertIsInstance(self.anime.score, float)
-        self.anime.reload.assert_called_once_with()
 
     def test_rank(self):
         self.assertIsInstance(self.anime.rank, int)
-        self.anime.reload.assert_called_once_with()
 
     def test_popularity(self):
         self.assertIsInstance(self.anime.popularity, int)
-        self.anime.reload.assert_called_once_with()
 
     def test_synopsis(self):
         self.assertEqual(self.anime.synopsis, "Having fun in school, doing homework \ntogether, cooking and eating, playing videogames, watching anime. All \nthose little things make up the daily life of the anime—and \nchocolate-loving—Izumi Konata and her friends. Sometimes relaxing but \nmore than often simply funny!" + os.linesep)
-        self.anime.reload.assert_called_once_with()
 
     def test_spinoff(self):
         self.assertIsInstance(self.anime.spin_offs, frozenset)
@@ -115,7 +103,6 @@ class ReloadTestCase(unittest.TestCase):
         for spin_off in self.anime.spin_offs:
             self.assertIsInstance(spin_off, anime.Anime)
         self.assertIn(17637, list(self.anime.spin_offs))
-        self.anime.reload.assert_called_once_with()
 
     def test_adaptations(self):
         self.assertIsInstance(self.anime.adaptations, frozenset)
@@ -124,7 +111,6 @@ class ReloadTestCase(unittest.TestCase):
             self.assertIsInstance(adaptation, manga.Manga)
             self.assertIsInstance(adaptation, manga.Manga)
         self.assertIn(587, list(self.anime.adaptations))
-        self.anime.reload.assert_called_once_with()
 
     def test_characters(self):
         self.assertIsInstance(self.anime.characters, frozenset)
@@ -132,7 +118,6 @@ class ReloadTestCase(unittest.TestCase):
         for character in self.anime.characters:
             self.assertIsInstance(character, anime.Anime)
         self.assertIn(3080, list(self.anime.characters))
-        self.anime.reload.assert_called_once_with()
 
     def test_sequals(self):
         self.assertIsInstance(self.anime.sequels, frozenset)
@@ -140,132 +125,111 @@ class ReloadTestCase(unittest.TestCase):
         for sequal in self.anime.sequels:
             self.assertIsInstance(sequal, anime.Anime)
         self.assertIn(4472, list(self.anime.sequels))
-        self.anime.reload.assert_called_once_with()
 
     def test_prequels(self):
         self.assertIsInstance(self.anime.prequels, frozenset)
         self.assertEqual(len(self.anime.prequels), 0)
         for prequel in self.anime.prequels:
             self.assertIsInstance(prequel, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_alternative_versions(self):
         self.assertIsInstance(self.anime.alternative_versions, frozenset)
         self.assertEqual(len(self.anime.alternative_versions), 0)
         for alternative_version in self.anime.alternative_versions:
             self.assertIsInstance(alternative_version, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_side_story(self):
         self.assertIsInstance(self.anime.side_stories, frozenset)
         self.assertEqual(len(self.anime.side_stories), 0)
         for side_story in self.anime.side_stories:
             self.assertIsInstance(side_story, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_summaries(self):
         self.assertIsInstance(self.anime.summaries, frozenset)
         self.assertEqual(len(self.anime.summaries), 0)
         for summary in self.anime.summaries:
             self.assertIsInstance(summary, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_other(self):
         self.assertIsInstance(self.anime.others, frozenset)
         self.assertEqual(len(self.anime.others), 0)
         for other in self.anime.others:
             self.assertIsInstance(other, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_parent_stories(self):
         self.assertIsInstance(self.anime.parent_stories, frozenset)
         self.assertEqual(len(self.anime.parent_stories), 0)
         for parent_story in self.anime.parent_stories:
             self.assertIsInstance(parent_story, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_alternative_settings(self):
         self.assertIsInstance(self.anime.alternative_settings, frozenset)
         self.assertEqual(len(self.anime.alternative_settings), 0)
         for alternative_setting in self.anime.alternative_settings:
             self.assertIsInstance(alternative_setting, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_full_stories(self):
         self.assertIsInstance(self.anime.full_stories, frozenset)
         self.assertEqual(len(self.anime.full_stories), 0)
         for full_story in self.anime.full_stories:
             self.assertIsInstance(full_story, anime.Anime)
-        self.anime.reload.assert_called_once_with()
 
     def test_str(self):
         self.assertEqual(str(self.anime), "<Anime Lucky☆Star id=1887>")
-        self.anime.reload.assert_called_once_with()
 
 
 class NoReloadTestCase(unittest.TestCase):
+    def setUp(self):
+        self.anime = anime.Anime(ANIME_ID)
+        self.__reload = self.anime.reload
+        self.anime.reload = Mock(wraps=self.__reload)
 
-    @classmethod
-    def setUpClass(cls):
-        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
-        cls.anime = list(cls.account.animes)[0]
-        cls.__reload = cls.anime.reload
-        cls.anime.reload = Mock(wraps=cls.__reload)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.anime.reload = cls.__reload
+    def tearDown(self):
+        self.assertFalse(self.anime.reload.called)
+        self.anime.reload = self.__reload
 
     def test_id(self):
         self.assertIsInstance(self.anime.id, int)
-        self.assertFalse(self.anime.reload.called)
 
     def test_title(self):
         self.assertIsInstance(self.anime.english, str)
-        self.assertFalse(self.anime.reload.called)
 
     def test_image_url(self):
         self.assertIsInstance(self.anime.image_url, str)
-        self.assertFalse(self.anime.reload.called)
 
     def test_synonyms(self):
         self.assertIsInstance(self.anime.synonyms, str)
-        self.assertFalse(self.anime.reload.called)
 
     def test_type(self):
         self.assertIsInstance(self.anime.type, str)
-        self.assertFalse(self.anime.reload.called)
 
     def test_episodes(self):
         try:
             self.assertIsInstance(self.anime.episodes, int)
         except AssertionError:
             self.assertEqual(self.anime.episodes, float('inf'))
-        self.assertFalse(self.anime.reload.called)
 
     def test_start_time(self):
         self.assertIsInstance(self.anime.start_time, float)
-        self.assertFalse(self.anime.reload.called)
 
     def test_end_time(self):
         self.assertIsInstance(self.anime.end_time, float)
-        self.assertFalse(self.anime.reload.called)
 
     def test_str(self):
-        repr(self.anime)
-        self.assertFalse(self.anime.reload.called)
+        self.assertEqual(self.anime, '<Anime id=1887>')
 
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
+        account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         anm = anime.Anime(ADD_ANIME_ID)
-        my_anm = anm.add(self.account)
+        my_anm = anm.add(account)
 
         self.assertIsInstance(my_anm, my_anime.MyAnime)
-        self.account.animes.reload()
-        self.assertIn(my_anm, self.account.animes)
+        account.animes.reload()
+        self.assertIn(my_anm, account.animes)
 
         my_anm.delete()
-        self.account.animes.reload()
+        account.animes.reload()
         self.assertNotIn(my_anm, self.account.animes)
 
 
