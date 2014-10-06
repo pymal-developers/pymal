@@ -404,7 +404,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             self.__japanese = ''
             return 0
 
-    def _type_parse(self, type_div):
+    def _type_parse(self, type_div: bs4.element.Tag):
         """
         type <div>
         :param type_div: type div
@@ -415,6 +415,19 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(type_div)
         type_span, self_type = type_div.contents
         self.__type = self_type.strip()
+        return 1
+
+    def _status_parse(self, status_div: bs4.element.Tag):
+        """
+        status <div>
+        :param status_div: type div
+        :type status_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Status', status_div):
+            raise exceptions.FailedToReloadError(status_div)
+        status_span, self.__status = status_div.contents
+        self.__status = self.__status.strip()
         return 1
 
     def _side_bar(self, side_content: bs4.element.Tag):
@@ -447,13 +460,9 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         chapters_span, self_chapters = chapters_div.contents
         self.__chapters = global_functions.make_counter(self_chapters.strip())
         side_contents_divs_index += 1
-        # status <div>
-        status_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Status', status_div):
-            raise exceptions.FailedToReloadError(status_div)
-        status_span, self.__status = status_div.contents
-        self.__status = self.__status.strip()
-        side_contents_divs_index += 1
+
+        side_contents_divs_index += self._status_parse(side_contents_divs[side_contents_divs_index])
+
         # published <div>
         published_div = side_contents_divs[side_contents_divs_index]
         if not global_functions.check_side_content_div('Published', published_div):
