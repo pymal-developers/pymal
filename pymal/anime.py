@@ -6,6 +6,7 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 from urllib import request
 import os
 import io
+import hashlib
 
 from PIL import Image
 import requests
@@ -128,7 +129,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     @property
     def id(self) -> int:
         """
-        :return: The id of the anime.
+        :return: The anime's id.
         :rtype: :class:`int`
         """
         return self.__id
@@ -145,10 +146,9 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
 
     def get_image(self):
         """
-        :return: The image of the anime
+        :return: The anime's image.
         :rtype: :class:`PIL.Image.Image`
         """
-
         sock = requests.get(self.image_url)
         data = io.BytesIO(sock.content)
         return Image.open(data)
@@ -294,11 +294,78 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     def episodes(self) -> int:
         return self.__episodes
 
+    def _synopsis_bar(self, synopsis_cell: bs4.element.Tag):
+        """
+        :param synopsis_cell: synopsis tag
+        :type synopsis_cell: bs4.element.Tag
+        :exception exceptions.FailedToReloadError: If failed to parse.
+        """
+        synopsis_cell = synopsis_cell.td
+        synopsis_cell_contents = synopsis_cell.contents
+        if 'Synopsis' != synopsis_cell.h2.text.strip():
+            raise exceptions.FailedToReloadError(synopsis_cell.h2.text.strip())
+        self.__synopsis = os.linesep.join([
+            synopsis_cell_content.strip()
+            for synopsis_cell_content in synopsis_cell_contents[1:-1]
+            if isinstance(synopsis_cell_content, bs4.element.NavigableString)
+        ])
+
+    def _main_bar(self, main_content: bs4.element.Tag):
+        """
+        :param main_content: The main content.
+        :type main_content: bs4.element.Tag
+        :exception exceptions.FailedToReloadError: If failed to parse.
+        """
+        main_content_inner_divs = main_content.findAll(
+            name='div', recursive=False)
+        if 2 != len(main_content_inner_divs):
+            raise exceptions.FailedToReloadError(
+                "Got len(main_content_inner_divs) == {0:d}".format(
+                    len(main_content_inner_divs)))
+        main_content_datas = main_content_inner_divs[
+            1].table.tbody.findAll(name="tr", recursive=False)
+
+        self._synopsis_bar(main_content_datas[0])
+
+        main_content_other_data = main_content_datas[1]
+        # Getting other data
+        main_content_other_data = main_content_other_data.td
+        other_data_kids = [i for i in main_content_other_data.children]
+        # Getting all the data under 'Related Anime'
+        index = 0
+        index = global_functions.get_next_index(index, other_data_kids)
+        if 'h2' == other_data_kids[index].name and 'Related Anime' == other_data_kids[index].text.strip():
+            index += 1
+            while other_data_kids[index + 1].name != 'br':
+                index = global_functions.make_set(
+                    self.related_str_to_set_dict[
+                        other_data_kids[index].strip()],
+                    index, other_data_kids)
+        else:
+            index -= 2
+        next_index = global_functions.get_next_index(index, other_data_kids)
+        if consts.DEBUG:
+            if next_index - index != 2:
+                raise exceptions.FailedToReloadError("{0:d} - {1:d}".format(next_index, index))
+            index = next_index + 1
+
+            # Getting all the data under 'Characters & Voice Actors'
+            if 'h2' != other_data_kids[index].name:
+                raise exceptions.FailedToReloadError('h2 == {0:s}'.format(other_data_kids[index].name))
+            if 'Characters & Voice Actors' != other_data_kids[index].contents[-1]:
+                raise exceptions.FailedToReloadError(other_data_kids[index].contents[-1])
+        tag_for_reviews = main_content_other_data.find(text='More reviews').parent
+        link_for_reviews = request.urljoin(consts.HOST_NAME, tag_for_reviews['href'])
+        self.__parse_reviews(link_for_reviews)
+        tag_for_recommendations = main_content_other_data.find(text='More recommendations').parent
+        link_for_recommendations = request.urljoin(consts.HOST_NAME, tag_for_recommendations['href'])
+        self.__parse_recommendations(link_for_recommendations)
+
     def _side_bar(self, side_content: bs4.element.Tag):
         """
         :param side_content: The side bar content
         :type side_content: bs4.element.Tag
-        :exception exceptions.FailedToReloadError: when failed.
+        :exception exceptions.FailedToReloadError: If failed to parse.
         """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
         # Getting anime image url <img>
@@ -429,74 +496,6 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(self_popularity)
         self.__popularity = int(self_popularity[1:])
 
-    def _synopsis_bar(self, synopsis_cell: bs4.element.Tag):
-        """
-        :param synopsis_cell: synopsis tag
-        :type synopsis_cell: bs4.element.Tag
-        :exception exceptions.FailedToReloadError: If failed to parse.
-        """
-        # Getting synopsis
-        synopsis_cell = synopsis_cell.td
-        synopsis_cell_contents = synopsis_cell.contents
-        if 'Synopsis' != synopsis_cell.h2.text.strip():
-            raise exceptions.FailedToReloadError(synopsis_cell.h2.text.strip())
-        self.__synopsis = os.linesep.join([
-            synopsis_cell_content.strip()
-            for synopsis_cell_content in synopsis_cell_contents[1:-1]
-            if isinstance(synopsis_cell_content, bs4.element.NavigableString)
-        ])
-
-    def _main_bar(self, main_content: bs4.element.Tag):
-        """
-        :param main_content: The main content.
-        :type main_content: bs4.element.Tag
-        :exception exceptions.FailedToReloadError: when failed.
-        """
-        main_content_inner_divs = main_content.findAll(
-            name='div', recursive=False)
-        if 2 != len(main_content_inner_divs):
-            raise exceptions.FailedToReloadError(
-                "Got len(main_content_inner_divs) == {0:d}".format(
-                    len(main_content_inner_divs)))
-        main_content_datas = main_content_inner_divs[
-            1].table.tbody.findAll(name="tr", recursive=False)
-
-        self._synopsis_bar(main_content_datas[0])
-
-        main_content_other_data = main_content_datas[1]
-        # Getting other data
-        main_content_other_data = main_content_other_data.td
-        other_data_kids = [i for i in main_content_other_data.children]
-        # Getting all the data under 'Related Anime'
-        index = 0
-        index = global_functions.get_next_index(index, other_data_kids)
-        if 'h2' == other_data_kids[index].name and 'Related Anime' == other_data_kids[index].text.strip():
-            index += 1
-            while other_data_kids[index + 1].name != 'br':
-                index = global_functions.make_set(
-                    self.related_str_to_set_dict[
-                        other_data_kids[index].strip()],
-                    index, other_data_kids)
-        else:
-            index -= 2
-        next_index = global_functions.get_next_index(index, other_data_kids)
-        if consts.DEBUG:
-            if next_index - index != 2:
-                raise exceptions.FailedToReloadError("{0:d} - {1:d}".format(next_index, index))
-            index = next_index + 1
-
-            # Getting all the data under 'Characters & Voice Actors'
-            if 'h2' != other_data_kids[index].name:
-                raise exceptions.FailedToReloadError('h2 == {0:s}'.format(other_data_kids[index].name))
-            if 'Characters & Voice Actors' != other_data_kids[index].contents[-1]:
-                raise exceptions.FailedToReloadError(other_data_kids[index].contents[-1])
-        tag_for_reviews = main_content_other_data.find(text='More reviews').parent
-        link_for_reviews = request.urljoin(consts.HOST_NAME, tag_for_reviews['href'])
-        self.__parse_reviews(link_for_reviews)
-        tag_for_recommendations = main_content_other_data.find(text='More recommendations').parent
-        link_for_recommendations = request.urljoin(consts.HOST_NAME, tag_for_recommendations['href'])
-        self.__parse_recommendations(link_for_recommendations)
-
     def reload(self):
         """
         :exception exceptions.FailedToReloadError: when failed.
@@ -518,8 +517,10 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
 
         contents = content_table.tbody.tr.findAll(name="td", recursive=False)
 
+        # Data from side content
         self._side_bar(contents[0])
 
+        # Data from main content
         self._main_bar(contents[1])
 
         self._is_loaded = True
@@ -626,8 +627,6 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         return False
 
     def __hash__(self):
-        import hashlib
-
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(b'Anime')

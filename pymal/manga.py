@@ -6,6 +6,7 @@ __contact__ = "Name Of Current Guardian of this file <email@address>"
 from urllib import request
 import os
 import io
+import hashlib
 
 from PIL import Image
 import requests
@@ -63,6 +64,8 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
     def __init__(self, mal_id: int):
         """
+        :param mal_id: the manga id in mal.
+        :type mal_id: int
         """
         self.__id = mal_id
         self._is_loaded = False
@@ -123,7 +126,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     @property
     def id(self) -> int:
         """
-        :return: the mangas id.
+        :return: The manga's id.
         :rtype: :class:`int`
         """
         return self.__id
@@ -189,7 +192,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
     @property
     @load()
-    def genres(self) ->dict:
+    def genres(self) -> dict:
         return self.__genres
 
     @property
@@ -296,7 +299,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
     def _main_bar(self, main_content: bs4.element.Tag):
         """
-        :param main_content: synopsis tag
+        :param main_content: The main content.
         :type main_content: bs4.element.Tag
         :exception exceptions.FailedToReloadError: If failed to parse.
         """
@@ -306,7 +309,8 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(
                 "Got len(main_content_inner_divs) == {0:d}".format(
                     len(main_content_inner_divs)))
-        main_content_datas = main_content_inner_divs[1].table.tbody.findAll(name="tr", recursive=False)
+        main_content_datas = main_content_inner_divs[
+            1].table.tbody.findAll(name="tr", recursive=False)
 
         self._synopsis_bar(main_content_datas[0])
 
@@ -346,7 +350,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
     def _side_bar(self, side_content: bs4.element.Tag):
         """
-        :param side_content: synopsis tag
+        :param side_content: The side bar content
         :type side_content: bs4.element.Tag
         :exception exceptions.FailedToReloadError: If failed to parse.
         """
@@ -496,7 +500,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
         content_wrapper_div = global_functions.get_content_wrapper_div(link_for_reviews, global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
         _, reviews_data_div = main_cell.findAll(name='div', recursive=False)
         reviews_data = reviews_data_div.findAll(name='div', recursive=False)[2:-2]
         self.reviews = frozenset(map(review.Review, reviews_data))
@@ -504,9 +508,10 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def __parse_recommendations(self, link_for_recommendations: str):
         from pymal.inner_objects import recommendation
 
-        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations, global_functions.connect)
+        content_wrapper_div = global_functions.get_content_wrapper_div(link_for_recommendations,
+                                                                       global_functions.connect)
         content_div = content_wrapper_div.find(name="div", attrs={"id": "content"}, recursive=False)
-        _,  main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
+        _, main_cell = content_div.table.tbody.tr.findAll(name='td', recursive=False)
         _, recommendations_data_div = main_cell.findAll(name='div', recursive=False)
         recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:-1]
         self.recommendations = frozenset(map(recommendation.Recommendation, recommendations_data))
@@ -537,10 +542,8 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         """
         :param account: the account to add him self manga.
         :type account: :class:`account.Account`
-
-        :exception exceptions.MyAnimeListApiAddError: when failed.
-
         :rtype: :class:`account_objects.my_manga.MyManga`
+        :exception exceptions.MyAnimeListApiAddError: when failed.
         """
         data = self.MY_MAL_XML_TEMPLATE.format(
             0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
@@ -572,8 +575,6 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         return False
 
     def __hash__(self):
-        import hashlib
-
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
         hash_md5.update(b'Manga')
