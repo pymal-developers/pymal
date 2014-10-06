@@ -21,7 +21,6 @@ class FetchWebTestCase(unittest.TestCase):
 
 
 class ReloadTestCase(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.__global_functions_get_content_wrapper_div = global_functions.get_content_wrapper_div
@@ -44,7 +43,6 @@ class ReloadTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.manga.reload.assert_called_once_with()
-        self.manga.reload = self.__reload
         manga.Manga._unregiter(self.manga)
 
     def test_manga_title(self):
@@ -165,7 +163,6 @@ class NoReloadTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.assertFalse(self.manga.reload.called)
-        self.manga.reload = self.__reload
         manga.Manga._unregiter(self.manga)
 
     def test_id(self):
