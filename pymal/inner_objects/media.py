@@ -77,17 +77,6 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         return ''
 
-    @property
-    def _GLOBAL_MAL_URL(self):
-        """
-        :rtype: str
-        """
-        return request.urljoin(consts.HOST_NAME, self._NAME.lower() + "/{0:d}")
-
-    @property
-    def _MY_MAL_ADD_URL(self):
-        return request.urljoin(consts.HOST_NAME, 'api/' + self._NAME.lower() + 'list/add/{0:d}.xml')
-
     def __init__(self, mal_id: int):
         """
         :param mal_id: the anime id in mal.
@@ -96,7 +85,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         self.__id = mal_id
         self._is_loaded = False
 
-        self.__mal_url = self._GLOBAL_MAL_URL.format(self.__id)
+        self.__mal_url = request.urljoin(consts.HOST_NAME, self._NAME.lower() + "/" + str(self.__id))
 
         self._side_bar_parser = []
 
@@ -636,7 +625,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         data = self.MY_MAL_XML_TEMPLATE.format(*self.DEFAULT_ADDING)
         xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
-        delete_url = self.__MY_MAL_ADD_URL.format(self.id)
+        delete_url = request.urljoin(consts.HOST_NAME, 'api/' + self._NAME.lower() + 'list/add/' + str(self.id) + '.xml')
         ret = account.auth_connect(
             delete_url,
             data='data=' + xml,
