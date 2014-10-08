@@ -7,10 +7,7 @@ from urllib import request
 import time
 
 import requests
-try:
-    import httpcache
-except ImportError:
-    httpcache = None
+import httpcache
 import bs4
 
 from pymal import consts
