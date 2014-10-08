@@ -25,6 +25,8 @@ class Manga(Media):
     """
 
     _NAME = 'manga'
+    _TIMING_HEADER = 'Published'
+    _CREATORS_HEADER = 'Authors'
 
     def __init__(self, mal_id: int):
         """
@@ -49,9 +51,9 @@ class Manga(Media):
             self._volumes_parse,
             self._chapters_parse,
             self._status_parse,
-            self._published_parse,
+            self._timing_parse,
             self._genres_parse,
-            self._authors_parse,
+            self._creators_parse,
             self._void_parse,
             self._score_parse,
             self._rank_parse,
@@ -92,29 +94,6 @@ class Manga(Media):
         self.__chapters = global_functions.make_counter(self_chapters.strip())
         return 1
 
-    def _published_parse(self, published_div: bs4.element.Tag):
-        """
-        :param published_div: Published <div>
-        :type published_div: bs4.element.Tag
-        :return: 1.
-        """
-        if not global_functions.check_side_content_div('Published', published_div):
-            raise exceptions.FailedToReloadError(published_div)
-        published_span, published = published_div.contents
-        self._start_time, self._end_time = global_functions.make_start_and_end_time(published)
-        return 1
-
-    def _authors_parse(self, authors_div: bs4.element.Tag):
-        """
-        :param authors_div: Authors <div>
-        :type authors_div: bs4.element.Tag
-        :return: 1.
-        """
-        if not global_functions.check_side_content_div('Authors', authors_div):
-            raise exceptions.FailedToReloadError(authors_div)
-        for authors_link in authors_div.findAll(name='a'):
-            self._creators[authors_link.text.strip()] = authors_link['href']
-        return 1
 
     MY_MAL_XML_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 <entry>
