@@ -59,7 +59,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: str
         """
-        return ''
+        pass
 
     @property
     @abstractmethod
@@ -67,7 +67,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: str
         """
-        return ''
+        pass
 
     @property
     @abstractmethod
@@ -75,7 +75,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: str
         """
-        return ''
+        pass
 
     def __init__(self, mal_id: int):
         """
@@ -402,7 +402,6 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
             self.__genres[genre_link.text.strip()] = genre_link['href']
         return 1
 
-
     def _timing_parse(self, timing_div: bs4.element.Tag):
         """
         :param timing_div: timing <div>
@@ -587,7 +586,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: str
         """
-        return ''
+        pass
 
     @property
     @abstractmethod
@@ -595,7 +594,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: tuple
         """
-        return tuple()
+        pass
 
     @abstractmethod
     def _add_data_checker(self, ret: str):
@@ -606,7 +605,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         :rtype: int
         :exception MyAnimeListApiAddError: if Failed to add.
         """
-        return 0
+        pass
 
     @property
     @abstractmethod
@@ -614,7 +613,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: class:`account_objects.MyAnime` or class:`account_objects.MyManga`
         """
-        return object
+        pass
 
     def add(self, account):
         """
