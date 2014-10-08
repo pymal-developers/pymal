@@ -622,9 +622,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:-1]
         self.recommendations = frozenset(map(recommendation.Recommendation, recommendations_data))
 
-    @property
-    def MY_MAL_XML_TEMPLATE(self):
-        return """<?xml version="1.0" encoding="UTF-8"?>
+    MY_MAL_XML_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 <entry>
 	<chapter>{0:d}</chapter>
 	<volume>{1:d}</volume>
@@ -644,6 +642,21 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 	<retail_volumes>{15:d}</retail_volumes>
 </entry>"""
 
+    DEFAULT_ADDING = tuple(0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME, consts.MALAPI_NONE_TIME, 0, False, False, '',
+                           '', '', 0, )
+
+    def _add_data_checker(self, ret: str):
+        """
+        :param ret: The return value from mal api.
+        :type ret: str
+        :return: The added MyMedia id.
+        :rtype: int
+        :exception MyAnimeListApiAddError: if Failed to add.
+        """
+        if not ret.isdigit():
+            raise exceptions.MyAnimeListApiAddError(ret)
+        return int(ret)
+
     def add(self, account):
         """
         :param account: the account to add him self manga.
@@ -651,10 +664,9 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         :rtype: :class:`account_objects.my_manga.MyManga`
         :exception exceptions.MyAnimeListApiAddError: when failed.
         """
-        data = self.MY_MAL_XML_TEMPLATE.format(
-            0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
-            consts.MALAPI_NONE_TIME, 0, False, False, '', '', '', 0
-        )
+        from pymal.account_objects.my_manga import MyManga as MyMedia
+
+        data = self.MY_MAL_XML_TEMPLATE.format(*self.DEFAULT_ADDING)
         xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
         delete_url = self.__MY_MAL_ADD_URL.format(self.id)
         ret = account.auth_connect(
@@ -662,12 +674,8 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             data='data=' + xml,
             headers={'Content-Type': 'application/x-www-form-urlencoded'}
         )
-        if not ret.isdigit():
-            raise exceptions.MyAnimeListApiAddError(ret)
-        my_id = int(ret)
 
-        from pymal.account_objects import my_manga
-        return my_manga.MyManga(self, my_id, account)
+        return MyMedia(self, self._add_data_checker(ret), account)
 
     def __eq__(self, other):
         if isinstance(other, Manga):
@@ -683,7 +691,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
     def __hash__(self):
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
-        hash_md5.update(b'Manga')
+        hash_md5.update(self.__class__.__name__.encode())
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):

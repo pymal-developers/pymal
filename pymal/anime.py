@@ -659,9 +659,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         recommendations_data = recommendations_data_div.findAll(name='div', recursive=False)[2:-1]
         self.recommendations = frozenset(map(recommendation.Recommendation, recommendations_data))
 
-    @property
-    def MY_MAL_XML_TEMPLATE(self) -> str:
-        return """<?xml version="1.0" encoding="UTF-8"?>
+    MY_MAL_XML_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 <entry>
     <episode>{0:d}</episode>
     <status>{1:d}</status>
@@ -681,6 +679,40 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     <tags>{15:s}</tags>
 </entry>"""
 
+    DEFAULT_ADDING = tuple(0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME, consts.MALAPI_NONE_TIME, 0, False, False,
+                           '', '', '', )
+
+    def _add_data_checker(self, ret: str):
+        """
+        :param ret: The return value from mal api.
+        :type ret: str
+        :return: The added MyMedia id.
+        :rtype: int
+        :exception MyAnimeListApiAddError: if Failed to add.
+        """
+        html_obj = bs4.BeautifulSoup(ret)
+        if html_obj is None:
+            raise exceptions.MyAnimeListApiAddError(html_obj)
+
+        head_obj = html_obj.head
+        if head_obj is None:
+            raise exceptions.MyAnimeListApiAddError(head_obj)
+
+        title_obj = head_obj.title
+        if title_obj is None:
+            raise exceptions.MyAnimeListApiAddError(title_obj)
+
+        data = title_obj.text
+        if data is None:
+            raise exceptions.MyAnimeListApiAddError(data)
+
+        my_id, string = data.split()
+        if not my_id.isdigit():
+            raise exceptions.MyAnimeListApiAddError(my_id)
+        if string != 'Created':
+            raise exceptions.MyAnimeListApiAddError(string)
+        return int(my_id)
+
     def add(self, account):
         """
         :param account: the account to add him self anime.
@@ -688,10 +720,9 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         :rtype: :class:`account_objects.my_anime.MyAnime`
         :exception exceptions.MyAnimeListApiAddError: when failed.
         """
-        data = self.MY_MAL_XML_TEMPLATE.format(
-            0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME,
-            consts.MALAPI_NONE_TIME, 0, False, False, '', '', ''
-        )
+        from pymal.account_objects.my_anime import MyAnime as MyMedia
+
+        data = self.MY_MAL_XML_TEMPLATE.format(*self.DEFAULT_ADDING)
         xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
         delete_url = self.__MY_MAL_ADD_URL.format(self.id)
         ret = account.auth_connect(
@@ -699,34 +730,8 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             data='data=' + xml,
             headers={'Content-Type': 'application/x-www-form-urlencoded'}
         )
-        try:
-            html_obj = bs4.BeautifulSoup(ret)
-            if html_obj is None:
-                raise exceptions.FailedToAddError(html_obj)
 
-            head_obj = html_obj.head
-            if head_obj is None:
-                raise exceptions.FailedToAddError(head_obj)
-
-            title_obj = head_obj.title
-            if title_obj is None:
-                raise exceptions.FailedToAddError(title_obj)
-
-            data = title_obj.text
-            if data is None:
-                raise exceptions.FailedToAddError(data)
-
-            my_id, string = data.split()
-            if not my_id.isdigit():
-                raise exceptions.FailedToAddError(my_id)
-            if string != 'Created':
-                raise exceptions.FailedToAddError(string)
-        except exceptions.FailedToAddError:
-            raise exceptions.MyAnimeListApiAddError(ret)
-
-        from pymal.account_objects import my_anime
-
-        return my_anime.MyAnime(self, my_id, account)
+        return MyMedia(self, self._add_data_checker(ret), account)
 
     def __eq__(self, other):
         if isinstance(other, Anime):
@@ -742,7 +747,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     def __hash__(self):
         hash_md5 = hashlib.md5()
         hash_md5.update(str(self.id).encode())
-        hash_md5.update(b'Anime')
+        hash_md5.update(self.__class__.__name__.encode())
         return int(hash_md5.hexdigest(), 16)
 
     def __repr__(self):
