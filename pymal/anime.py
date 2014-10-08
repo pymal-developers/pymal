@@ -566,6 +566,14 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         self.__popularity = int(self_popularity[1:])
         return 1
 
+    def _void_parse(self, div: bs4.element.Tag):
+        """
+        :param div: A <div>
+        :type div: bs4.element.Tag
+        :return: 1.
+        """
+        return 1
+
     def _side_bar(self, side_content: bs4.element.Tag):
         """
         :param side_content: The side bar content
@@ -574,9 +582,12 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
 
-        self._image_parse(side_contents_divs[0])
-        side_contents_divs_index = 4
+        side_contents_divs_index = 0
 
+        side_contents_divs_index += self._image_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._english_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._synonyms_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._japanese_parse(side_contents_divs[side_contents_divs_index])
@@ -590,7 +601,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         side_contents_divs_index += self._rating_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._score_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._rank_parse(side_contents_divs[side_contents_divs_index])
-        self._popularity_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._popularity_parse(side_contents_divs[side_contents_divs_index])
 
     def reload(self):
         """
