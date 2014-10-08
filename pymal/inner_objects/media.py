@@ -20,7 +20,7 @@ class SingletonFactoryABCMeta(SingletonFactory, ABCMeta):
 
 class Media(object, metaclass=SingletonFactoryABCMeta):
     """
-    Object that keeps all the anime data in MAL.
+    Object that keeps media data in MAL.
 
     :ivar title: :class:`str`
     :ivar image_url: :class:`str`
@@ -59,18 +59,23 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: str
         """
-        return ''
+        pass
 
     @property
-    def _GLOBAL_MAL_URL(self):
+    @abstractmethod
+    def _TIMING_HEADER(self):
         """
         :rtype: str
         """
-        return request.urljoin(consts.HOST_NAME, self._NAME.lower() + "/{0:d}")
+        pass
 
     @property
-    def _MY_MAL_ADD_URL(self):
-        return request.urljoin(consts.HOST_NAME, 'api/' + self._NAME.lower() + 'list/add/{0:d}.xml')
+    @abstractmethod
+    def _CREATORS_HEADER(self):
+        """
+        :rtype: str
+        """
+        pass
 
     def __init__(self, mal_id: int):
         """
@@ -80,26 +85,26 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         self.__id = mal_id
         self._is_loaded = False
 
-        self.__mal_url = self._GLOBAL_MAL_URL.format(self.__id)
+        self.__mal_url = request.urljoin(consts.HOST_NAME, self._NAME.lower() + "/" + str(self.__id))
 
         self._side_bar_parser = []
 
         # Getting staff from html
         # staff from side content
-        self._title = ''
-        self._image_url = ''
-        self._english = ''
-        self._synonyms = ''
-        self._japanese = ''
-        self._type = ''
-        self._status = 0
-        self._start_time = 0
-        self._end_time = 0
-        self._creators = dict()
-        self._genres = dict()
-        self._score = 0.0
-        self._rank = 0
-        self._popularity = 0
+        self.__title = ''
+        self.__image_url = ''
+        self.__english = ''
+        self.__synonyms = ''
+        self.__japanese = ''
+        self.__type = ''
+        self.__status = 0
+        self.__start_time = 0
+        self.__end_time = 0
+        self.__creators = dict()
+        self.__genres = dict()
+        self.__score = 0.0
+        self.__rank = 0
+        self.__popularity = 0
 
         # staff from main content
         # staff from row 1
@@ -146,12 +151,12 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
     @property
     @load()
     def title(self) -> str:
-        return self._title
+        return self.__title
 
     @property
     @load()
     def image_url(self) -> str:
-        return self._image_url
+        return self.__image_url
 
     def get_image(self):
         """
@@ -165,62 +170,62 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
     @property
     @load()
     def english(self) -> str:
-        return self._english
+        return self.__english
 
     @property
     @load()
     def synonyms(self) -> str:
-        return self._synonyms
+        return self.__synonyms
 
     @property
     @load()
     def japanese(self) -> str:
-        return self._japanese
+        return self.__japanese
 
     @property
     @load()
     def type(self) -> str:
-        return self._type
+        return self.__type
 
     @property
     @load()
     def status(self) -> int:
-        return self._status
+        return self.__status
 
     @property
     @load()
     def start_time(self) -> int:
-        return self._start_time
+        return self.__start_time
 
     @property
     @load()
     def end_time(self) -> int:
-        return self._end_time
+        return self.__end_time
 
     @property
     @load()
     def creators(self) -> dict:
-        return self._creators
+        return self.__creators
 
     @property
     @load()
     def genres(self) -> dict:
-        return self._genres
+        return self.__genres
 
     @property
     @load()
     def score(self) -> float:
-        return self._score
+        return self.__score
 
     @property
     @load()
     def rank(self) -> int:
-        return self._rank
+        return self.__rank
 
     @property
     @load()
     def popularity(self) -> int:
-        return self._popularity
+        return self.__popularity
 
     @property
     @load()
@@ -313,7 +318,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         img_link = img_div.find(name="a")
         if img_link is None:
             raise exceptions.FailedToReloadError(img_div)
-        self._image_url = img_link.img['src']
+        self.__image_url = img_link.img['src']
         return 1
 
     def _english_parse(self, english_div):
@@ -325,10 +330,10 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         if global_functions.check_side_content_div('English', english_div):
             english_span, self_english = english_div.contents
-            self._english = self_english.strip()
+            self.__english = self_english.strip()
             return 1
         else:
-            self._english = ''
+            self.__english = ''
             return 0
 
     def _synonyms_parse(self, synonyms_div: bs4.element.Tag):
@@ -340,10 +345,10 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         if global_functions.check_side_content_div('Synonyms', synonyms_div):
             synonyms_span, self_synonyms = synonyms_div.contents
-            self._synonyms = self_synonyms.strip()
+            self.__synonyms = self_synonyms.strip()
             return 1
         else:
-            self._synonyms = ''
+            self.__synonyms = ''
             return 0
 
     def _japanese_parse(self, japanese_div: bs4.element.Tag):
@@ -355,10 +360,10 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         if global_functions.check_side_content_div('Japanese', japanese_div):
             japanese_span, self_japanese = japanese_div.contents
-            self._japanese = self_japanese.strip()
+            self.__japanese = self_japanese.strip()
             return 1
         else:
-            self._japanese = ''
+            self.__japanese = ''
             return 0
 
     def _type_parse(self, type_div: bs4.element.Tag):
@@ -370,7 +375,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         if not global_functions.check_side_content_div('Type', type_div):
             raise exceptions.FailedToReloadError(type_div)
         type_span, self_type = type_div.contents
-        self._type = self_type.strip()
+        self.__type = self_type.strip()
         return 1
 
     def _status_parse(self, status_div: bs4.element.Tag):
@@ -381,8 +386,8 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         if not global_functions.check_side_content_div('Status', status_div):
             raise exceptions.FailedToReloadError(status_div)
-        status_span, self._status = status_div.contents
-        self._status = self._status.strip()
+        status_span, self.__status = status_div.contents
+        self.__status = self.__status.strip()
         return 1
 
     def _genres_parse(self, genres_div: bs4.element.Tag):
@@ -394,19 +399,31 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         if not global_functions.check_side_content_div('Genres', genres_div):
             raise exceptions.FailedToReloadError(genres_div)
         for genre_link in genres_div.findAll(name='a'):
-            self._genres[genre_link.text.strip()] = genre_link['href']
+            self.__genres[genre_link.text.strip()] = genre_link['href']
         return 1
 
-    def _rating_parse(self, rating_div: bs4.element.Tag):
+    def _timing_parse(self, timing_div: bs4.element.Tag):
         """
-        :type rating_div: bs4.element.Tag
-        :param rating_div: Rating <div>
+        :param timing_div: timing <div>
+        :type timing_div: bs4.element.Tag
         :return: 1.
         """
-        if not global_functions.check_side_content_div('Rating', rating_div):
-            raise exceptions.FailedToReloadError(rating_div)
-        rating_span, self.__rating = rating_div.contents
-        self.__rating = self.__rating.strip()
+        if not global_functions.check_side_content_div(self._TIMING_HEADER, timing_div):
+            raise exceptions.FailedToReloadError(timing_div)
+        timing_span, timing = timing_div.contents
+        self.__start_time, self.__end_time = global_functions.make_start_and_end_time(timing)
+        return 1
+
+    def _creators_parse(self, creators_div: bs4.element.Tag):
+        """
+        :param creators_div: creators <div>
+        :type creators_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div(self._CREATORS_HEADER, creators_div):
+            raise exceptions.FailedToReloadError(creators_div)
+        for creators_link in creators_div.findAll(name='a'):
+            self.__creators[creators_link.text.strip()] = creators_link['href']
         return 1
 
     def _rank_parse(self, rank_div: bs4.element.Tag):
@@ -421,7 +438,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         self_rank = self_rank.strip()
         if not self_rank.startswith("#"):
             raise exceptions.FailedToReloadError(self_rank)
-        self._rank = int(self_rank[1:])
+        self.__rank = int(self_rank[1:])
         return 1
 
     def _score_parse(self, score_div: bs4.element.Tag):
@@ -433,7 +450,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         if not global_functions.check_side_content_div('Score', score_div):
             raise exceptions.FailedToReloadError(score_div)
         score_span, self_score = score_div.contents[:2]
-        self._score = float(self_score)
+        self.__score = float(self_score)
         return 1
 
     def _popularity_parse(self, popularity_div: bs4.element.Tag):
@@ -448,7 +465,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         self_popularity = self_popularity.strip()
         if not self_popularity.startswith("#"):
             raise exceptions.FailedToReloadError(self_popularity)
-        self._popularity = int(self_popularity[1:])
+        self.__popularity = int(self_popularity[1:])
         return 1
 
     def _void_parse(self, div: bs4.element.Tag):
@@ -520,7 +537,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         content_wrapper_div = global_functions.get_content_wrapper_div(self.__mal_url, global_functions.connect)
 
         # Getting title <div>
-        self._title = content_wrapper_div.h1.contents[1].strip()
+        self.__title = content_wrapper_div.h1.contents[1].strip()
 
         # Getting content <div>
         content_div = content_wrapper_div.find(
@@ -569,7 +586,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: str
         """
-        return ''
+        pass
 
     @property
     @abstractmethod
@@ -577,7 +594,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: tuple
         """
-        return tuple()
+        pass
 
     @abstractmethod
     def _add_data_checker(self, ret: str):
@@ -588,7 +605,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         :rtype: int
         :exception MyAnimeListApiAddError: if Failed to add.
         """
-        return 0
+        pass
 
     @property
     @abstractmethod
@@ -596,7 +613,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         :rtype: class:`account_objects.MyAnime` or class:`account_objects.MyManga`
         """
-        return object
+        pass
 
     def add(self, account):
         """
@@ -607,7 +624,7 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         """
         data = self.MY_MAL_XML_TEMPLATE.format(*self.DEFAULT_ADDING)
         xml = ''.join(map(lambda x: x.strip(), data.splitlines()))
-        delete_url = self.__MY_MAL_ADD_URL.format(self.id)
+        delete_url = request.urljoin(consts.HOST_NAME, 'api/' + self._NAME.lower() + 'list/add/' + str(self.id) + '.xml')
         ret = account.auth_connect(
             delete_url,
             data='data=' + xml,
@@ -617,8 +634,5 @@ class Media(object, metaclass=SingletonFactoryABCMeta):
         return self._my_media(self, self._add_data_checker(ret), account)
 
     def __repr__(self):
-        title = '' if self._title is None else ' ' + self._title
+        title = '' if self.__title is None else ' ' + self.__title
         return "<{0:s}{1:s} id={2:d}>".format(self.__class__.__name__, title, self.__id)
-
-    def __format__(self, format_spec):
-        return str(self).__format__(format_spec)

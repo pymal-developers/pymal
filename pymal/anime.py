@@ -20,40 +20,14 @@ class Anime(Media):
     """
     Object that keeps all the anime data in MAL.
 
-    :ivar title: :class:`str`
-    :ivar image_url: :class:`str`
-    :ivar english: :class:`str`
-    :ivar synonyms: :class:`str`
-    :ivar japanese: :class:`str`
-    :ivar type: :class:`str`
-    :ivar status: :class:`int`
-    :ivar start_time: :class:`int`
-    :ivar end_time: :class:`int`
-    :ivar creators: :class:`dict`
-    :ivar genres: :class:`dict`
     :ivar duration: :class:`int`
-    :ivar score: :class:`float`
-    :ivar rank: :class:`int`
-    :ivar popularity: :class:`int`
     :ivar rating: :class:`str`
     :ivar episodes: :class:`int`
-    :ivar synopsis: :class:`str`
-
-    :ivar adaptations: :class:`frozenset`
-    :ivar characters: :class:`frozenset`
-    :ivar sequels: :class:`frozenset`
-    :ivar prequels: :class:`frozenset`
-    :ivar spin_offs: :class:`frozenset`
-    :ivar alternative_versions: :class:`frozenset`
-    :ivar side_stories: :class:`frozenset`
-    :ivar summaries: :class:`frozenset`
-    :ivar others: :class:`frozenset`
-    :ivar parent_stories: :class:`frozenset`
-    :ivar alternative_settings: :class:`frozenset`
-    :ivar full_stories: :class:`frozenset`
     """
 
     _NAME = 'anime'
+    _TIMING_HEADER = 'Aired'
+    _CREATORS_HEADER = 'Producers'
 
     def __init__(self, mal_id: int):
         """
@@ -79,8 +53,8 @@ class Anime(Media):
             self._type_parse,
             self._episodes_parse,
             self._status_parse,
-            self._aired_parse,
-            self._producers_parse,
+            self._timing_parse,
+            self._creators_parse,
             self._genres_parse,
             self._duration_parse,
             self._rating_parse,
@@ -93,11 +67,6 @@ class Anime(Media):
     @load()
     def duration(self) -> int:
         return self.__duration
-
-    @property
-    @load()
-    def full_stories(self) -> frozenset:
-        return frozenset(self._full_stories)
 
     @property
     @load()
@@ -119,30 +88,6 @@ class Anime(Media):
             raise exceptions.FailedToReloadError(episodes_div)
         episodes_span, self_episodes = episodes_div.contents
         self.__episodes = global_functions.make_counter(self_episodes.strip())
-        return 1
-
-    def _aired_parse(self, aired_div: bs4.element.Tag):
-        """
-        :param aired_div: Aired <div>
-        :type aired_div: bs4.element.Tag
-        :return: 1.
-        """
-        if not global_functions.check_side_content_div('Aired', aired_div):
-            raise exceptions.FailedToReloadError(aired_div)
-        aired_span, aired = aired_div.contents
-        self._start_time, self._end_time = global_functions.make_start_and_end_time(aired)
-        return 1
-
-    def _producers_parse(self, producers_div: bs4.element.Tag):
-        """
-        :param producers_div: Aired <div>
-        :type producers_div: bs4.element.Tag
-        :return: 1.
-        """
-        if not global_functions.check_side_content_div('Producers', producers_div):
-            raise exceptions.FailedToReloadError(producers_div)
-        for producer_link in producers_div.findAll(name='a'):
-            self._creators[producer_link.text.strip()] = producer_link['href']
         return 1
 
     def _duration_parse(self, duration_div: bs4.element.Tag):
