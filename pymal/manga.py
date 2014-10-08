@@ -642,8 +642,8 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 	<retail_volumes>{15:d}</retail_volumes>
 </entry>"""
 
-    DEFAULT_ADDING = tuple(0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME, consts.MALAPI_NONE_TIME, 0, False, False, '',
-                           '', '', 0, )
+    DEFAULT_ADDING = (0, 0, 6, 0, 0, 0, 0, consts.MALAPI_NONE_TIME, consts.MALAPI_NONE_TIME, 0, False, False, '', '',
+                      '', 0, )
 
     def _add_data_checker(self, ret: str):
         """

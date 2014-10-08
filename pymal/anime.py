@@ -679,8 +679,8 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
     <tags>{15:s}</tags>
 </entry>"""
 
-    DEFAULT_ADDING = tuple(0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME, consts.MALAPI_NONE_TIME, 0, False, False,
-                           '', '', '', )
+    DEFAULT_ADDING = (0, 6, 0, 0, 0, 0, 0, 0, consts.MALAPI_NONE_TIME, consts.MALAPI_NONE_TIME, 0, False, False, '', '',
+                      '', )
 
     def _add_data_checker(self, ret: str):
         """
