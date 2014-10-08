@@ -358,6 +358,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         if img_link is None:
             raise exceptions.FailedToReloadError(img_div)
         self.__image_url = img_link.img['src']
+        return 1
 
     def _english_parse(self, english_div):
         """
@@ -546,25 +547,30 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
 
-        side_contents_divs_index = 0
+        parser = [
+            self._image_parse,
+            self._void_parse,
+            self._void_parse,
+            self._english_parse,
+            self._synonyms_parse,
+            self._japanese_parse,
+            self._type_parse,
+            self._volumes_parse,
+            self._chapters_parse,
+            self._status_parse,
+            self._published_parse,
+            self._genres_parse,
+            self._authors_parse,
+            self._void_parse,
+            self._score_parse,
+            self._rank_parse,
+            self._popularity_parse
+        ]
 
-        side_contents_divs_index += self._image_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._english_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._synonyms_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._japanese_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._type_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._volumes_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._chapters_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._status_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._published_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._genres_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._authors_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._score_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._rank_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._popularity_parse(side_contents_divs[side_contents_divs_index])
+        index = 0
+
+        for function in parser:
+            index += function(side_contents_divs[index])
 
     def reload(self):
         """

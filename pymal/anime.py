@@ -124,7 +124,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             'Parent story:': self.__parent_stories,
             'Alternative setting:': self.__alternative_settings,
             'Full story:': self.__full_stories,
-        }
+            }
 
     @property
     def id(self) -> int:
@@ -371,6 +371,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         if img_link is None:
             raise exceptions.FailedToReloadError(img_div)
         self.__image_url = img_link.img['src']
+        return 1
 
     def _english_parse(self, english_div):
         """
@@ -582,26 +583,31 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
         """
         side_contents_divs = side_content.findAll(name="div", recursive=False)
 
-        side_contents_divs_index = 0
+        parser = [
+            self._image_parse,
+            self._void_parse,
+            self._void_parse,
+            self._void_parse,
+            self._english_parse,
+            self._synonyms_parse,
+            self._japanese_parse,
+            self._type_parse,
+            self._episodes_parse,
+            self._status_parse,
+            self._aired_parse,
+            self._producers_parse,
+            self._genres_parse,
+            self._duration_parse,
+            self._rating_parse,
+            self._score_parse,
+            self._rank_parse,
+            self._popularity_parse
+        ]
 
-        side_contents_divs_index += self._image_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._void_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._english_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._synonyms_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._japanese_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._type_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._episodes_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._status_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._aired_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._producers_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._genres_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._duration_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._rating_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._score_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._rank_parse(side_contents_divs[side_contents_divs_index])
-        side_contents_divs_index += self._popularity_parse(side_contents_divs[side_contents_divs_index])
+        index = 0
+
+        for function in parser:
+            index += function(side_contents_divs[index])
 
     def reload(self):
         """
