@@ -14,4 +14,5 @@ class SearchAnimesProviderTestCase(unittest.TestCase):
         SearchAnimesProvider._instance = None
 
     def test_search(self):
-        self.assertListEqual(self.provider.search('lucky star'), [Anime(ANIME_ID)])
+        expected = frozenset({Anime(4472), Anime(ANIME_ID)})
+        self.assertListEqual(self.provider.search('lucky star'), expected)
