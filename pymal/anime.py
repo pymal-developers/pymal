@@ -68,11 +68,6 @@ class Anime(Media):
 
     @property
     @load()
-    def full_stories(self) -> frozenset:
-        return frozenset(self._full_stories)
-
-    @property
-    @load()
     def rating(self) -> int:
         return self.__rating
 
