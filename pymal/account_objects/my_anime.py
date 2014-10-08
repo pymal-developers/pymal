@@ -46,8 +46,11 @@ class MyAnime(object, metaclass=singleton_factory.SingletonFactory):
     __MY_MAL_UPDATE_URL = request.urljoin(
         consts.HOST_NAME, 'api/animelist/update/{0:d}.xml')
 
-    def __init__(self, mal_id: int, my_mal_id, account):
+    def __init__(self, mal_id: int, my_mal_id: int, account):
         """
+        :type mal_id: int or :class:`anime.Anime`
+        :type my_mal_id: int
+        :type account: :class:`account.Account`
         """
         from pymal import anime
         if isinstance(mal_id, anime.Anime):
