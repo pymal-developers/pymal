@@ -12,11 +12,16 @@ class SearchAnimesProvider(search_provider.SearchProvider):
     """
     Searching for animes.
     """
-    _SEARCH_NAME = 'anime'
-    _SEARCHED_URL_SUFFIX = '/anime/'
+    @property
+    def _SEARCH_NAME(self):
+        return 'anime'
+
+    @property
+    def _SEARCHED_URL_SUFFIX(self):
+        return '/anime/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import anime
+        from pymal.anime import Anime
 
         mal_id = int(mal_url.split('/')[0])
-        return anime.Anime(int(mal_id))
+        return Anime(int(mal_id))

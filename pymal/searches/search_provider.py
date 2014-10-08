@@ -4,6 +4,7 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 from urllib import parse
+from abc import ABCMeta, abstractmethod
 
 import bs4
 from singleton3 import Singleton
@@ -11,7 +12,11 @@ from singleton3 import Singleton
 from pymal import global_functions, consts
 
 
-class SearchProvider(object, metaclass=Singleton):
+class SingletonABCMeta(Singleton, ABCMeta):
+    pass
+
+
+class SearchProvider(object, metaclass=SingletonABCMeta):
     """
     A search engine.
     Change the following properties and it will search for you:
@@ -19,13 +24,24 @@ class SearchProvider(object, metaclass=Singleton):
      - _SEARCHED_URL_SUFFIX
      - _SEARCHED_OBJECT
     """
-    _SEARCH_NAME = ''
-    _SEARCHED_URL_SUFFIX = ''
-    _SEARCHED_OBJECT = object
+
+    @property
+    @abstractmethod
+    def _SEARCH_NAME(self):
+        pass
+
+    @abstractmethod
+    def _SEARCHED_OBJECT(self):
+        pass
 
     @property
     def __SEARCH_URL(self):
         return parse.urljoin(consts.HOST_NAME, self._SEARCH_NAME + '.php')
+
+    @property
+    @abstractmethod
+    def _SEARCHED_URL_SUFFIX(self):
+        pass
 
     def __make_url(self, search_line: str, show_number: int) -> str:
         params = {

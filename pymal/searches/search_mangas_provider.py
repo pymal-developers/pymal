@@ -12,11 +12,16 @@ class SearchMangasProvider(search_provider.SearchProvider):
     """
     Searching for mangas.
     """
-    _SEARCH_NAME = 'manga'
-    _SEARCHED_URL_SUFFIX = '/manga/'
+    @property
+    def _SEARCH_NAME(self):
+        return 'manga'
+
+    @property
+    def _SEARCHED_URL_SUFFIX(self):
+        return '/manga/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import manga
+        from pymal.manga import Manga
 
         mal_id = int(mal_url.split('/')[0])
-        return manga.Manga(int(mal_id))
+        return Manga(int(mal_id))

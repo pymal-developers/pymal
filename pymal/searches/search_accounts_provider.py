@@ -12,10 +12,15 @@ class SearchAccountsProvider(search_provider.SearchProvider):
     """
     Searching for accounts.
     """
-    _SEARCH_NAME = 'users'
-    _SEARCHED_URL_SUFFIX = '/profile/'
+    @property
+    def _SEARCH_NAME(self):
+        return 'users'
+
+    @property
+    def _SEARCHED_URL_SUFFIX(self):
+        return '/profile/'
 
     def _SEARCHED_OBJECT(self, mal_url: str):
-        from pymal import account
+        from pymal.account import Account
 
-        return Account.Account(mal_url)
+        return Account(mal_url)
