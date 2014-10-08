@@ -194,6 +194,18 @@ class NoReloadTestCase(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.anime), '<Anime  id={0:d}>'.format(ANIME_ID))
 
+    def test___equal___anime_object(self):
+        self.assertEqual(self.anime, self.anime)
+
+    def test___equal___anime_id_int(self):
+        self.assertEqual(self.anime, ANIME_ID)
+
+    def test___equal___anime_id_str(self):
+        self.assertEqual(self.anime, str(ANIME_ID))
+
+    def test___equald___not_equal(self):
+        self.assertNotEqual(self.anime, set())
+
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
         account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)

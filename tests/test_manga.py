@@ -171,6 +171,18 @@ class NoReloadTestCase(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.manga), '<Manga  id=587>')
 
+    def test___equal___manga_object(self):
+        self.assertEqual(self.manga, self.manga)
+
+    def test___equal___manga_id_int(self):
+        self.assertEqual(self.manga, MANGA_ID)
+
+    def test___equal___manga_id_str(self):
+        self.assertEqual(self.manga, str(MANGA_ID))
+
+    def test___equald___not_equal(self):
+        self.assertNotEqual(self.manga, set())
+
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
         mng = manga.Manga(ADD_MANGA_ID)
