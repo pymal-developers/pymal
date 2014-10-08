@@ -4,9 +4,9 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 import singleton_factory
-from reloaded_set import load
 
 from pymal import consts
+from pymal import decorators
 
 __all__ = ['Season']
 
@@ -54,7 +54,7 @@ class Season(object, metaclass=singleton_factory.SingletonFactory):
         self.start_time = time.strptime(start_time_string, '%Y %m')
 
     @property
-    @load()
+    @decorators.load
     def animes(self) -> frozenset:
         """
         :return: all the animes in this season

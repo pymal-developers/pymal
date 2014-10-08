@@ -4,7 +4,7 @@ from os import path
 
 from mock import Mock
 
-from pymal.account import Account
+from pymal import account
 from pymal import anime
 from pymal import manga
 from pymal import global_functions
@@ -15,18 +15,11 @@ from tests.constants_for_testing import ADD_ANIME_ID, ANIME_ID, ACCOUNT_TEST_USE
     SOURCES_DIRECTORY
 
 
-class FetchWebTestCase(unittest.TestCase):
+class ReloadTestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.anime = anime.Anime(ANIME_ID)
-
-    def test_fetch_web(self):
-        self.anime.reload()
-
-
-class ReloadTestCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
         cls.__global_functions_get_content_wrapper_div = global_functions.get_content_wrapper_div
 
         with open(path.join(SOURCES_DIRECTORY, "Lucky☆Star - MyAnimeList.net.html"), "rb") as f:
@@ -36,19 +29,14 @@ class ReloadTestCase(unittest.TestCase):
         content_wrapper_div = myanimelist_div.find(name="div", attrs={"id": "contentWrapper"}, recursive=False)
         global_functions.get_content_wrapper_div = Mock(return_value=content_wrapper_div)
 
-    def setUp(self):
-        self.anime = anime.Anime(ANIME_ID)
-        self.__reload = self.anime.reload
-        self.anime.reload = Mock(wraps=self.__reload)
-        self.anime.reload()
+        cls.anime.reload()
 
     @classmethod
     def tearDownClass(cls):
         global_functions.get_content_wrapper_div = cls.__global_functions_get_content_wrapper_div
 
-    def tearDown(self):
-        self.anime.reload.assert_called_once_with()
-        anime.Anime._unregiter(self.anime)
+    def test_id(self):
+        self.assertEqual(self.anime.id, ANIME_ID)
 
     def test_title(self):
         self.assertEqual(self.anime.title, 'Lucky☆Star')
@@ -70,8 +58,8 @@ class ReloadTestCase(unittest.TestCase):
 
     def test_episodes(self):
         self.assertEqual(self.anime.episodes, 24)
-        # TODO: need to take something with no number
-        # self.assertEqual(self.anime.episodes, float('inf'))
+        # need to take something with no number
+        #self.assertEqual(self.anime.episodes, float('inf'))
 
     def test_start_time(self):
         self.assertEqual(self.anime.start_time, 1175990400)
@@ -179,33 +167,53 @@ class ReloadTestCase(unittest.TestCase):
 
 
 class NoReloadTestCase(unittest.TestCase):
-    def setUp(self):
-        self.anime = anime.Anime(ANIME_ID)
-        self.__reload = self.anime.reload
-        self.anime.reload = Mock(wraps=self.__reload)
 
-    def tearDown(self):
-        self.assertFalse(self.anime.reload.called)
-        anime.Anime._unregiter(self.anime)
+    @classmethod
+    def setUpClass(cls):
+        cls.account = account.Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
+        cls.anime = list(cls.account.animes)[0]
 
     def test_id(self):
-        self.assertEqual(self.anime.id, ANIME_ID)
+        self.assertIsInstance(self.anime.id, int)
+
+    def test_title(self):
+        self.assertIsInstance(self.anime.english, str)
+
+    def test_image_url(self):
+        self.assertIsInstance(self.anime.image_url, str)
+
+    def test_synonyms(self):
+        self.assertIsInstance(self.anime.synonyms, str)
+
+    def test_type(self):
+        self.assertIsInstance(self.anime.type, str)
+
+    def test_episodes(self):
+        try:
+            self.assertIsInstance(self.anime.episodes, int)
+        except AssertionError:
+            self.assertEqual(self.anime.episodes, float('inf'))
+
+    def test_start_time(self):
+        self.assertIsInstance(self.anime.start_time, float)
+
+    def test_end_time(self):
+        self.assertIsInstance(self.anime.end_time, float)
 
     def test_str(self):
-        self.assertEqual(str(self.anime), '<Anime  id={0:d}>'.format(ANIME_ID))
+        repr(self.anime)
 
     @unittest.skip("Delete is not working")
     def test_add_and_delete(self):
-        account = Account(ACCOUNT_TEST_USERNAME, ACCOUNT_TEST_PASSWORD)
         anm = anime.Anime(ADD_ANIME_ID)
-        my_anm = anm.add(account)
+        my_anm = anm.add(self.account)
 
         self.assertIsInstance(my_anm, my_anime.MyAnime)
-        account.animes.reload()
-        self.assertIn(my_anm, account.animes)
+        self.account.animes.reload()
+        self.assertIn(my_anm, self.account.animes)
 
         my_anm.delete()
-        account.animes.reload()
+        self.account.animes.reload()
         self.assertNotIn(my_anm, self.account.animes)
 
 
