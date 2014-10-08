@@ -406,7 +406,6 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
     def _type_parse(self, type_div: bs4.element.Tag):
         """
-        type <div>
         :param type_div: type div
         :type type_div: bs4.element.Tag
         :return: 1.
@@ -419,8 +418,7 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
 
     def _status_parse(self, status_div: bs4.element.Tag):
         """
-        status <div>
-        :param status_div: type div
+        :param status_div: Status div
         :type status_div: bs4.element.Tag
         :return: 1.
         """
@@ -428,6 +426,108 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(status_div)
         status_span, self.__status = status_div.contents
         self.__status = self.__status.strip()
+        return 1
+
+    def _genres_parse(self, genres_div: bs4.element.Tag):
+        """
+        :param genres_div: Genres <div>
+        :type genres_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Genres', genres_div):
+            raise exceptions.FailedToReloadError(genres_div)
+        for genre_link in genres_div.findAll(name='a'):
+            self.__genres[genre_link.text.strip()] = genre_link['href']
+        return 1
+
+    def _volumes_parse(self, volumes_div: bs4.element.Tag):
+        """
+        :param volumes_div: Volumes <div>
+        :type volumes_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Volumes', volumes_div):
+            raise exceptions.FailedToReloadError(volumes_div)
+        volumes_span, self_volumes = volumes_div.contents
+        self.__volumes = global_functions.make_counter(self_volumes.strip())
+        return 1
+
+    def _chapters_parse(self, chapters_div: bs4.element.Tag):
+        """
+        :param chapters_div: Chapters <div>
+        :type chapters_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Chapters', chapters_div):
+            raise exceptions.FailedToReloadError(chapters_div)
+        chapters_span, self_chapters = chapters_div.contents
+        self.__chapters = global_functions.make_counter(self_chapters.strip())
+        return 1
+
+    def _published_parse(self, published_div: bs4.element.Tag):
+        """
+        :param published_div: Published <div>
+        :type published_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Published', published_div):
+            raise exceptions.FailedToReloadError(published_div)
+        published_span, published = published_div.contents
+        self.__start_time, self.__end_time = global_functions.make_start_and_end_time(published)
+        return 1
+
+    def _authors_parse(self, authors_div: bs4.element.Tag):
+        """
+        :param authors_div: Authors <div>
+        :type authors_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Authors', authors_div):
+            raise exceptions.FailedToReloadError(authors_div)
+        for authors_link in authors_div.findAll(name='a'):
+            self.__creators[authors_link.text.strip()] = authors_link['href']
+        return 1
+
+    def _rank_parse(self, rank_div: bs4.element.Tag):
+        """
+        :param rank_div: Rank <div>
+        :type rank_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Ranked', rank_div):
+            raise exceptions.FailedToReloadError(rank_div)
+        rank_span, self_rank = rank_div.contents[:2]
+        self_rank = self_rank.strip()
+        if not self_rank.startswith("#"):
+            raise exceptions.FailedToReloadError(self_rank)
+        self.__rank = int(self_rank[1:])
+        return 1
+
+    def _score_parse(self, score_div: bs4.element.Tag):
+        """
+        :param score_div: Score <div>
+        :type score_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Score', score_div):
+            raise exceptions.FailedToReloadError(score_div)
+        score_span, self_score = score_div.contents[:2]
+        self.__score = float(self_score)
+        return 1
+
+    def _popularity_parse(self, popularity_div: bs4.element.Tag):
+        """
+        :param popularity_div: Popularity <div>
+        :type popularity_div: bs4.element.Tag
+        :return: 1.
+        """
+        if not global_functions.check_side_content_div('Popularity', popularity_div):
+            raise exceptions.FailedToReloadError(popularity_div)
+        popularity_span, self_popularity = popularity_div.contents[:2]
+        self_popularity = self_popularity.strip()
+        if not self_popularity.startswith("#"):
+            raise exceptions.FailedToReloadError(self_popularity)
+        self.__popularity = int(self_popularity[1:])
         return 1
 
     def _side_bar(self, side_content: bs4.element.Tag):
@@ -445,72 +545,16 @@ class Manga(object, metaclass=singleton_factory.SingletonFactory):
         side_contents_divs_index += self._synonyms_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._japanese_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._type_parse(side_contents_divs[side_contents_divs_index])
-
-        # volumes <div>
-        volumes_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Volumes', volumes_div):
-            raise exceptions.FailedToReloadError(side_content)
-        volumes_span, self_volumes = volumes_div.contents
-        self.__volumes = global_functions.make_counter(self_volumes.strip())
-        side_contents_divs_index += 1
-        # chapters <div>
-        chapters_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Chapters', chapters_div):
-            raise exceptions.FailedToReloadError(side_content)
-        chapters_span, self_chapters = chapters_div.contents
-        self.__chapters = global_functions.make_counter(self_chapters.strip())
-        side_contents_divs_index += 1
-
+        side_contents_divs_index += self._volumes_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._chapters_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += self._status_parse(side_contents_divs[side_contents_divs_index])
-
-        # published <div>
-        published_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Published', published_div):
-            raise exceptions.FailedToReloadError(side_content)
-        published_span, published = published_div.contents
-        self.__start_time, self.__end_time = global_functions.make_start_and_end_time(published)
+        side_contents_divs_index += self._published_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._genres_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._authors_parse(side_contents_divs[side_contents_divs_index])
         side_contents_divs_index += 1
-        # genres <div>
-        genres_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Genres', genres_div):
-            raise exceptions.FailedToReloadError(side_content)
-        for genre_link in genres_div.findAll(name='a'):
-            self.__genres[genre_link.text.strip()] = genre_link['href']
-        side_contents_divs_index += 1
-        # authors <div>
-        authors_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Authors', authors_div):
-            raise exceptions.FailedToReloadError(side_content)
-        for authors_link in authors_div.findAll(name='a'):
-            self.__creators[authors_link.text.strip()] = authors_link['href']
-        side_contents_divs_index += 1
-        side_contents_divs_index += 1
-        # score <div>
-        score_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Score', score_div):
-            raise exceptions.FailedToReloadError(side_content)
-        score_span, self_score = score_div.contents[:2]
-        self.__score = float(self_score)
-        side_contents_divs_index += 1
-        # rank <div>
-        rank_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Ranked', rank_div):
-            raise exceptions.FailedToReloadError(side_content)
-        rank_span, self_rank = rank_div.contents[:2]
-        self_rank = self_rank.strip()
-        if not self_rank.startswith("#"):
-            raise exceptions.FailedToReloadError(self_rank)
-        self.__rank = int(self_rank[1:])
-        side_contents_divs_index += 1
-        # popularity <div>
-        popularity_div = side_contents_divs[side_contents_divs_index]
-        if not global_functions.check_side_content_div('Popularity', popularity_div):
-            raise exceptions.FailedToReloadError(side_content)
-        popularity_span, self_popularity = popularity_div.contents[:2]
-        self_popularity = self_popularity.strip()
-        if not self_popularity.startswith("#"):
-            raise exceptions.FailedToReloadError(self_popularity)
-        self.__popularity = int(self_popularity[1:])
+        side_contents_divs_index += self._score_parse(side_contents_divs[side_contents_divs_index])
+        side_contents_divs_index += self._rank_parse(side_contents_divs[side_contents_divs_index])
+        self._popularity_parse(side_contents_divs[side_contents_divs_index])
 
     def reload(self):
         """
