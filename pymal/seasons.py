@@ -4,7 +4,8 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 from singleton3 import Singleton
-from reloaded_set import load
+
+from pymal import decorators
 
 __all__ = ['Seasons']
 
@@ -23,7 +24,7 @@ class Seasons(object, metaclass=Singleton):
         self._is_loaded = False
 
     @property
-    @load()
+    @decorators.load
     def seasons(self) -> frozenset:
         return self.__seasons
 
