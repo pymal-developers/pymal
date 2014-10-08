@@ -20,7 +20,7 @@ class SingletonFactoryABCMeta(SingletonFactory, ABCMeta):
 
 class Media(object, metaclass=SingletonFactoryABCMeta):
     """
-    Object that keeps all the anime data in MAL.
+    Object that keeps media data in MAL.
 
     :ivar title: :class:`str`
     :ivar image_url: :class:`str`

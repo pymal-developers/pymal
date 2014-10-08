@@ -20,37 +20,9 @@ class Anime(Media):
     """
     Object that keeps all the anime data in MAL.
 
-    :ivar title: :class:`str`
-    :ivar image_url: :class:`str`
-    :ivar english: :class:`str`
-    :ivar synonyms: :class:`str`
-    :ivar japanese: :class:`str`
-    :ivar type: :class:`str`
-    :ivar status: :class:`int`
-    :ivar start_time: :class:`int`
-    :ivar end_time: :class:`int`
-    :ivar creators: :class:`dict`
-    :ivar genres: :class:`dict`
     :ivar duration: :class:`int`
-    :ivar score: :class:`float`
-    :ivar rank: :class:`int`
-    :ivar popularity: :class:`int`
     :ivar rating: :class:`str`
     :ivar episodes: :class:`int`
-    :ivar synopsis: :class:`str`
-
-    :ivar adaptations: :class:`frozenset`
-    :ivar characters: :class:`frozenset`
-    :ivar sequels: :class:`frozenset`
-    :ivar prequels: :class:`frozenset`
-    :ivar spin_offs: :class:`frozenset`
-    :ivar alternative_versions: :class:`frozenset`
-    :ivar side_stories: :class:`frozenset`
-    :ivar summaries: :class:`frozenset`
-    :ivar others: :class:`frozenset`
-    :ivar parent_stories: :class:`frozenset`
-    :ivar alternative_settings: :class:`frozenset`
-    :ivar full_stories: :class:`frozenset`
     """
 
     _NAME = 'anime'
