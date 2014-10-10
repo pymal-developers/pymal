@@ -47,11 +47,8 @@ class MyManga(object, metaclass=singleton_factory.SingletonFactory):
     __MY_MAL_UPDATE_URL = request.urljoin(
         consts.HOST_NAME, 'api/mangalist/update/{0:d}.xml')
 
-    def __init__(self, mal_id: int, my_mal_id: int, account):
+    def __init__(self, mal_id: int, my_mal_id, account):
         """
-        :type mal_id: int or :class:`manga.Manga`
-        :type my_mal_id: int
-        :type account: :class:`account.Account`
         """
         from pymal import manga
         if isinstance(mal_id, manga.Manga):

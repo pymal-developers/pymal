@@ -4,14 +4,13 @@ __license__ = "BSD License"
 __contact__ = "Name Of Current Guardian of this file <email@address>"
 
 
-from reloaded_set import load
-from pymal.types.reloaded_set_singleton_factory import ReloadedSetSingletonFactory
-
 from pymal import global_functions
+from pymal.types import ReloadedSet
+from pymal.decorators import load
 from pymal import exceptions
 
 
-class AccountFriends(ReloadedSetSingletonFactory):
+class AccountFriends(ReloadedSet.ReloadedSetSingletonFactory):
     """
     A slow load of friend list.
 
@@ -23,14 +22,15 @@ class AccountFriends(ReloadedSetSingletonFactory):
         :param account: the account to get the friends.
         :type account: :class:`account.Account`
         """
-        super().__init__()
         self.account = account
         self.__url = account._main_profile_url + '/friends'
 
         self.__friends = frozenset()
 
+        self._is_loaded = False
+
     @property
-    @load()
+    @load
     def __friends_list(self):
         return self.__friends
 
@@ -38,7 +38,7 @@ class AccountFriends(ReloadedSetSingletonFactory):
     def _values(self):
         return self.__friends_list
 
-    def _reload(self):
+    def reload(self):
         """
         :exception FailedToParseError
         """
