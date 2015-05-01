@@ -328,7 +328,7 @@ class Anime(object, metaclass=singleton_factory.SingletonFactory):
             raise exceptions.FailedToReloadError(content_wrapper_div)
         self.__image_url = img_link.img['src']
 
-        side_contents_divs_index = 4
+        side_contents_divs_index = 5
 
         # english <div>
         english_div = side_contents_divs[side_contents_divs_index]
